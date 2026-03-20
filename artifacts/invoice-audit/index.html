@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Invoice Audit — Mosaic Wellness</title>
+<style>
+  body { font-family: sans-serif; background: #0f0f0f; color: #eee; padding: 2rem; }
+  h1 { color: #f5a623; }
+  #status { margin: 1rem 0; font-size: 14px; color: #aaa; }
+  #progress { width: 100%; background: #222; height: 8px; border-radius: 4px; margin: 0.5rem 0; }
+  #bar { height: 8px; background: #f5a623; border-radius: 4px; width: 0%; transition: width 0.2s; }
+  pre { background: #1a1a1a; padding: 1rem; border-radius: 8px; overflow: auto; font-size: 12px; max-height: 500px; }
+</style>
+</head>
+<body>
+<h1>🔍 Invoice Audit Engine</h1>
+<div id="status">Click Start to begin fetching all data...</div>
+<div id="progress"><div id="bar"></div></div>
+<button onclick="runAudit()" style="background:#f5a623;color:#000;border:none;padding:10px 24px;border-radius:6px;font-size:15px;cursor:pointer;margin:1rem 0">▶ Start Audit</button>
+<pre id="output">Results will appear here...</pre>
+
+<script>
+const BASE = 'https://mosaicfellowship.in/api/data/finance';
+
+async function fetchAll(endpoint, label) {
+  let page = 1, all = [];
+  while (true) {
+    setStatus(`Fetching ${label} page ${page}...`);
+    const r = await fetch(`${BASE}/${endpoint}?page=${page}&limit=100`);
+    const d = await r.json();
+    all = all.concat(d.data);
+    setBar(all.length / d.pagination.total * 100);
+    if (!d.pagination.has_next) break;
+    page++;
+  }
+  return all;
+}
+
+function setStatus(msg) { document.getElementById('status').textContent = msg; }
+function setBar(pct) { document.getElementById('bar').style.width = Math.min(pct,100) + '%'; }
+function log(msg) { document.getElementById('output').textContent += msg + '\n'; }
+
+async function runAudit() {
+  document.getElementById('output').textContent = '';
+  log('=== MOSAIC WELLNESS INVOICE AUDIT ===\n');
+
+  // 1. Fetch everything
+  const rateCard = await fetchAll('rate-card', 'Rate Card');
+  log(`✅ Rate card: ${rateCard.length} entries`);
+
+  const lineItems = await fetchAll('line-items', 'Line Items');
+  log(`✅ Line items: ${lineItems.length} entries`);
+
+  // 2. Build lookup: vendorId+itemName → contracted rate & correct GST
+  const rateMap = {};
+  for (const r of rateCard) {
+    const key = `${r.vendor_id}|${r.item_name}`;
+    rateMap[key] = { contracted_rate: r.contracted_rate, correct_gst_rate: r.correct_gst_rate };
+  }
+
+  // 3. Audit each line item
+  const discrepancies = [];
+  let totalOvercharge = 0;
+
+  for (const li of lineItems) {
+    const key = `${li.vendor_id}|${li.item_name}`;
+    const contracted = rateMap[key];
+    if (!contracted) continue; // item not in rate card — flag separately
+
+    const expectedAmount = li.quantity * contracted.contracted_rate;
+    const priceDiff = li.billed_amount - expectedAmount;
+    const gstWrong = li.billed_gst_rate !== contracted.correct_gst_rate;
+
+    if (Math.abs(priceDiff) > 0.5 || gstWrong) {
+      discrepancies.push({
+        invoice_id: li.invoice_id,
+        vendor_id: li.vendor_id,
+        item_name: li.item_name,
+        quantity: li.quantity,
+        contracted_rate: contracted.contracted_rate,
+        billed_unit_price: li.unit_price,
+        billed_amount: li.billed_amount,
+        expected_amount: Math.round(expectedAmount * 100) / 100,
+        overcharge: Math.round(priceDiff * 100) / 100,
+        billed_gst: li.billed_gst_rate,
+        correct_gst: contracted.correct_gst_rate,
+        gst_wrong: gstWrong,
+      });
+      if (priceDiff > 0) totalOvercharge += priceDiff;
+    }
+  }
+
+  // 4. Group by vendor
+  const byVendor = {};
+  for (const d of discrepancies) {
+    if (!byVendor[d.vendor_id]) byVendor[d.vendor_id] = { count: 0, total_overcharge: 0, gst_issues: 0 };
+    byVendor[d.vendor_id].count++;
+    if (d.overcharge > 0) byVendor[d.vendor_id].total_overcharge += d.overcharge;
+    if (d.gst_wrong) byVendor[d.vendor_id].gst_issues++;
+  }
+
+  // 5. Print results
+  log(`\n=== AUDIT SUMMARY ===`);
+  log(`Total line items audited: ${lineItems.length}`);
+  log(`Total discrepancies found: ${discrepancies.length}`);
+  log(`💰 TOTAL OVERCHARGES: ₹${totalOvercharge.toLocaleString('en-IN', {maximumFractionDigits: 0})}`);
+
+  log(`\n=== BY VENDOR ===`);
+  const sorted = Object.entries(byVendor).sort((a,b) => b[1].total_overcharge - a[1].total_overcharge);
+  for (const [vid, v] of sorted) {
+    log(`${vid}: ${v.count} issues | ₹${v.total_overcharge.toLocaleString('en-IN',{maximumFractionDigits:0})} overcharged | ${v.gst_issues} GST errors`);
+  }
+
+  log(`\n=== SAMPLE DISCREPANCIES (first 20) ===`);
+  for (const d of discrepancies.slice(0, 20)) {
+    log(`${d.invoice_id} | ${d.vendor_id} | ${d.item_name} | Billed: ₹${d.billed_amount} | Expected: ₹${d.expected_amount} | Diff: ₹${d.overcharge}${d.gst_wrong ? ` | ⚠️ GST: billed ${d.billed_gst}% vs correct ${d.correct_gst}%` : ''}`);
+  }
+
+  // Save to window for next layer
+  window.auditData = { discrepancies, byVendor, totalOvercharge, lineItemCount: lineItems.length };
+  setStatus(`✅ Audit complete! Found ${discrepancies.length} discrepancies.`);
+  setBar(100);
+}
+</script>
+</body>
+</html>
