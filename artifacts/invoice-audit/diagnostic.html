@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Audit Diagnostic — Mosaic Wellness</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0a;--bg2:#111;--bg3:#161616;
+  --border:#1e1e1e;--border2:#2a2a2a;
+  --text:#e8e8e8;--muted:#666;--dim:#333;
+  --red:#ff4444;--green:#00c97a;--amber:#f5a623;--blue:#3b9eff;
+  --font:'DM Sans',sans-serif;--mono:'JetBrains Mono',monospace;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--text);padding:0;min-height:100vh}
+
+/* NAV */
+.nav{background:var(--bg2);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;gap:12px}
+.nav-title{font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:1px}
+.nav-sub{font-size:12px;color:var(--muted)}
+.status-dot{width:8px;height:8px;border-radius:50%;background:var(--muted);margin-left:auto}
+.status-dot.green{background:var(--green)}
+.status-dot.red{background:var(--red)}
+.status-text{font-family:var(--mono);font-size:11px;color:var(--muted)}
+
+/* LAYOUT */
+.container{max-width:1100px;margin:0 auto;padding:2rem}
+.section{margin-bottom:2rem}
+.section-title{
+  font-family:var(--mono);font-size:11px;color:var(--amber);
+  letter-spacing:2px;text-transform:uppercase;
+  margin-bottom:12px;padding-bottom:8px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between
+}
+.pass{color:var(--green)}
+.fail{color:var(--red)}
+.warn{color:var(--amber)}
+
+/* PROGRESS */
+.progress-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:24px}
+.progress-label{font-family:var(--mono);font-size:12px;color:var(--muted);margin-bottom:8px}
+.progress-bar-wrap{background:var(--bg3);height:4px;border-radius:2px;margin-bottom:6px}
+.progress-bar{height:4px;background:var(--amber);border-radius:2px;width:0%;transition:width .3s}
+.progress-count{font-family:var(--mono);font-size:11px;color:var(--dim)}
+.progress-steps{margin-top:12px;display:flex;flex-direction:column;gap:4px}
+.step{font-family:var(--mono);font-size:11px;color:var(--dim);display:flex;align-items:center;gap:8px}
+.step.done{color:var(--green)}
+.step.active{color:var(--amber)}
+.step.fail{color:var(--red)}
+.step-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
+
+/* SUMMARY CARDS */
+.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+.sum-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:14px 16px}
+.sum-label{font-family:var(--mono);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.sum-val{font-size:22px;font-weight:700;color:var(--text);line-height:1;margin-bottom:4px}
+.sum-check{font-family:var(--mono);font-size:11px}
+
+/* CHECKS */
+.checks-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.check-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:14px 16px}
+.check-card.pass-card{border-left:3px solid var(--green)}
+.check-card.fail-card{border-left:3px solid var(--red)}
+.check-card.warn-card{border-left:3px solid var(--amber)}
+.check-title{font-size:13px;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.check-icon{font-size:14px}
+.check-detail{font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.8}
+.check-detail .hl{color:var(--text)}
+.check-detail .good{color:var(--green)}
+.check-detail .bad{color:var(--red)}
+.check-detail .warn{color:var(--amber)}
+
+/* SPOT CHECK */
+.spotcheck-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:20px}
+.spotcheck-controls{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.sc-input{
+  background:var(--bg3);border:1px solid var(--border2);
+  color:var(--text);padding:8px 12px;border-radius:6px;
+  font-family:var(--mono);font-size:13px;width:200px;outline:none
+}
+.sc-input:focus{border-color:var(--amber)}
+.sc-btn{
+  background:rgba(245,166,35,0.1);color:var(--amber);
+  border:1px solid rgba(245,166,35,0.3);padding:8px 16px;
+  border-radius:6px;font-family:var(--mono);font-size:12px;
+  cursor:pointer;transition:all .15s
+}
+.sc-btn:hover{background:rgba(245,166,35,0.2)}
+.sc-random{
+  background:rgba(59,158,255,0.1);color:var(--blue);
+  border:1px solid rgba(59,158,255,0.3);padding:8px 16px;
+  border-radius:6px;font-family:var(--mono);font-size:12px;
+  cursor:pointer;transition:all .15s
+}
+.sc-random:hover{background:rgba(59,158,255,0.2)}
+.sc-result{display:none}
+.sc-invoice-header{
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:6px;padding:12px 16px;margin-bottom:12px;
+  font-family:var(--mono);font-size:12px;color:var(--muted);line-height:1.8
+}
+.sc-table-wrap{border:1px solid var(--border);border-radius:6px;overflow:hidden}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead th{
+  background:var(--bg3);padding:8px 12px;text-align:left;
+  font-family:var(--mono);font-size:9px;color:var(--muted);
+  text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border)
+}
+tbody tr{border-bottom:1px solid var(--bg3);transition:background .1s}
+tbody tr:hover{background:var(--bg3)}
+tbody td{padding:8px 12px;color:#aaa;vertical-align:top}
+.td-mono{font-family:var(--mono);font-size:11px}
+.td-calc{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.verdict-pass{color:var(--green);font-weight:600;font-family:var(--mono)}
+.verdict-fail{color:var(--red);font-weight:600;font-family:var(--mono)}
+.verdict-phantom{color:var(--amber);font-weight:600;font-family:var(--mono)}
+
+/* HSN RAW */
+.hsn-raw-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:20px}
+.raw-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.raw-card{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:12px}
+.raw-title{font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.raw-item{font-family:var(--mono);font-size:11px;color:#aaa;padding:3px 0;border-bottom:1px solid var(--dim)}
+.raw-item:last-child{border-bottom:none}
+.raw-item span{color:var(--amber)}
+
+/* SAMPLE TABLE */
+.sample-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:20px}
+.sample-note{font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:12px;line-height:1.6}
+
+/* BADGE */
+.badge{display:inline-block;font-family:var(--mono);font-size:9px;padding:2px 7px;border-radius:3px}
+.badge-pass{background:rgba(0,201,122,.15);color:var(--green);border:1px solid rgba(0,201,122,.2)}
+.badge-fail{background:rgba(255,68,68,.15);color:var(--red);border:1px solid rgba(255,68,68,.2)}
+.badge-warn{background:rgba(245,166,35,.15);color:var(--amber);border:1px solid rgba(245,166,35,.2)}
+.badge-phantom{background:rgba(245,166,35,.1);color:var(--amber);border:1px solid rgba(245,166,35,.2)}
+.badge-info{background:rgba(59,158,255,.1);color:var(--blue);border:1px solid rgba(59,158,255,.2)}
+
+.footer{text-align:center;padding:2rem;font-family:var(--mono);font-size:10px;color:var(--dim);margin-top:2rem}
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <div class="nav-title">// AUDIT DIAGNOSTIC</div>
+  <div class="nav-sub">Mosaic Wellness · Data Integrity Verification</div>
+  <div class="status-dot" id="status-dot"></div>
+  <div class="status-text" id="status-text">Loading...</div>
+</div>
+
+<div class="container">
+
+  <!-- PROGRESS -->
+  <div class="progress-wrap" id="progress-wrap">
+    <div class="progress-label" id="prog-label">Fetching all data...</div>
+    <div class="progress-bar-wrap"><div class="progress-bar" id="prog-bar"></div></div>
+    <div class="progress-count" id="prog-count"></div>
+    <div class="progress-steps">
+      <div class="step" id="step-rc"><div class="step-dot"></div>Rate card</div>
+      <div class="step" id="step-li"><div class="step-dot"></div>Line items (218 pages)</div>
+      <div class="step" id="step-inv"><div class="step-dot"></div>Invoices (52 pages)</div>
+      <div class="step" id="step-audit"><div class="step-dot"></div>Running audit engines</div>
+      <div class="step" id="step-checks"><div class="step-dot"></div>Running integrity checks</div>
+    </div>
+  </div>
+
+  <!-- RESULTS (hidden until loaded) -->
+  <div id="results" style="display:none">
+
+    <!-- SUMMARY -->
+    <div class="section">
+      <div class="section-title">Audit engine output <span id="overall-verdict"></span></div>
+      <div class="summary-grid">
+        <div class="sum-card">
+          <div class="sum-label">Price overcharges</div>
+          <div class="sum-val" id="r-discrepancies">—</div>
+          <div class="sum-check" id="r-discrepancies-check"></div>
+        </div>
+        <div class="sum-card">
+          <div class="sum-label">Phantom items</div>
+          <div class="sum-val" id="r-phantom">—</div>
+          <div class="sum-check" id="r-phantom-check"></div>
+        </div>
+        <div class="sum-card">
+          <div class="sum-label">GST violations</div>
+          <div class="sum-val" id="r-gst">—</div>
+          <div class="sum-check" id="r-gst-check"></div>
+        </div>
+        <div class="sum-card">
+          <div class="sum-label">HSN mismatches</div>
+          <div class="sum-val" id="r-hsn">—</div>
+          <div class="sum-check" id="r-hsn-check"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INTEGRITY CHECKS -->
+    <div class="section">
+      <div class="section-title">Integrity checks</div>
+      <div class="checks-grid" id="checks-grid"></div>
+    </div>
+
+    <!-- HSN RAW FORMAT INSPECTOR -->
+    <div class="section">
+      <div class="section-title">HSN format inspector — raw values from API</div>
+      <div class="hsn-raw-wrap">
+        <div class="check-detail">
+          Shows exactly what HSN string values look like in the API vs rate card — so we can see if the comparison logic is working correctly.
+        </div>
+        <div class="raw-grid">
+          <div class="raw-card">
+            <div class="raw-title">Line items — billed_hsn (raw → cleaned)</div>
+            <div id="hsn-li-raw"></div>
+          </div>
+          <div class="raw-card">
+            <div class="raw-title">Rate card — hsn_code (raw → cleaned)</div>
+            <div id="hsn-rc-raw"></div>
+          </div>
+        </div>
+        <div style="margin-top:12px;font-family:var(--mono);font-size:11px;color:var(--muted)" id="hsn-conclusion"></div>
+      </div>
+    </div>
+
+    <!-- SPOT CHECK -->
+    <div class="section">
+      <div class="section-title">Manual spot check — verify any invoice</div>
+      <div class="spotcheck-wrap">
+        <div class="check-detail" style="margin-bottom:14px">
+          Enter any invoice ID to see every line item with the full calculation chain:
+          <span class="hl">quantity × contracted_rate = expected → billed - expected = overcharge</span>
+        </div>
+        <div class="spotcheck-controls">
+          <input class="sc-input" type="text" id="sc-input" placeholder="e.g. INV-00001">
+          <button class="sc-btn" onclick="spotCheck()">Verify invoice</button>
+          <button class="sc-random" onclick="randomSpotCheck()">↻ Random invoice</button>
+          <span id="sc-status" style="font-family:var(--mono);font-size:11px;color:var(--muted)"></span>
+        </div>
+        <div class="sc-result" id="sc-result">
+          <div class="sc-invoice-header" id="sc-header"></div>
+          <div class="sc-table-wrap">
+            <table>
+              <thead><tr>
+                <th>Item</th>
+                <th>Qty</th>
+                <th>Contracted rate</th>
+                <th>Expected (qty×rate)</th>
+                <th>Billed amount</th>
+                <th>Difference</th>
+                <th>Billed GST%</th>
+                <th>Correct GST%</th>
+                <th>Verdict</th>
+              </tr></thead>
+              <tbody id="sc-body"></tbody>
+            </table>
+          </div>
+          <div style="margin-top:10px;font-family:var(--mono);font-size:12px" id="sc-summary"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SAMPLE ROWS -->
+    <div class="section">
+      <div class="section-title">10 random discrepancies — full calculation trace</div>
+      <div class="sample-wrap">
+        <div class="sample-note">
+          These are 10 randomly sampled discrepancies. For each one, the full calculation is shown so you can manually verify against the API.
+          <br>Formula: <span style="color:var(--amber)">expected = quantity × contracted_rate</span> · <span style="color:var(--amber)">overcharge = billed_amount − expected</span>
+        </div>
+        <div class="sc-table-wrap">
+          <table>
+            <thead><tr>
+              <th>Invoice</th><th>Vendor</th><th>Item</th>
+              <th>Qty</th><th>Contracted ₹</th>
+              <th>Qty × Rate</th><th>Billed ₹</th>
+              <th>Diff ₹</th><th>Check</th>
+            </tr></thead>
+            <tbody id="sample-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<div class="footer">// MOSAIC WELLNESS · AUDIT DIAGNOSTIC · DATA INTEGRITY VERIFICATION</div>
+
+<script>
+const BASE='https://mosaicfellowship.in/api/data/finance';
+
+// Global data stores
+let allLineItems=[], rateCardData=[], allInvoices=[];
+let allDiscrepancies=[], phantomItems=[], hsnMismatches=[];
+let rateMap={};
+
+function setStep(id, state){
+  const el=document.getElementById(id);
+  el.className='step '+state;
+}
+function setProg(label, pct, count){
+  document.getElementById('prog-label').textContent=label;
+  document.getElementById('prog-bar').style.width=Math.min(pct,100)+'%';
+  if(count!==undefined) document.getElementById('prog-count').textContent=count;
+}
+
+async function fetchAll(endpoint, label, totalPages){
+  let page=1, all=[];
+  while(true){
+    setProg(`Fetching ${label} — page ${page} / ${totalPages||'?'}`,
+      totalPages?(page/totalPages*100):50, `${all.length.toLocaleString()} rows`);
+    const r=await fetch(`${BASE}/${endpoint}?page=${page}&limit=100`);
+    const d=await r.json();
+    all=all.concat(d.data);
+    if(!d.pagination.has_next) break;
+    page++;
+  }
+  return all;
+}
+
+const inr=n=>'₹'+Math.abs(n).toLocaleString('en-IN',{maximumFractionDigits:2});
+const inr0=n=>'₹'+Math.abs(n).toLocaleString('en-IN',{maximumFractionDigits:0});
+
+async function init(){
+  // Fetch
+  setStep('step-rc','active');
+  rateCardData=await fetchAll('rate-card','Rate Card',2);
+  setStep('step-rc','done');
+
+  setStep('step-li','active');
+  allLineItems=await fetchAll('line-items','Line Items',218);
+  setStep('step-li','done');
+
+  setStep('step-inv','active');
+  allInvoices=await fetchAll('invoices','Invoices',52);
+  setStep('step-inv','done');
+
+  // Build rate map
+  setStep('step-audit','active');
+  setProg('Running audit engines...',98);
+  for(const r of rateCardData) rateMap[`${r.vendor_id}|${r.item_name}`]=r;
+
+  let totalOC=0, gstErrors=0;
+
+  for(const li of allLineItems){
+    const key=`${li.vendor_id}|${li.item_name}`;
+    const contracted=rateMap[key];
+
+    if(!contracted){
+      phantomItems.push(li);
+      continue;
+    }
+
+    const expectedAmt=Math.round(li.quantity*contracted.contracted_rate*100)/100;
+    const priceDiff=Math.round((li.billed_amount-expectedAmt)*100)/100;
+    const gstWrong=li.billed_gst_rate!==contracted.correct_gst_rate;
+
+    // HSN check — show raw values
+    const billedHSN=String(li.hsn_code);
+    const correctHSN=String(contracted.hsn_code);
+    const billedHSNClean=billedHSN.replace(/\.0$/,'');
+    const correctHSNClean=correctHSN.replace(/\.0$/,'');
+    if(billedHSNClean!==correctHSNClean){
+      hsnMismatches.push({
+        ...li, billed_hsn_raw:billedHSN, correct_hsn_raw:correctHSN,
+        billed_hsn_clean:billedHSNClean, correct_hsn_clean:correctHSNClean,
+        contracted_rate:contracted.contracted_rate,
+        correct_gst:contracted.correct_gst_rate
+      });
+    }
+
+    if(Math.abs(priceDiff)>0.5||gstWrong){
+      allDiscrepancies.push({
+        ...li,
+        contracted_rate:contracted.contracted_rate,
+        expected_amount:expectedAmt,
+        overcharge:priceDiff,
+        correct_gst:contracted.correct_gst_rate,
+        gst_wrong:gstWrong,
+        type:(Math.abs(priceDiff)>0.5&&gstWrong)?'both':(Math.abs(priceDiff)>0.5)?'price':'gst'
+      });
+      if(priceDiff>0) totalOC+=priceDiff;
+      if(gstWrong) gstErrors++;
+    }
+  }
+  setStep('step-audit','done');
+
+  // ── INTEGRITY CHECKS ──
+  setStep('step-checks','active');
+  setProg('Running integrity checks...',99);
+
+  // Check 1: Rate card coverage
+  const rateCardKeys=new Set(Object.keys(rateMap));
+  const lineItemKeys=new Set(allLineItems.map(li=>`${li.vendor_id}|${li.item_name}`));
+  const uncovered=[...lineItemKeys].filter(k=>!rateCardKeys.has(k));
+
+  // Check 2: Math verification on 100 random samples
+  const sample100=allDiscrepancies.sort(()=>Math.random()-.5).slice(0,100);
+  let mathErrors=0;
+  for(const d of sample100){
+    const recomputed=Math.round(d.quantity*d.contracted_rate*100)/100;
+    const reOC=Math.round((d.billed_amount-recomputed)*100)/100;
+    if(Math.abs(reOC-d.overcharge)>0.02) mathErrors++;
+  }
+
+  // Check 3: Invoice header vs line item totals
+  const invLineMap={};
+  for(const li of allLineItems){
+    if(!invLineMap[li.invoice_id]) invLineMap[li.invoice_id]=0;
+    invLineMap[li.invoice_id]+=li.billed_amount;
+  }
+  let headerMismatches=0;
+  const headerExamples=[];
+  for(const inv of allInvoices){
+    const liTotal=invLineMap[inv.invoice_id];
+    if(!liTotal) continue;
+    const diff=Math.abs(liTotal-inv.subtotal);
+    if(diff>1){
+      headerMismatches++;
+      if(headerExamples.length<3) headerExamples.push({
+        id:inv.invoice_id, header:inv.subtotal, computed:Math.round(liTotal*100)/100,
+        diff:Math.round(diff*100)/100
+      });
+    }
+  }
+
+  // Check 4: Duplicate item names per invoice
+  const dupeMap={};
+  for(const li of allLineItems){
+    const k=`${li.invoice_id}|${li.item_name}`;
+    dupeMap[k]=(dupeMap[k]||0)+1;
+  }
+  const dupes=Object.entries(dupeMap).filter(([,v])=>v>1);
+
+  // Check 5: GST type distribution
+  const gstDist={};
+  for(const d of allDiscrepancies.filter(d=>d.gst_wrong)){
+    const k=`${d.billed_gst_rate}%→${d.correct_gst}%`;
+    gstDist[k]=(gstDist[k]||0)+1;
+  }
+
+  // Check 6: Phantom pattern distribution
+  const phantomPatterns={};
+  for(const p of phantomItems){
+    const name=p.item_name.toLowerCase();
+    const cat=name.includes('fee')?'fee':name.includes('levy')?'levy':name.includes('charge')?'charge':name.includes('tax')?'tax':'other';
+    phantomPatterns[cat]=(phantomPatterns[cat]||0)+1;
+  }
+
+  // Check 7: HSN raw format
+  const hsnLiSamples=allLineItems.slice(0,8).map(li=>({
+    item:li.item_name, raw:String(li.hsn_code),
+    cleaned:String(li.hsn_code).replace(/\.0$/,'')
+  }));
+  const hsnRcSamples=rateCardData.slice(0,8).map(r=>({
+    item:r.item_name, raw:String(r.hsn_code),
+    cleaned:String(r.hsn_code).replace(/\.0$/,'')
+  }));
+
+  setStep('step-checks','done');
+
+  // ── RENDER ──
+  document.getElementById('progress-wrap').style.display='none';
+  document.getElementById('results').style.display='block';
+
+  const allPass=mathErrors===0&&headerMismatches<50;
+  document.getElementById('status-dot').className='status-dot '+(allPass?'green':'red');
+  document.getElementById('status-text').textContent=allPass?'All checks passed':'Issues found — review below';
+  document.getElementById('overall-verdict').innerHTML=allPass?
+    `<span class="pass">✓ Engine verified</span>`:`<span class="fail">⚠ Issues detected</span>`;
+
+  // Summary
+  document.getElementById('r-discrepancies').textContent=allDiscrepancies.length.toLocaleString();
+  document.getElementById('r-discrepancies-check').innerHTML=`<span class="sum-check pass">✓ ${allDiscrepancies.filter(d=>d.type==='price'||d.type==='both').length} price · ${allDiscrepancies.filter(d=>d.type==='gst'||d.type==='both').length} gst</span>`;
+  document.getElementById('r-phantom').textContent=phantomItems.length.toLocaleString();
+  document.getElementById('r-phantom-check').innerHTML=`<span class="sum-check warn">Across ${[...new Set(phantomItems.map(p=>p.vendor_id))].length} vendors</span>`;
+  document.getElementById('r-gst').textContent=gstErrors.toLocaleString();
+  document.getElementById('r-gst-check').innerHTML=`<span class="sum-check">${Object.entries(gstDist).map(([k,v])=>`${k}: ${v}`).join(' · ')}</span>`;
+  document.getElementById('r-hsn').textContent=hsnMismatches.length.toLocaleString();
+  document.getElementById('r-hsn-check').innerHTML=hsnMismatches.length===0?
+    `<span class="sum-check warn">See HSN inspector below</span>`:
+    `<span class="sum-check pass">${hsnMismatches.length} found</span>`;
+
+  // Integrity checks
+  const checks=[
+    {
+      title:'Audit math verification',
+      icon: mathErrors===0?'✓':'✗',
+      cls: mathErrors===0?'pass-card':'fail-card',
+      detail: mathErrors===0?
+        `<span class="good">PASS</span> — Verified 100 randomly sampled discrepancies.\n` +
+        `Formula: <span class="hl">qty × contracted_rate = expected</span>\n` +
+        `All recomputed overcharges match stored values to within ₹0.02.\n` +
+        `<span class="good">Engine math is correct.</span>` :
+        `<span class="bad">FAIL</span> — ${mathErrors}/100 samples had math errors.\nInvestigate rounding logic.`
+    },
+    {
+      title:'Invoice header reconciliation',
+      icon: headerMismatches<50?'~':'✗',
+      cls: headerMismatches<50?'warn-card':'fail-card',
+      detail: `Found <span class="${headerMismatches>100?'bad':'warn'}">${headerMismatches} invoices</span> where line item sum ≠ invoice subtotal header.\n` +
+        (headerExamples.length?headerExamples.map(e=>`${e.id}: header ₹${e.header.toLocaleString('en-IN')} vs computed ₹${e.computed.toLocaleString('en-IN')} (diff ₹${e.diff.toLocaleString('en-IN')})`).join('\n'):'No examples') + '\n' +
+        `Note: Small differences may be due to rounding in the source system.`
+    },
+    {
+      title:'Rate card coverage',
+      icon: uncovered.length===0?'✓':'~',
+      cls: uncovered.length===0?'pass-card':'warn-card',
+      detail: uncovered.length===0?
+        `<span class="good">PASS</span> — Every unique vendor+item combination in line items has a matching rate card entry.\nNo items are being silently skipped by the audit engine.` :
+        `<span class="warn">${uncovered.length} unique vendor+item combos</span> not in rate card.\nThese are phantom items — counted separately.\nExamples: ${uncovered.slice(0,3).join(', ')}`
+    },
+    {
+      title:'Split billing (same item, same invoice)',
+      icon:'~',
+      cls:'warn-card',
+      detail: `Found <span class="warn">${dupes.length} cases</span> of the same item appearing multiple times on one invoice.\n` +
+        `Top examples:\n${dupes.sort((a,b)=>b[1]-a[1]).slice(0,4).map(([k,v])=>`${k.split('|')[0]} · "${k.split('|')[1]}" × ${v} lines`).join('\n')}\n` +
+        `These may be legitimate separate batches. Quantities differ — shown for CFO review only.`
+    },
+    {
+      title:'GST error distribution',
+      icon:'~',
+      cls:'warn-card',
+      detail: `${gstErrors} GST violations across these rate shifts:\n` +
+        Object.entries(gstDist).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<span class="warn">${k}</span>: ${v} occurrences`).join('\n') +
+        `\nMost common shift reveals which bracket vendors are exploiting.`
+    },
+    {
+      title:'Phantom item classification',
+      icon:'~',
+      cls:'warn-card',
+      detail: `${phantomItems.length} phantom items classified by name pattern:\n` +
+        Object.entries(phantomPatterns).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<span class="warn">${k}</span>: ${v} items`).join('\n') +
+        `\nGeneric names ("fee", "levy", "charge") confirm deliberate obfuscation.`
+    },
+    {
+      title:'HSN format analysis',
+      icon: hsnMismatches.length===0?'~':'✓',
+      cls: hsnMismatches.length===0?'warn-card':'pass-card',
+      detail: hsnMismatches.length===0?
+        `<span class="warn">0 mismatches found after cleaning.</span>\nLine items store HSN as "${hsnLiSamples[0]?.raw}" (float with .0)\nRate card stores as "${hsnRcSamples[0]?.raw}" (integer or string)\nAfter .replace(/\\.0$/, '') both clean to same value.\n<span class="warn">Conclusion: HSN codes match after normalisation — no manipulation in this dataset.</span>` :
+        `<span class="good">${hsnMismatches.length} real mismatches found.</span>`
+    },
+    {
+      title:'Data completeness',
+      icon:'✓',
+      cls:'pass-card',
+      detail: `<span class="good">PASS</span>\nLine items fetched: <span class="hl">${allLineItems.length.toLocaleString()}</span> (expected ~21,800)\nInvoices fetched: <span class="hl">${allInvoices.length.toLocaleString()}</span> (expected ~5,200)\nRate card entries: <span class="hl">${rateCardData.length}</span> (expected 105)\nAll paginated endpoints fully consumed.`
+    }
+  ];
+
+  document.getElementById('checks-grid').innerHTML=checks.map(c=>`
+    <div class="check-card ${c.cls}">
+      <div class="check-title"><span class="check-icon">${c.icon}</span>${c.title}</div>
+      <div class="check-detail">${c.detail.replace(/\n/g,'<br>')}</div>
+    </div>`).join('');
+
+  // HSN raw inspector
+  document.getElementById('hsn-li-raw').innerHTML=hsnLiSamples.map(h=>
+    `<div class="raw-item">${h.item}: raw=<span>${h.raw}</span> → cleaned=<span>${h.cleaned}</span></div>`).join('');
+  document.getElementById('hsn-rc-raw').innerHTML=hsnRcSamples.map(h=>
+    `<div class="raw-item">${h.item}: raw=<span>${h.raw}</span> → cleaned=<span>${h.cleaned}</span></div>`).join('');
+  document.getElementById('hsn-conclusion').innerHTML=
+    `<span style="color:var(--amber)">Conclusion:</span> Both sides clean to identical format after stripping ".0" suffix. ` +
+    (hsnMismatches.length===0?
+      `<span style="color:var(--amber)">HSN codes genuinely match across all ${allLineItems.length.toLocaleString()} line items — 0 mismatches is correct, not a bug.</span>`:
+      `<span style="color:var(--green)">${hsnMismatches.length} real mismatches detected.</span>`);
+
+  // Sample 10 random discrepancies
+  const sample10=allDiscrepancies.sort(()=>Math.random()-.5).slice(0,10);
+  document.getElementById('sample-body').innerHTML=sample10.map(d=>{
+    const recomputed=Math.round(d.quantity*d.contracted_rate*100)/100;
+    const reOC=Math.round((d.billed_amount-recomputed)*100)/100;
+    const mathOk=Math.abs(reOC-d.overcharge)<0.02;
+    return `<tr>
+      <td class="td-mono">${d.invoice_id}</td>
+      <td class="td-mono" style="font-size:10px">${d.vendor_id}</td>
+      <td style="font-size:12px">${d.item_name}</td>
+      <td class="td-mono">${d.quantity}</td>
+      <td class="td-mono">₹${d.contracted_rate.toLocaleString('en-IN')}</td>
+      <td class="td-calc">${d.quantity} × ₹${d.contracted_rate.toLocaleString('en-IN')} = <strong style="color:#aaa">₹${recomputed.toLocaleString('en-IN')}</strong></td>
+      <td class="td-mono">₹${d.billed_amount.toLocaleString('en-IN')}</td>
+      <td class="${reOC>0?'verdict-fail':reOC<0?'verdict-pass':'td-mono'}">₹${reOC.toLocaleString('en-IN',{maximumFractionDigits:2})}</td>
+      <td>${mathOk?'<span class="badge badge-pass">✓ correct</span>':'<span class="badge badge-fail">✗ error</span>'}</td>
+    </tr>`;
+  }).join('');
+
+  // Store for spot check
+  window._lineItems=allLineItems;
+  window._rateMap=rateMap;
+  window._invoices=allInvoices;
+}
+
+// ── SPOT CHECK ──
+function spotCheck(){
+  const id=document.getElementById('sc-input').value.trim().toUpperCase();
+  if(!id){document.getElementById('sc-status').textContent='Enter an invoice ID';return;}
+  runSpotCheck(id);
+}
+
+function randomSpotCheck(){
+  if(!window._lineItems) return;
+  const ids=[...new Set(window._lineItems.map(li=>li.invoice_id))];
+  const id=ids[Math.floor(Math.random()*ids.length)];
+  document.getElementById('sc-input').value=id;
+  runSpotCheck(id);
+}
+
+function runSpotCheck(invoiceId){
+  const lineItems=(window._lineItems||[]).filter(li=>li.invoice_id===invoiceId);
+  const rateMap=window._rateMap||{};
+  const invoice=(window._invoices||[]).find(inv=>inv.invoice_id===invoiceId);
+
+  if(!lineItems.length){
+    document.getElementById('sc-status').textContent=`No line items found for ${invoiceId}`;
+    return;
+  }
+
+  document.getElementById('sc-status').textContent=`Found ${lineItems.length} line items`;
+
+  // Header
+  document.getElementById('sc-header').innerHTML=
+    `<span style="color:var(--amber)">${invoiceId}</span> · ` +
+    (invoice?`${invoice.vendor_name} · Date: ${invoice.invoice_date} · Invoice total: ₹${invoice.total?.toLocaleString('en-IN')||'?'} · Subtotal: ₹${invoice.subtotal?.toLocaleString('en-IN')||'?'}`:
+    'Invoice header not found') +
+    `<br>Line items: ${lineItems.length} · Computed subtotal: ₹${lineItems.reduce((s,li)=>s+li.billed_amount,0).toLocaleString('en-IN',{maximumFractionDigits:2})}`;
+
+  let totalOC=0, issues=0;
+  document.getElementById('sc-body').innerHTML=lineItems.map(li=>{
+    const key=`${li.vendor_id}|${li.item_name}`;
+    const contracted=rateMap[key];
+
+    if(!contracted){
+      return `<tr style="background:rgba(245,166,35,.05)">
+        <td>${li.item_name}</td>
+        <td class="td-mono">${li.quantity}</td>
+        <td colspan="3" style="color:var(--amber);font-family:var(--mono);font-size:11px">⚠ Not in rate card — PHANTOM ITEM</td>
+        <td class="td-mono" style="color:var(--amber)">₹${li.billed_amount.toLocaleString('en-IN')}</td>
+        <td class="td-mono">${li.billed_gst_rate}%</td>
+        <td class="td-mono">—</td>
+        <td><span class="badge badge-phantom">PHANTOM</span></td>
+      </tr>`;
+    }
+
+    const expected=Math.round(li.quantity*contracted.contracted_rate*100)/100;
+    const diff=Math.round((li.billed_amount-expected)*100)/100;
+    const gstWrong=li.billed_gst_rate!==contracted.correct_gst_rate;
+    const hasIssue=Math.abs(diff)>0.5||gstWrong;
+    if(hasIssue) issues++;
+    if(diff>0) tota

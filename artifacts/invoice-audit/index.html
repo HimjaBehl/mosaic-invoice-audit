@@ -4,323 +4,208 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Invoice Audit Intelligence — Mosaic Wellness</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-
 :root{
-  --cream:#F7F4EF;
-  --cream2:#F0EDE6;
-  --ink:#111111;
-  --ink2:#333333;
-  --muted:#888888;
-  --dim:#BBBBBB;
-  --rule:#D8D4CC;
-  --red:#C0392B;
-  --amber:#B7600A;
-  --blue:#1A56B0;
-  --green:#1A7A4A;
-  --red-bg:#FDE8E8;
-  --amber-bg:#FEF3E2;
-  --blue-bg:#E8F0FE;
-  --font-serif:'Playfair Display',Georgia,serif;
-  --font-sans:'DM Sans',sans-serif;
-  --font-mono:'JetBrains Mono',monospace;
+  --cream:#F7F4EF;--cream2:#F0EDE6;--ink:#111;--ink2:#333;
+  --muted:#888;--dim:#bbb;--rule:#D8D4CC;
+  --red:#C0392B;--amber:#B7600A;--blue:#1A56B0;--green:#1A7A4A;
+  --red-bg:#FDE8E8;--amber-bg:#FEF3E2;--blue-bg:#E8F0FE;
+  --font:'DM Sans',sans-serif;--serif:'Playfair Display',serif;--mono:'JetBrains Mono',monospace;
 }
+body{font-family:var(--font);background:var(--cream);color:var(--ink);min-height:100vh}
 
-body{font-family:var(--font-sans);background:var(--cream);color:var(--ink);min-height:100vh}
-
-/* ── LOADING ── */
-#loading-screen{
-  position:fixed;inset:0;background:var(--cream);z-index:200;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px
-}
-.loader-title{font-family:var(--font-serif);font-size:22px;color:var(--ink)}
-.loader-sub{font-family:var(--font-mono);font-size:11px;color:var(--muted);letter-spacing:1px}
+/* LOADING */
+#loading-screen{position:fixed;inset:0;background:var(--cream);z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+.loader-title{font-family:var(--serif);font-size:22px;color:var(--ink)}
+.loader-sub{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:1px}
 .loader-bar-wrap{width:240px;height:2px;background:var(--rule)}
 .loader-bar{height:2px;background:var(--red);width:0%;transition:width .3s}
-.loader-count{font-family:var(--font-mono);font-size:11px;color:var(--dim)}
+.loader-count{font-family:var(--mono);font-size:11px;color:var(--dim)}
 
-/* ── MASTHEAD ── */
-.masthead{
-  border-bottom:3px solid var(--ink);
-  padding:16px 2rem 12px;
-  display:flex;align-items:flex-end;justify-content:space-between;
-  background:var(--cream);
-  position:sticky;top:0;z-index:100;
-}
-.masthead-left .kicker{
-  font-family:var(--font-mono);font-size:10px;
-  color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px
-}
-.masthead-left .brand{
-  font-family:var(--font-serif);font-size:24px;font-weight:900;color:var(--ink);line-height:1
-}
+/* MASTHEAD */
+.masthead{border-bottom:3px solid var(--ink);padding:16px 2rem 12px;display:flex;align-items:flex-end;justify-content:space-between;background:var(--cream);position:sticky;top:0;z-index:100}
+.masthead-left .kicker{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
+.masthead-left .brand{font-family:var(--serif);font-size:24px;font-weight:900;color:var(--ink);line-height:1}
 .masthead-right{text-align:right}
-.masthead-right .meta{font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
-.live-badge{
-  display:inline-flex;align-items:center;gap:5px;margin-top:4px;
-  font-family:var(--font-mono);font-size:10px;color:var(--red)
-}
+.masthead-right .meta{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
+.live-badge{display:inline-flex;align-items:center;gap:5px;margin-top:4px;font-family:var(--mono);font-size:10px;color:var(--red)}
 .live-dot{width:5px;height:5px;background:var(--red);border-radius:50%;animation:blink 1.5s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
 
-/* ── TABS ── */
-.tab-bar{
-  display:flex;gap:0;border-bottom:1px solid var(--rule);
-  background:var(--cream);padding:0 2rem;
-  position:sticky;top:61px;z-index:99;
-}
-.tab{
-  font-family:var(--font-mono);font-size:11px;letter-spacing:.5px;
-  color:var(--muted);padding:10px 18px;cursor:pointer;
-  border-bottom:2px solid transparent;margin-bottom:-1px;
-  transition:all .15s;text-transform:uppercase;white-space:nowrap
-}
+/* TABS */
+.tab-bar{display:flex;border-bottom:1px solid var(--rule);background:var(--cream);padding:0 2rem;position:sticky;top:61px;z-index:99;overflow-x:auto}
+.tab{font-family:var(--mono);font-size:11px;letter-spacing:.5px;color:var(--muted);padding:10px 18px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;text-transform:uppercase;white-space:nowrap}
 .tab:hover{color:var(--ink)}
 .tab.active{color:var(--red);border-bottom-color:var(--red);font-weight:500}
 .tab-panel{display:none}
 .tab-panel.active{display:block;animation:fadeUp .2s ease}
 @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
-/* ── CONTAINER ── */
+/* LAYOUT */
 .container{max-width:1200px;margin:0 auto;padding:2rem}
-.section-rule{
-  display:flex;align-items:center;gap:12px;
-  font-family:var(--font-mono);font-size:10px;color:var(--muted);
-  letter-spacing:2px;text-transform:uppercase;
-  margin-bottom:16px;margin-top:2.5rem
-}
+.section-rule{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;margin-top:2.5rem}
 .section-rule::after{content:'';flex:1;height:1px;background:var(--rule)}
 
-/* ── HEADLINE BLOCK ── */
-.headline-block{
-  border-bottom:1px solid var(--rule);
-  padding-bottom:24px;margin-bottom:24px
-}
-.hl-kicker{
-  font-family:var(--font-mono);font-size:10px;color:var(--red);
-  letter-spacing:2px;text-transform:uppercase;margin-bottom:8px
-}
-.hl-number{
-  font-family:var(--font-serif);font-size:80px;font-weight:900;
-  color:var(--red);line-height:.9;letter-spacing:-3px;margin-bottom:12px
-}
-.hl-deck{
-  font-size:15px;color:var(--ink2);line-height:1.7;max-width:620px
-}
+/* HEADLINE */
+.headline-block{border-bottom:1px solid var(--rule);padding-bottom:28px;margin-bottom:28px}
+.hl-kicker{font-family:var(--mono);font-size:10px;color:var(--red);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+.hl-number{font-family:var(--serif);font-size:84px;font-weight:900;color:var(--red);line-height:.9;letter-spacing:-3px;margin-bottom:14px}
+.hl-deck{font-size:15px;color:var(--ink2);line-height:1.7;max-width:640px}
 .hl-deck strong{color:var(--ink)}
 
-/* ── STAT ROW ── */
-.stat-row{
-  display:grid;grid-template-columns:repeat(4,1fr);
-  gap:1px;background:var(--rule);border:1px solid var(--rule);
-  margin-bottom:28px
+/* PHANTOM CALLOUT under headline */
+.phantom-callout{
+  display:flex;align-items:flex-start;gap:16px;
+  background:var(--amber-bg);border:1px solid #f5d99a;
+  border-left:4px solid var(--amber);
+  padding:14px 18px;margin-top:20px;
 }
+.pc-icon{font-size:18px;margin-top:1px}
+.pc-text{font-size:13px;color:var(--amber);line-height:1.6}
+.pc-text strong{color:var(--ink)}
+.pc-amount{font-family:var(--serif);font-size:22px;font-weight:700;color:var(--amber);margin-top:4px}
+
+/* STAT ROW */
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);margin-bottom:28px}
 .stat-cell{background:var(--cream);padding:16px 18px}
-.stat-val{
-  font-family:var(--font-serif);font-size:32px;font-weight:700;
-  color:var(--ink);line-height:1;margin-bottom:5px
-}
+.stat-val{font-family:var(--serif);font-size:32px;font-weight:700;color:var(--ink);line-height:1;margin-bottom:5px}
 .stat-val.red{color:var(--red)}
 .stat-val.amber{color:var(--amber)}
 .stat-val.blue{color:var(--blue)}
 .stat-val.green{color:var(--green)}
-.stat-label{font-family:var(--font-mono);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.stat-label{font-family:var(--mono);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
 .stat-sub{font-size:11px;color:var(--dim);margin-top:3px}
 
-/* ── FINDINGS ── */
-.findings-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--rule);border:1px solid var(--rule);margin-bottom:20px}
+/* FINDINGS */
+.findings-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);margin-bottom:20px}
 .finding-card{background:var(--cream);padding:18px 20px}
 .finding-card.crit{border-top:3px solid var(--red)}
 .finding-card.high{border-top:3px solid var(--amber)}
 .finding-card.med{border-top:3px solid var(--blue)}
-.finding-card.low{border-top:3px solid var(--green)}
-.sev-pill{
-  display:inline-block;font-family:var(--font-mono);font-size:9px;
-  padding:2px 8px;border-radius:2px;margin-bottom:10px;
-  text-transform:uppercase;letter-spacing:.5px;font-weight:500
-}
+.sev-pill{display:inline-block;font-family:var(--mono);font-size:9px;padding:2px 8px;border-radius:2px;margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px}
 .sev-pill.crit{background:var(--red-bg);color:var(--red);border:1px solid #f5c6c6}
 .sev-pill.high{background:var(--amber-bg);color:var(--amber);border:1px solid #f5d99a}
 .sev-pill.med{background:var(--blue-bg);color:var(--blue);border:1px solid #b8d0f8}
-.sev-pill.low{background:#e8f5ee;color:var(--green);border:1px solid #a8dbbe}
-.finding-num{
-  font-family:var(--font-serif);font-size:28px;font-weight:700;
-  line-height:1;margin-bottom:6px
-}
+.finding-num{font-family:var(--serif);font-size:28px;font-weight:700;line-height:1;margin-bottom:6px}
 .finding-num.red{color:var(--red)}
 .finding-num.amber{color:var(--amber)}
 .finding-num.blue{color:var(--blue)}
-.finding-num.green{color:var(--green)}
 .finding-title{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:5px}
 .finding-body{font-size:12px;color:var(--muted);line-height:1.6}
 
-/* ── ACTION STRIP ── */
-.action-strip{
-  background:var(--ink);padding:18px 22px;
-  display:flex;gap:20px;align-items:flex-start;margin-bottom:28px
-}
-.action-head{
-  font-family:var(--font-mono);font-size:9px;color:#555;
-  letter-spacing:2px;text-transform:uppercase;
-  white-space:nowrap;padding-top:2px;min-width:80px
-}
+/* ACTION STRIP */
+.action-strip{background:var(--ink);padding:18px 22px;display:flex;gap:20px;align-items:flex-start;margin-bottom:28px}
+.action-head{font-family:var(--mono);font-size:9px;color:#555;letter-spacing:2px;text-transform:uppercase;white-space:nowrap;padding-top:2px;min-width:80px}
 .action-list{display:flex;flex-wrap:wrap;gap:8px}
-.action-item{
-  display:flex;align-items:center;gap:6px;
-  font-size:12px;color:#888;
-  background:#1a1a1a;border:1px solid #2a2a2a;
-  border-radius:3px;padding:5px 10px
-}
+.action-item{display:flex;align-items:center;gap:6px;font-size:12px;color:#888;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:3px;padding:5px 10px}
 .adot{width:4px;height:4px;border-radius:50%;flex-shrink:0}
 .adot-red{background:var(--red)}
 .adot-amber{background:var(--amber)}
 .adot-blue{background:var(--blue)}
 
-/* ── CATEGORY GRID ── */
+/* CAT GRID */
 .cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);margin-bottom:8px}
 .cat-cell{background:var(--cream);padding:14px 16px}
-.cat-name{font-family:var(--font-mono);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
-.cat-amt{font-family:var(--font-serif);font-size:22px;font-weight:700;color:var(--amber);line-height:1;margin-bottom:3px}
+.cat-name{font-family:var(--mono);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.cat-amt{font-family:var(--serif);font-size:22px;font-weight:700;color:var(--amber);line-height:1;margin-bottom:3px}
 .cat-meta{font-size:11px;color:var(--dim)}
 
-/* ── CHART ── */
+/* CHART */
 .chart-box{border:1px solid var(--rule);padding:20px;background:var(--cream);margin-bottom:8px}
 .chart-box canvas{max-height:240px}
-.chart-title{font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:14px}
+.chart-title{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:14px}
 .charts-2{display:grid;grid-template-columns:1.5fr 1fr;gap:1px;background:var(--rule);border:1px solid var(--rule);margin-bottom:8px}
 .charts-2 .chart-box{border:none;margin-bottom:0}
 
-/* ── PHANTOM TAB ── */
-.phantom-lede{
-  border-left:4px solid var(--red);padding:16px 20px;
-  background:#fff8f8;border-top:1px solid var(--rule);
-  border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);
-  margin-bottom:20px
-}
-.phantom-lede h3{font-family:var(--font-serif);font-size:20px;color:var(--red);margin-bottom:6px}
-.phantom-lede p{font-size:13px;color:var(--muted);line-height:1.6;max-width:680px}
-.phantom-stat{font-family:var(--font-mono);font-size:12px;color:var(--red);margin-top:8px;font-weight:500}
+/* TAB LEDE */
+.tab-lede{border-left:4px solid var(--red);padding:14px 18px;background:#fff8f8;border:1px solid var(--rule);border-left:4px solid var(--red);margin-bottom:20px}
+.tab-lede.amber{border-left-color:var(--amber);background:#fffbf5}
+.tab-lede.blue{border-left-color:var(--blue);background:#f5f8ff}
+.tab-lede h3{font-family:var(--serif);font-size:18px;margin-bottom:6px}
+.tab-lede h3.red{color:var(--red)}
+.tab-lede h3.amber{color:var(--amber)}
+.tab-lede h3.blue{color:var(--blue)}
+.tab-lede p{font-size:13px;color:var(--muted);line-height:1.6;max-width:700px}
+.tab-lede .lede-stat{font-family:var(--mono);font-size:12px;margin-top:8px;font-weight:500}
+.tab-lede .lede-stat.red{color:var(--red)}
+.tab-lede .lede-stat.amber{color:var(--amber)}
+.tab-lede .lede-stat.blue{color:var(--blue)}
 
-/* ── NEGOTIATION BLOCK ── */
-.neg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);margin-bottom:20px}
-.neg-card{background:var(--cream);padding:16px 18px}
-.neg-vendor{font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}
-.neg-total{font-family:var(--font-serif);font-size:24px;font-weight:700;color:var(--red);line-height:1;margin-bottom:4px}
-.neg-count{font-size:11px;color:var(--muted);margin-bottom:8px}
-.neg-items{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px}
-.neg-item-tag{
-  font-family:var(--font-mono);font-size:9px;
-  background:var(--cream2);border:1px solid var(--rule);
-  padding:2px 7px;border-radius:2px;color:var(--ink2)
-}
-.neg-proposal{
-  background:var(--ink);padding:10px 12px;border-radius:2px
-}
-.neg-proposal-label{font-family:var(--font-mono);font-size:9px;color:#666;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
-.neg-proposal-text{font-size:11px;color:#aaa;line-height:1.5}
-.neg-proposal-amount{font-family:var(--font-serif);font-size:16px;color:#f5a623;font-weight:700;margin-top:4px}
+/* VENDOR SUMMARY CARDS */
+.vendor-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);margin-bottom:20px}
+.vs-card{background:var(--cream);padding:14px 16px}
+.vs-rank{font-family:var(--mono);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+.vs-name{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:4px}
+.vs-amount{font-family:var(--serif);font-size:20px;font-weight:700;margin-bottom:3px}
+.vs-meta{font-size:11px;color:var(--dim)}
 
-/* ── PRIORITY TAB ── */
-.priority-lede{
-  border-left:4px solid var(--amber);padding:16px 20px;
-  background:#fffbf5;border-top:1px solid var(--rule);
-  border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);
-  margin-bottom:20px
-}
-.priority-lede h3{font-family:var(--font-serif);font-size:20px;color:var(--amber);margin-bottom:6px}
-.priority-lede p{font-size:13px;color:var(--muted);line-height:1.6;max-width:680px}
+/* PHANTOM VENDOR TABLE */
+.phantom-vendor-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);margin-bottom:20px}
+.pv-card{background:var(--cream);padding:14px 16px}
+.pv-vendor{font-family:var(--mono);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+.pv-name{font-size:12px;font-weight:600;color:var(--ink);margin-bottom:6px}
+.pv-amount{font-family:var(--serif);font-size:20px;font-weight:700;color:var(--amber);margin-bottom:2px}
+.pv-count{font-size:11px;color:var(--dim);margin-bottom:8px}
+.pv-items{display:flex;flex-wrap:wrap;gap:4px}
+.pv-tag{font-family:var(--mono);font-size:9px;background:var(--cream2);border:1px solid var(--rule);padding:2px 7px;border-radius:2px;color:var(--ink2)}
 
-/* ── TABLES ── */
+/* TABLES */
 .table-controls{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
-.search-box{
-  background:var(--cream);border:1px solid var(--rule);
-  color:var(--ink);padding:7px 12px;border-radius:2px;
-  font-size:13px;width:220px;outline:none;font-family:var(--font-sans)
-}
+.search-box{background:var(--cream);border:1px solid var(--rule);color:var(--ink);padding:7px 12px;border-radius:2px;font-size:13px;width:220px;outline:none;font-family:var(--font)}
 .search-box:focus{border-color:var(--ink)}
-.filter-sel{
-  background:var(--cream);border:1px solid var(--rule);
-  color:var(--ink);padding:7px 10px;border-radius:2px;
-  font-size:13px;outline:none;cursor:pointer;font-family:var(--font-sans)
-}
-.btn{
-  padding:7px 14px;border-radius:2px;font-size:12px;
-  cursor:pointer;border:1px solid;font-weight:500;
-  font-family:var(--font-mono);letter-spacing:.5px;transition:all .15s
-}
-.btn-export{background:#e8f5ee;color:var(--green);border-color:#a8dbbe}
-.btn-export:hover{background:#d0eedc}
-.btn-export-red{background:var(--red-bg);color:var(--red);border-color:#f5c6c6;margin-top:12px}
-.btn-export-red:hover{background:#fad4d4}
-.tbl-count{font-family:var(--font-mono);font-size:10px;color:var(--muted);margin-left:auto}
-
-.tbl-wrap{border:1px solid var(--rule);overflow:hidden}
+.filter-sel{background:var(--cream);border:1px solid var(--rule);color:var(--ink);padding:7px 10px;border-radius:2px;font-size:13px;outline:none;cursor:pointer}
+.btn{padding:7px 14px;border-radius:2px;font-size:12px;cursor:pointer;border:1px solid;font-weight:500;font-family:var(--mono);letter-spacing:.5px;transition:all .15s}
+.btn-green{background:#e8f5ee;color:var(--green);border-color:#a8dbbe}
+.btn-green:hover{background:#d0eedc}
+.btn-amber{background:var(--amber-bg);color:var(--amber);border-color:#f5d99a;margin-top:12px}
+.btn-amber:hover{background:#fde8c0}
+.tbl-count{font-family:var(--mono);font-size:10px;color:var(--muted);margin-left:auto}
+.tbl-wrap{border:1px solid var(--rule);overflow:hidden;margin-bottom:8px}
 table{width:100%;border-collapse:collapse;font-size:13px}
-thead th{
-  background:var(--cream2);padding:9px 14px;text-align:left;
-  font-family:var(--font-mono);font-size:9px;font-weight:500;
-  color:var(--muted);text-transform:uppercase;letter-spacing:1px;
-  border-bottom:1px solid var(--rule);cursor:pointer;white-space:nowrap
-}
+thead th{background:var(--cream2);padding:9px 14px;text-align:left;font-family:var(--mono);font-size:9px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--rule);cursor:pointer;white-space:nowrap}
 thead th:hover{color:var(--ink)}
 tbody tr{border-bottom:1px solid #f0ece4;transition:background .1s}
 tbody tr:hover{background:var(--cream2)}
 tbody td{padding:9px 14px;color:var(--ink2);vertical-align:middle}
-.td-mono{font-family:var(--font-mono);font-size:11px;color:var(--muted)}
-.td-red{color:var(--red);font-weight:600;font-family:var(--font-mono)}
-.td-amber{color:var(--amber);font-family:var(--font-mono)}
-.td-blue{color:var(--blue);font-family:var(--font-mono)}
-.td-ok{color:var(--green)}
-.vendor-tag{
-  display:inline-block;background:var(--cream2);border:1px solid var(--rule);
-  border-radius:2px;padding:1px 6px;
-  font-family:var(--font-mono);font-size:10px;color:var(--muted)
-}
-.badge{
-  display:inline-block;font-family:var(--font-mono);
-  font-size:9px;padding:2px 7px;border-radius:2px;font-weight:500
-}
+.td-mono{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.td-red{color:var(--red);font-weight:600;font-family:var(--mono)}
+.td-amber{color:var(--amber);font-family:var(--mono)}
+.td-blue{color:var(--blue);font-family:var(--mono)}
+.td-green{color:var(--green)}
+.vendor-tag{display:inline-block;background:var(--cream2);border:1px solid var(--rule);border-radius:2px;padding:1px 6px;font-family:var(--mono);font-size:10px;color:var(--muted)}
+.badge{display:inline-block;font-family:var(--mono);font-size:9px;padding:2px 7px;border-radius:2px;font-weight:500}
 .badge-price{background:var(--red-bg);color:var(--red);border:1px solid #f5c6c6}
 .badge-gst{background:var(--blue-bg);color:var(--blue);border:1px solid #b8d0f8}
 .badge-both{background:var(--amber-bg);color:var(--amber);border:1px solid #f5d99a}
-.badge-hsn{background:#f5eef8;color:#7b2d8b;border:1px solid #dbb8e8}
-.badge-priority{background:var(--amber-bg);color:var(--amber);border:1px solid #f5d99a}
+.badge-flag{background:var(--amber-bg);color:var(--amber);border:1px solid #f5d99a}
+.badge-clean{background:#e8f5ee;color:var(--green);border:1px solid #a8dbbe}
 
-/* ── PAGINATION ── */
+/* PAGINATION */
 .pagination{display:flex;justify-content:center;align-items:center;gap:4px;margin-top:16px;flex-wrap:wrap}
-.pg-btn{
-  background:var(--cream);border:1px solid var(--rule);
-  color:var(--muted);padding:5px 11px;border-radius:2px;
-  font-family:var(--font-mono);font-size:11px;cursor:pointer;transition:all .12s
-}
+.pg-btn{background:var(--cream);border:1px solid var(--rule);color:var(--muted);padding:5px 11px;border-radius:2px;font-family:var(--mono);font-size:11px;cursor:pointer;transition:all .12s}
 .pg-btn:hover,.pg-btn.active{background:var(--ink);color:var(--cream);border-color:var(--ink)}
 .pg-btn:disabled{opacity:.3;cursor:default}
 
-.footer{
-  text-align:center;padding:2rem;
-  font-family:var(--font-mono);font-size:10px;color:var(--dim);
-  border-top:1px solid var(--rule);margin-top:3rem;letter-spacing:1px
-}
+.footer{text-align:center;padding:2rem;font-family:var(--mono);font-size:10px;color:var(--dim);border-top:1px solid var(--rule);margin-top:3rem;letter-spacing:1px}
 
 @media(max-width:900px){
-  .findings-grid,.neg-grid{grid-template-columns:1fr 1fr}
+  .findings-grid,.vendor-summary,.phantom-vendor-grid{grid-template-columns:1fr 1fr}
   .stat-row,.cat-grid{grid-template-columns:1fr 1fr}
   .charts-2{grid-template-columns:1fr}
   .hl-number{font-size:56px}
 }
 @media(max-width:600px){
-  .findings-grid,.neg-grid{grid-template-columns:1fr}
-  .hl-number{font-size:44px}
+  .findings-grid{grid-template-columns:1fr}
+  .hl-number{font-size:42px}
   .container{padding:1rem}
 }
 </style>
 </head>
 <body>
 
-<!-- LOADING -->
 <div id="loading-screen">
   <div class="loader-title">Invoice Audit Intelligence</div>
   <div class="loader-sub" id="loader-label">Connecting to API...</div>
@@ -328,7 +213,6 @@ tbody td{padding:9px 14px;color:var(--ink2);vertical-align:middle}
   <div class="loader-count" id="loader-count"></div>
 </div>
 
-<!-- APP -->
 <div id="app" style="display:none">
 
   <div class="masthead">
@@ -344,10 +228,10 @@ tbody td{padding:9px 14px;color:var(--ink2);vertical-align:middle}
 
   <div class="tab-bar">
     <div class="tab active" onclick="switchTab('overview')">Overview</div>
+    <div class="tab" onclick="switchTab('price')">Price Discrepancies</div>
+    <div class="tab" onclick="switchTab('gst')">GST Violations</div>
     <div class="tab" onclick="switchTab('phantom')">Phantom Items</div>
-    <div class="tab" onclick="switchTab('priority')">Audit Priority</div>
-    <div class="tab" onclick="switchTab('hsn')">HSN Mismatches</div>
-    <div class="tab" onclick="switchTab('table')">All Discrepancies</div>
+    <div class="tab" onclick="switchTab('priority')">High Value Invoices</div>
   </div>
 
   <div class="container">
@@ -356,31 +240,40 @@ tbody td{padding:9px 14px;color:var(--ink2);vertical-align:middle}
     <div class="tab-panel active" id="tab-overview">
 
       <div class="headline-block">
-        <div class="hl-kicker">// confirmed financial exposure · FY 2025</div>
+        <div class="hl-kicker">// confirmed overcharges on contracted items · FY 2025</div>
         <div class="hl-number" id="stat-overcharge">—</div>
-        <div class="hl-deck" id="hl-deck">Loading audit results...</div>
+        <div class="hl-deck" id="hl-deck">Loading...</div>
+
+        <div class="phantom-callout">
+          <div class="pc-icon">⚠</div>
+          <div>
+            <div class="pc-text"><strong>Additionally identified:</strong> Phantom billing — items charged with no rate card entry.</div>
+            <div class="pc-amount" id="pc-amount">—</div>
+            <div class="pc-text" style="margin-top:2px">across <span id="pc-count">—</span> line items · <span id="pc-vendors">—</span> vendors · See Phantom Items tab</div>
+          </div>
+        </div>
       </div>
 
       <div class="stat-row">
         <div class="stat-cell">
-          <div class="stat-val red" id="s-discrepancies">—</div>
+          <div class="stat-val red" id="s-price">—</div>
           <div class="stat-label">Price discrepancies</div>
-          <div class="stat-sub" id="s-pct">of all line items</div>
-        </div>
-        <div class="stat-cell">
-          <div class="stat-val amber" id="s-phantom">—</div>
-          <div class="stat-label">Phantom line items</div>
-          <div class="stat-sub">Never contracted</div>
+          <div class="stat-sub" id="s-price-pct">—</div>
         </div>
         <div class="stat-cell">
           <div class="stat-val blue" id="s-gst">—</div>
-          <div class="stat-label">GST rate violations</div>
-          <div class="stat-sub">Wrong tax bracket</div>
+          <div class="stat-label">GST violations</div>
+          <div class="stat-sub">Wrong tax rate applied</div>
         </div>
         <div class="stat-cell">
-          <div class="stat-val" id="s-hsn">—</div>
-          <div class="stat-label">HSN code mismatches</div>
-          <div class="stat-sub">Wrong classification</div>
+          <div class="stat-val amber" id="s-phantom">—</div>
+          <div class="stat-label">Phantom items</div>
+          <div class="stat-sub">Not in rate card</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-val" id="s-hv">—</div>
+          <div class="stat-label">High value invoices</div>
+          <div class="stat-sub">Above ₹10 lakh</div>
         </div>
       </div>
 
@@ -389,7 +282,13 @@ tbody td{padding:9px 14px;color:var(--ink2);vertical-align:middle}
 
       <div class="action-strip">
         <div class="action-head">Actions</div>
-        <div class="action-list" id="action-list"></div>
+        <div class="action-list">
+          <div class="action-item"><div class="adot adot-red"></div>Issue debit notes to all 15 vendors for confirmed overcharges</div>
+          <div class="action-item"><div class="adot adot-red"></div>Freeze payments pending rate card reconfirmation</div>
+          <div class="action-item"><div class="adot adot-amber"></div>Initiate vendor dialogue on phantom items before recovery</div>
+          <div class="action-item"><div class="adot adot-amber"></div>File GST corrections for all 471 violations</div>
+          <div class="action-item"><div class="adot adot-blue"></div>Gate all future invoices through this audit system</div>
+        </div>
       </div>
 
       <div class="section-rule">Overcharge by vendor category</div>
@@ -397,14 +296,14 @@ tbody td{padding:9px 14px;color:var(--ink2);vertical-align:middle}
 
       <div class="section-rule">Overcharge by vendor</div>
       <div class="chart-box">
-        <div class="chart-title">₹ overcharged per vendor · top offenders highlighted</div>
+        <div class="chart-title">₹ confirmed price overcharge per vendor</div>
         <canvas id="vendor-chart"></canvas>
       </div>
 
       <div class="section-rule">Monthly trend</div>
       <div class="charts-2">
         <div class="chart-box">
-          <div class="chart-title">Overcharge amount by month (₹)</div>
+          <div class="chart-title">Monthly overcharge (₹)</div>
           <canvas id="trend-chart"></canvas>
         </div>
         <div class="chart-box">
@@ -415,41 +314,138 @@ tbody td{padding:9px 14px;color:var(--ink2);vertical-align:middle}
 
     </div>
 
-    <!-- ══ PHANTOM ITEMS ══ -->
-    <div class="tab-panel" id="tab-phantom">
-
-      <div class="phantom-lede">
-        <h3>Phantom Billing Intelligence</h3>
-        <p>These line items were charged with <strong>no entry in the agreed rate card</strong> — services never contracted. Beyond recovery, phantom items reveal your vendors' real cost structure. Use this to contractualise legitimate costs at fair rates and eliminate phantom billing permanently.</p>
-        <div class="phantom-stat" id="phantom-stat">Loading...</div>
+    <!-- ══ PRICE DISCREPANCIES ══ -->
+    <div class="tab-panel" id="tab-price">
+      <div class="tab-lede">
+        <h3 class="red">Price Discrepancies</h3>
+        <p>Line items where the billed amount exceeds <code>quantity × contracted rate</code> from the rate card. These are confirmed overcharges on agreed items — the vendor has breached contract terms.</p>
+        <div class="lede-stat red" id="price-lede-stat">Loading...</div>
       </div>
 
-      <div class="section-rule">Negotiation intelligence — per vendor</div>
-      <div id="neg-grid" class="neg-grid"></div>
+      <div class="section-rule">Top vendors by overcharge</div>
+      <div class="vendor-summary" id="price-vendor-summary"></div>
 
-      <div class="section-rule">All phantom line items</div>
+      <div class="section-rule">Overcharge distribution by item type</div>
+      <div class="chart-box">
+        <div class="chart-title">Top items by total overcharge amount (₹)</div>
+        <canvas id="item-chart"></canvas>
+      </div>
+
+      <div class="section-rule">All price discrepancies</div>
+      <div class="table-controls">
+        <input class="search-box" type="text" id="price-search" placeholder="Search invoice, vendor, item...">
+        <select class="filter-sel" id="price-vendor">
+          <option value="">All vendors</option>
+        </select>
+        <button class="btn btn-green" onclick="exportPriceCSV()">⬇ Export CSV</button>
+        <div class="tbl-count" id="price-count"></div>
+      </div>
       <div class="tbl-wrap">
         <table>
           <thead><tr>
-            <th>Invoice</th><th>Vendor</th><th>Item billed</th>
-            <th>Qty</th><th>Unit price</th><th>Amount charged</th><th>Pattern</th>
+            <th onclick="sortPrice('invoice_id')">Invoice ↕</th>
+            <th onclick="sortPrice('vendor_id')">Vendor ↕</th>
+            <th>Item</th>
+            <th onclick="sortPrice('quantity')">Qty ↕</th>
+            <th>Contracted ₹</th>
+            <th>Billed ₹</th>
+            <th onclick="sortPrice('overcharge')">Overcharge ₹ ↕</th>
+            <th>Overcharge %</th>
+          </tr></thead>
+          <tbody id="price-body"></tbody>
+        </table>
+      </div>
+      <div class="pagination" id="price-pagination"></div>
+    </div>
+
+    <!-- ══ GST VIOLATIONS ══ -->
+    <div class="tab-panel" id="tab-gst">
+      <div class="tab-lede blue">
+        <h3 class="blue">GST Rate Violations</h3>
+        <p>Line items where the applied GST rate differs from the contracted rate in the rate card. The unit price may be correct — the overcharge is entirely in the tax bracket. This also creates input tax credit compliance risk.</p>
+        <div class="lede-stat blue" id="gst-lede-stat">Loading...</div>
+      </div>
+
+      <div class="section-rule">GST shift patterns — which brackets are being exploited</div>
+      <div class="vendor-summary" id="gst-shift-summary"></div>
+
+      <div class="section-rule">GST violations by vendor</div>
+      <div class="chart-box">
+        <div class="chart-title">GST violation count per vendor</div>
+        <canvas id="gst-chart"></canvas>
+      </div>
+
+      <div class="section-rule">All GST violations</div>
+      <div class="table-controls">
+        <input class="search-box" type="text" id="gst-search" placeholder="Search invoice, vendor, item...">
+        <select class="filter-sel" id="gst-vendor">
+          <option value="">All vendors</option>
+        </select>
+        <button class="btn btn-green" onclick="exportGSTCSV()">⬇ Export CSV</button>
+        <div class="tbl-count" id="gst-count"></div>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr>
+            <th onclick="sortGST('invoice_id')">Invoice ↕</th>
+            <th onclick="sortGST('vendor_id')">Vendor ↕</th>
+            <th>Item</th>
+            <th onclick="sortGST('quantity')">Qty ↕</th>
+            <th>Billed amount</th>
+            <th>Billed GST%</th>
+            <th>Correct GST%</th>
+            <th>Shift</th>
+          </tr></thead>
+          <tbody id="gst-body"></tbody>
+        </table>
+      </div>
+      <div class="pagination" id="gst-pagination"></div>
+    </div>
+
+    <!-- ══ PHANTOM ITEMS ══ -->
+    <div class="tab-panel" id="tab-phantom">
+      <div class="tab-lede amber">
+        <h3 class="amber">Phantom Items</h3>
+        <p>Line items billed by vendors for services or products with <strong>no entry in the agreed rate card</strong>. These were never contracted. Broken down by vendor — showing item names, quantities, and amounts charged.</p>
+        <div class="lede-stat amber" id="phantom-lede-stat">Loading...</div>
+      </div>
+
+      <div class="section-rule">Phantom billing by vendor</div>
+      <div class="phantom-vendor-grid" id="phantom-vendor-grid"></div>
+
+      <div class="section-rule">All phantom line items</div>
+      <div class="table-controls">
+        <input class="search-box" type="text" id="phantom-search" placeholder="Search invoice, vendor, item...">
+        <select class="filter-sel" id="phantom-vendor-filter">
+          <option value="">All vendors</option>
+        </select>
+        <button class="btn btn-green" onclick="exportPhantomCSV()">⬇ Export CSV</button>
+        <div class="tbl-count" id="phantom-count"></div>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr>
+            <th>Invoice</th>
+            <th>Vendor</th>
+            <th>Item billed</th>
+            <th>Qty</th>
+            <th>Unit price</th>
+            <th>Amount charged</th>
           </tr></thead>
           <tbody id="phantom-body"></tbody>
         </table>
       </div>
-      <button class="btn btn-export-red" onclick="exportPhantomCSV()">⬇ Download phantom items CSV</button>
-
+      <div class="pagination" id="phantom-pagination"></div>
     </div>
 
-    <!-- ══ AUDIT PRIORITY ══ -->
+    <!-- ══ HIGH VALUE INVOICES ══ -->
     <div class="tab-panel" id="tab-priority">
-
-      <div class="priority-lede">
-        <h3>Audit Priority Queue</h3>
-        <p>The CFO cannot manually review 5,200 invoices. But she can review the top 50. These are invoices above ₹10 lakh — where even a 1% error costs more than an entire small vendor's overcharge. Sorted by invoice value. Start here.</p>
+      <div class="tab-lede amber">
+        <h3 class="amber">High Value Invoices</h3>
+        <p>All invoices above ₹10 lakh. Even a 1% error on a ₹2 crore invoice equals ₹2 lakh — more than many smaller vendors' total overcharge. These deserve manual line-by-line review. Sorted by invoice value.</p>
+        <div class="lede-stat amber" id="priority-lede-stat">Loading...</div>
       </div>
 
-      <div class="section-rule">High-value invoices requiring manual review</div>
       <div class="stat-row" style="margin-bottom:20px">
         <div class="stat-cell">
           <div class="stat-val amber" id="pq-count">—</div>
@@ -457,93 +453,32 @@ tbody td{padding:9px 14px;color:var(--ink2);vertical-align:middle}
         </div>
         <div class="stat-cell">
           <div class="stat-val red" id="pq-total">—</div>
-          <div class="stat-label">Total value at risk</div>
+          <div class="stat-label">Combined value</div>
         </div>
         <div class="stat-cell">
-          <div class="stat-val" id="pq-errors">—</div>
+          <div class="stat-val" id="pq-with-errors">—</div>
           <div class="stat-label">With confirmed errors</div>
         </div>
         <div class="stat-cell">
-          <div class="stat-val amber" id="pq-vendors">—</div>
-          <div class="stat-label">Vendors implicated</div>
+          <div class="stat-val amber" id="pq-overcharge">—</div>
+          <div class="stat-label">Overcharge within these</div>
         </div>
       </div>
 
       <div class="tbl-wrap">
         <table>
           <thead><tr>
-            <th onclick="sortPriority('invoice_id')">Invoice ↕</th>
+            <th onclick="sortPQ('invoice_id')">Invoice ↕</th>
             <th>Vendor</th>
-            <th onclick="sortPriority('total')">Invoice total ↕</th>
+            <th onclick="sortPQ('total')">Invoice value ↕</th>
             <th>Date</th>
-            <th onclick="sortPriority('errors')">Errors found ↕</th>
-            <th onclick="sortPriority('overcharge')">Overcharge ↕</th>
+            <th onclick="sortPQ('errors')">Errors ↕</th>
+            <th onclick="sortPQ('overcharge')">Overcharge ↕</th>
             <th>Status</th>
           </tr></thead>
           <tbody id="priority-body"></tbody>
         </table>
       </div>
-
-    </div>
-
-    <!-- ══ HSN MISMATCHES ══ -->
-    <div class="tab-panel" id="tab-hsn">
-
-      <div class="phantom-lede" style="border-left-color:var(--blue);background:#f5f8ff">
-        <h3 style="color:var(--blue)">HSN Code Mismatches</h3>
-        <p>HSN (Harmonised System of Nomenclature) codes determine GST tax brackets. When a vendor files the wrong HSN code for an item, it lands in a higher tax bracket — and the company pays the difference. This is sophisticated tax manipulation: the item name and unit price are correct, only the classification changes.</p>
-        <div class="phantom-stat" style="color:var(--blue)" id="hsn-stat">Loading...</div>
-      </div>
-
-      <div class="section-rule">All HSN mismatches</div>
-      <div class="tbl-wrap">
-        <table>
-          <thead><tr>
-            <th>Invoice</th><th>Vendor</th><th>Item</th>
-            <th>Billed HSN</th><th>Correct HSN</th>
-            <th>Billed GST%</th><th>Correct GST%</th><th>Extra tax paid</th>
-          </tr></thead>
-          <tbody id="hsn-body"></tbody>
-        </table>
-      </div>
-      <button class="btn btn-export-red" style="margin-top:12px" onclick="exportHSNCSV()">⬇ Download HSN mismatches CSV</button>
-
-    </div>
-
-    <!-- ══ ALL DISCREPANCIES ══ -->
-    <div class="tab-panel" id="tab-table">
-      <div class="section-rule">All discrepancies</div>
-      <div class="table-controls">
-        <input class="search-box" type="text" id="search" placeholder="Search invoice, vendor, item...">
-        <select class="filter-sel" id="filter-type">
-          <option value="">All types</option>
-          <option value="price">Price overcharge</option>
-          <option value="gst">GST error</option>
-          <option value="both">Both</option>
-        </select>
-        <select class="filter-sel" id="filter-vendor">
-          <option value="">All vendors</option>
-        </select>
-        <button class="btn btn-export" onclick="exportCSV()">⬇ Export CSV</button>
-        <div class="tbl-count" id="tbl-count"></div>
-      </div>
-      <div class="tbl-wrap">
-        <table>
-          <thead><tr>
-            <th onclick="sortTable('invoice_id')">Invoice ↕</th>
-            <th onclick="sortTable('vendor_id')">Vendor ↕</th>
-            <th>Item</th>
-            <th onclick="sortTable('quantity')">Qty ↕</th>
-            <th>Contracted</th>
-            <th>Billed</th>
-            <th onclick="sortTable('overcharge')">Overcharge ↕</th>
-            <th>GST</th>
-            <th>Type</th>
-          </tr></thead>
-          <tbody id="table-body"></tbody>
-        </table>
-      </div>
-      <div class="pagination" id="pagination"></div>
     </div>
 
   </div>
@@ -552,62 +487,36 @@ tbody td{padding:9px 14px;color:var(--ink2);vertical-align:middle}
 
 <script>
 const BASE='https://mosaicfellowship.in/api/data/finance';
-const PER_PAGE=50;
+const PER=50;
 
-let allDiscrepancies=[],phantomItems=[],hsnMismatches=[],priorityInvoices=[];
-let invoiceMap={};
-let filtered=[],sortKey='overcharge',sortDir=-1,currentPage=1;
-let prioritySorted=[],prioritySortKey='total',prioritySortDir=-1;
+const vNames={V01:'Delhivery',V02:'BlueDart',V03:'Ecom Express',V04:'Xpressbees',V05:'Ashok Packaging',V06:'Sri Lakshmi Plastics',V07:'Naveen Corrugators',V08:'Sai Pharma',V09:'Kaival Nutra',V10:'Primus Biotech',V11:'Herb Valley',V12:'DigiBoost Media',V13:'PixelCraft Studios',V14:'Brandwise Digital',V15:'CloudNine Ads'};
+const vCat={V01:'Logistics',V02:'Logistics',V03:'Logistics',V04:'Logistics',V05:'Packaging',V06:'Packaging',V07:'Packaging',V08:'Raw Materials',V09:'Raw Materials',V10:'Raw Materials',V11:'Raw Materials',V12:'Marketing',V13:'Marketing',V14:'Marketing',V15:'Marketing'};
 
-const vendorNames={
-  V01:'Delhivery',V02:'BlueDart',V03:'Ecom Express',V04:'Xpressbees',
-  V05:'Ashok Packaging',V06:'Sri Lakshmi Plastics',V07:'Naveen Corrugators',
-  V08:'Sai Pharma',V09:'Kaival Nutra',V10:'Primus Biotech',
-  V11:'Herb Valley',V12:'DigiBoost Media',V13:'PixelCraft Studios',
-  V14:'Brandwise Digital',V15:'CloudNine Ads'
-};
-const vendorCat={
-  V01:'Logistics',V02:'Logistics',V03:'Logistics',V04:'Logistics',
-  V05:'Packaging',V06:'Packaging',V07:'Packaging',
-  V08:'Raw Materials',V09:'Raw Materials',V10:'Raw Materials',V11:'Raw Materials',
-  V12:'Marketing',V13:'Marketing',V14:'Marketing',V15:'Marketing'
-};
+let priceDisc=[],gstViol=[],phantomAll=[],priorityAll=[];
+let priceFilt=[],gstFilt=[],phantomFilt=[],pqFilt=[];
+let priceSortK='overcharge',priceSortD=-1,priceP=1;
+let gstSortK='invoice_id',gstSortD=1,gstP=1;
+let phantomSortK='billed_amount',phantomSortD=-1,phantomP=1;
+let pqSortK='total',pqSortD=-1;
 
-// Phantom name patterns
-const phantomPatterns={
-  'fee':['platform fee','handling fee','processing fee','service fee','management fee'],
-  'levy':['admin levy','fuel levy','surcharge levy'],
-  'charge':['convenience charge','admin charge','service charge'],
-  'other':[]
-};
-
-function classifyPhantom(name){
-  const n=name.toLowerCase();
-  if(n.includes('fee')) return 'fee';
-  if(n.includes('levy')) return 'levy';
-  if(n.includes('charge')) return 'charge';
-  return 'other';
-}
-
-function switchTab(name){
-  const names=['overview','phantom','priority','hsn','table'];
-  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',names[i]===name));
+function switchTab(n){
+  const ns=['overview','price','gst','phantom','priority'];
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',ns[i]===n));
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
-  document.getElementById('tab-'+name).classList.add('active');
+  document.getElementById('tab-'+n).classList.add('active');
 }
 
-function setLoader(label,pct,count){
+function setProg(label,pct,count){
   document.getElementById('loader-label').textContent=label;
   document.getElementById('loader-bar').style.width=Math.min(pct,100)+'%';
   if(count!==undefined) document.getElementById('loader-count').textContent=count;
 }
 
-async function fetchAll(endpoint,label,totalPages){
+async function fetchAll(ep,label,total){
   let page=1,all=[];
   while(true){
-    setLoader(`Fetching ${label} — page ${page}${totalPages?' / '+totalPages:''}`,
-      totalPages?(page/totalPages*100):50,`${all.length.toLocaleString()} rows loaded`);
-    const r=await fetch(`${BASE}/${endpoint}?page=${page}&limit=100`);
+    setProg(`Fetching ${label} — page ${page}/${total||'?'}`,total?(page/total*100):50,`${all.length.toLocaleString()} rows`);
+    const r=await fetch(`${BASE}/${ep}?page=${page}&limit=100`);
     const d=await r.json();
     all=all.concat(d.data);
     if(!d.pagination.has_next) break;
@@ -617,403 +526,416 @@ async function fetchAll(endpoint,label,totalPages){
 }
 
 const inr=n=>'₹'+Math.abs(n).toLocaleString('en-IN',{maximumFractionDigits:0});
-const inrFull=n=>'₹'+Math.abs(n).toLocaleString('en-IN',{maximumFractionDigits:2});
+const inrF=n=>'₹'+Math.abs(n).toLocaleString('en-IN',{maximumFractionDigits:2});
 
 async function init(){
-  const rateCard =await fetchAll('rate-card','Rate Card',2);
-  const lineItems=await fetchAll('line-items','Line Items',218);
-  const invoices =await fetchAll('invoices','Invoices',52);
-  setLoader('Running audit engines...',99);
+  const rc=await fetchAll('rate-card','Rate Card',2);
+  const li=await fetchAll('line-items','Line Items',218);
+  const inv=await fetchAll('invoices','Invoices',52);
+  setProg('Running audit...',99);
 
-  // Build maps
   const rateMap={};
-  for(const r of rateCard) rateMap[`${r.vendor_id}|${r.item_name}`]=r;
+  for(const r of rc) rateMap[`${r.vendor_id}|${r.item_name}`]=r;
 
-  for(const inv of invoices) invoiceMap[inv.invoice_id]=inv;
+  const invMap={};
+  for(const i of inv) invMap[i.invoice_id]=i;
 
-  // Per-invoice error tracking for priority queue
   const invErrors={};
+  let totalOC=0,gstCount=0;
+  const byVendor={},byCat={},monthOC=new Array(12).fill(0),monthCt=new Array(12).fill(0);
 
-  let totalOvercharge=0,gstErrors=0,hsnCount=0;
-  const byVendor={},byCategory={};
-  const monthlyOC=new Array(12).fill(0),monthlyCt=new Array(12).fill(0);
-
-  for(const li of lineItems){
-    const key=`${li.vendor_id}|${li.item_name}`;
+  for(const item of li){
+    const key=`${item.vendor_id}|${item.item_name}`;
     const contracted=rateMap[key];
+    if(!invErrors[item.invoice_id]) invErrors[item.invoice_id]={errors:0,overcharge:0};
 
-    // Track for priority queue
-    if(!invErrors[li.invoice_id]) invErrors[li.invoice_id]={errors:0,overcharge:0};
-
-    // ── PHANTOM ──
     if(!contracted){
-      phantomItems.push({
-        invoice_id:li.invoice_id,vendor_id:li.vendor_id,
-        vendor_name:vendorNames[li.vendor_id]||li.vendor_id,
-        item_name:li.item_name,quantity:li.quantity,
-        unit_price:li.unit_price,billed_amount:li.billed_amount,
-        pattern:classifyPhantom(li.item_name)
-      });
-      invErrors[li.invoice_id].errors++;
-      invErrors[li.invoice_id].overcharge+=li.billed_amount;
+      phantomAll.push({...item,vendor_name:vNames[item.vendor_id]||item.vendor_id});
+      invErrors[item.invoice_id].errors++;
       continue;
     }
 
-    const expectedAmt=Math.round(li.quantity*contracted.contracted_rate*100)/100;
-    const priceDiff=Math.round((li.billed_amount-expectedAmt)*100)/100;
-    const gstWrong=li.billed_gst_rate!==contracted.correct_gst_rate;
+    const exp=Math.round(item.quantity*contracted.contracted_rate*100)/100;
+    const diff=Math.round((item.billed_amount-exp)*100)/100;
+    const gstWrong=item.billed_gst_rate!==contracted.correct_gst_rate;
+    const mIdx=Math.min(11,Math.floor((parseInt(item.invoice_id.replace('INV-',''))-1)/(5200/12)));
 
-    // ── HSN MISMATCH ──
-    const billedHSN=String(li.hsn_code).replace('.0','');
-    const correctHSN=String(contracted.hsn_code).replace('.0','');
-    if(billedHSN!==correctHSN){
-      hsnMismatches.push({
-        invoice_id:li.invoice_id,vendor_id:li.vendor_id,
-        vendor_name:vendorNames[li.vendor_id]||li.vendor_id,
-        item_name:li.item_name,quantity:li.quantity,
-        billed_hsn:billedHSN,correct_hsn:correctHSN,
-        billed_gst:li.billed_gst_rate,correct_gst:contracted.correct_gst_rate,
-        billed_amount:li.billed_amount,
-        extra_tax:Math.round(li.billed_amount*(li.billed_gst_rate-contracted.correct_gst_rate)/100*100)/100
+    if(Math.abs(diff)>0.5){
+      priceDisc.push({
+        invoice_id:item.invoice_id,vendor_id:item.vendor_id,
+        vendor_name:vNames[item.vendor_id]||item.vendor_id,
+        item_name:item.item_name,quantity:item.quantity,
+        contracted_rate:contracted.contracted_rate,
+        billed_amount:item.billed_amount,
+        expected_amount:exp,overcharge:diff,
+        overcharge_pct:Math.round((diff/exp)*10000)/100
       });
-      hsnCount++;
+      if(diff>0){
+        totalOC+=diff;
+        if(!byVendor[item.vendor_id]) byVendor[item.vendor_id]={overcharge:0,count:0};
+        byVendor[item.vendor_id].overcharge+=diff;
+        byVendor[item.vendor_id].count++;
+        if(!byCat[vCat[item.vendor_id]||'Other']) byCat[vCat[item.vendor_id]||'Other']=0;
+        byCat[vCat[item.vendor_id]||'Other']+=diff;
+        monthOC[mIdx]+=diff;
+        invErrors[item.invoice_id].overcharge+=diff;
+      }
+      monthCt[mIdx]++;
+      invErrors[item.invoice_id].errors++;
     }
 
-    if(Math.abs(priceDiff)>0.5||gstWrong){
-      const type=(Math.abs(priceDiff)>0.5&&gstWrong)?'both':(Math.abs(priceDiff)>0.5)?'price':'gst';
-      const cat=vendorCat[li.vendor_id]||'Other';
-      const mIdx=Math.min(11,Math.floor((parseInt(li.invoice_id.replace('INV-',''))-1)/(5200/12)));
-
-      allDiscrepancies.push({
-        invoice_id:li.invoice_id,vendor_id:li.vendor_id,
-        vendor_name:vendorNames[li.vendor_id]||li.vendor_id,
-        item_name:li.item_name,quantity:li.quantity,
-        contracted_rate:contracted.contracted_rate,
-        billed_amount:li.billed_amount,expected_amount:expectedAmt,
-        overcharge:priceDiff,billed_gst:li.billed_gst_rate,
-        correct_gst:contracted.correct_gst_rate,gst_wrong:gstWrong,type,category:cat
+    if(gstWrong){
+      gstViol.push({
+        invoice_id:item.invoice_id,vendor_id:item.vendor_id,
+        vendor_name:vNames[item.vendor_id]||item.vendor_id,
+        item_name:item.item_name,quantity:item.quantity,
+        billed_amount:item.billed_amount,
+        billed_gst:item.billed_gst_rate,correct_gst:contracted.correct_gst_rate,
+        shift:`${item.billed_gst_rate}%→${contracted.correct_gst_rate}%`
       });
-
-      if(!byVendor[li.vendor_id]) byVendor[li.vendor_id]={overcharge:0,count:0,gst:0};
-      if(priceDiff>0){byVendor[li.vendor_id].overcharge+=priceDiff;totalOvercharge+=priceDiff;}
-      if(gstWrong){byVendor[li.vendor_id].gst++;gstErrors++;}
-      byVendor[li.vendor_id].count++;
-
-      if(!byCategory[cat]) byCategory[cat]=0;
-      if(priceDiff>0) byCategory[cat]+=priceDiff;
-
-      if(priceDiff>0) monthlyOC[mIdx]+=priceDiff;
-      monthlyCt[mIdx]++;
-
-      invErrors[li.invoice_id].errors++;
-      if(priceDiff>0) invErrors[li.invoice_id].overcharge+=priceDiff;
+      gstCount++;
+      invErrors[item.invoice_id].errors++;
     }
   }
 
-  // ── PRIORITY QUEUE — invoices > ₹10L ──
-  priorityInvoices=invoices
-    .filter(inv=>inv.total>=1000000)
-    .map(inv=>({
-      ...inv,
-      errors:(invErrors[inv.invoice_id]?.errors||0),
-      overcharge:(invErrors[inv.invoice_id]?.overcharge||0),
-      vendor_name:vendorNames[inv.vendor_id]||inv.vendor_id
-    }))
-    .sort((a,b)=>b.total-a.total);
+  // Priority queue
+  priorityAll=inv.filter(i=>i.total>=1000000).map(i=>({
+    ...i,vendor_name:vNames[i.vendor_id]||i.vendor_id,
+    errors:invErrors[i.invoice_id]?.errors||0,
+    overcharge:invErrors[i.invoice_id]?.overcharge||0
+  })).sort((a,b)=>b.total-a.total);
 
   const vendorsSorted=Object.entries(byVendor).sort((a,b)=>b[1].overcharge-a[1].overcharge);
   const top3=vendorsSorted.slice(0,3);
-  const phantomTotal=phantomItems.reduce((s,p)=>s+p.billed_amount,0);
-  const phantomVendorCount=[...new Set(phantomItems.map(p=>p.vendor_id))].length;
-  const totalRecoverable=totalOvercharge+phantomTotal;
+  const phantomTotal=phantomAll.reduce((s,p)=>s+p.billed_amount,0);
+  const phantomVendors=[...new Set(phantomAll.map(p=>p.vendor_id))].length;
 
-  // ── HEADLINE ──
-  document.getElementById('stat-overcharge').textContent=inr(totalOvercharge);
+  // ── OVERVIEW ──
+  document.getElementById('stat-overcharge').textContent=inr(totalOC);
   document.getElementById('hl-deck').innerHTML=
-    `Overcharged across <strong>${allDiscrepancies.length.toLocaleString()} line items</strong> by all <strong>15 vendors</strong> in FY 2025. An additional <strong>${inr(phantomTotal)}</strong> billed for ${phantomItems.length} services never contracted. Total recoverable: <strong>${inr(totalRecoverable)}</strong>.`;
-  document.getElementById('s-discrepancies').textContent=allDiscrepancies.length.toLocaleString();
-  document.getElementById('s-pct').textContent=((allDiscrepancies.length/lineItems.length)*100).toFixed(1)+'% of all line items';
-  document.getElementById('s-phantom').textContent=phantomItems.length.toLocaleString();
-  document.getElementById('s-gst').textContent=gstErrors.toLocaleString();
-  document.getElementById('s-hsn').textContent=hsnCount.toLocaleString();
-  document.getElementById('audit-meta').textContent=`FY 2025 · ${lineItems.length.toLocaleString()} line items · Audit run: `+new Date().toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short'});
+    `Confirmed price overcharges on contracted items across <strong>${priceDisc.filter(d=>d.overcharge>0).length.toLocaleString()} line items</strong> — all <strong>15 vendors</strong> implicated. ${((priceDisc.length/li.length)*100).toFixed(1)}% error rate across FY 2025.`;
+  document.getElementById('pc-amount').textContent=inr(phantomTotal);
+  document.getElementById('pc-count').textContent=phantomAll.length.toLocaleString();
+  document.getElementById('pc-vendors').textContent=phantomVendors+' vendors';
 
-  // ── FINDINGS ──
-  const highValueVendors=Object.keys(byVendor).filter(v=>byVendor[v].overcharge>200000);
+  document.getElementById('s-price').textContent=priceDisc.filter(d=>d.overcharge>0).length.toLocaleString();
+  document.getElementById('s-price-pct').textContent=((priceDisc.length/li.length)*100).toFixed(1)+'% of all line items';
+  document.getElementById('s-gst').textContent=gstCount.toLocaleString();
+  document.getElementById('s-phantom').textContent=phantomAll.length.toLocaleString();
+  document.getElementById('s-hv').textContent=priorityAll.length.toLocaleString();
+  document.getElementById('audit-meta').textContent=`FY 2025 · ${li.length.toLocaleString()} line items · ${new Date().toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short'})}`;
+
+  // Findings
   const findings=[
-    {sev:'crit',color:'red',num:'15 / 15',title:'All vendors overcharging',
-      body:'Every single vendor shows billing discrepancies. This is a systemic failure in invoice verification — not isolated error.'},
-    {sev:'crit',color:'red',num:inr(phantomTotal),title:`${phantomItems.length} phantom line items`,
-      body:`Billed for services never contracted — across ${phantomVendorCount} vendors. Generic names like "Platform fee", "Admin levy", "Convenience charge" designed to slip through review.`},
-    {sev:'high',color:'amber',num:inr(top3[0][1].overcharge),title:`Top offender: ${vendorNames[top3[0][0]]}`,
-      body:`${top3[0][1].count} discrepancies. ${vendorNames[top3[1][0]]} (${inr(top3[1][1].overcharge)}) and ${vendorNames[top3[2][0]]} (${inr(top3[2][1].overcharge)}) follow. Three vendors = 28% of all overcharges.`},
-    {sev:'high',color:'amber',num:inr(totalRecoverable),title:'Total recoverable amount',
-      body:`Price overcharges (${inr(totalOvercharge)}) + phantom billing (${inr(phantomTotal)}). Full amount recoverable via debit notes and contract renegotiation.`},
-    {sev:'med',color:'blue',num:hsnCount.toLocaleString(),title:'HSN code manipulations',
-      body:`Wrong HSN codes filed to move items into higher GST brackets. Item name and price appear correct — only the tax classification changes. Sophisticated and hard to catch manually.`},
-    {sev:'med',color:'blue',num:gstErrors.toLocaleString(),title:'GST rate violations',
-      body:`Incorrect GST rates on ${gstErrors} line items. Beyond financial overcharge, wrongly claimed input tax credits risk GST audit scrutiny and penalties.`},
+    {sev:'crit',color:'red',num:'15/15',title:'All vendors overcharging',body:'Every vendor shows price discrepancies. This is a systemic verification failure — not isolated billing error.'},
+    {sev:'crit',color:'red',num:inr(top3[0][1].overcharge),title:`Top offender: ${vNames[top3[0][0]]}`,body:`${top3[0][1].count} overcharged line items. ${vNames[top3[1][0]]} (${inr(top3[1][1].overcharge)}) and ${vNames[top3[2][0]]} (${inr(top3[2][1].overcharge)}) follow.`},
+    {sev:'high',color:'amber',num:phantomAll.length+' items',title:'Phantom billing detected',body:`${inr(phantomTotal)} billed for items absent from the rate card across ${phantomVendors} vendors. Requires vendor dialogue.`},
+    {sev:'high',color:'amber',num:gstCount.toLocaleString(),title:'GST rate violations',body:'Correct unit price, wrong tax bracket. Extra tax inflates the bill while appearing legitimate on line item review.'},
+    {sev:'med',color:'blue',num:priorityAll.length.toLocaleString(),title:'High value invoices',body:`${priorityAll.length} invoices above ₹10L — combined value ${inr(priorityAll.reduce((s,i)=>s+i.total,0))}. A 1% error here exceeds entire small vendor overcharges.`},
+    {sev:'med',color:'blue',num:inr(byCat['Marketing']||0),title:'Marketing: highest exposure',body:'Marketing vendors issue crore-value invoices. Even small % errors here dwarf all logistics and packaging overcharges combined.'},
   ];
   document.getElementById('findings-grid').innerHTML=findings.map(f=>`
     <div class="finding-card ${f.sev}">
-      <div class="sev-pill ${f.sev}">${f.sev==='crit'?'Critical':f.sev==='high'?'High':f.sev==='med'?'Medium':'Low'}</div>
+      <div class="sev-pill ${f.sev}">${f.sev==='crit'?'Critical':f.sev==='high'?'High':'Medium'}</div>
       <div class="finding-num ${f.color}">${f.num}</div>
       <div class="finding-title">${f.title}</div>
       <div class="finding-body">${f.body}</div>
     </div>`).join('');
 
-  // ── ACTIONS ──
-  const actions=[
-    {dot:'adot-red',text:'Issue debit notes to all 15 vendors for confirmed overcharges'},
-    {dot:'adot-red',text:'Freeze outstanding payments pending rate card reconfirmation'},
-    {dot:'adot-red',text:`Recover ${inr(phantomTotal)} in phantom payments — no contractual basis`},
-    {dot:'adot-amber',text:'Renegotiate rate cards to contractualise legitimate phantom charges'},
-    {dot:'adot-amber',text:'File GST corrections for all HSN mismatches and rate violations'},
-    {dot:'adot-blue',text:'Gate all future invoices through this audit system before approval'},
-  ];
-  document.getElementById('action-list').innerHTML=actions.map(a=>
-    `<div class="action-item"><div class="adot ${a.dot}"></div>${a.text}</div>`).join('');
-
-  // ── CATEGORIES ──
+  // Categories
   document.getElementById('cat-grid').innerHTML=
     ['Logistics','Packaging','Raw Materials','Marketing'].map(cat=>{
-      const amt=byCategory[cat]||0;
-      const cnt=allDiscrepancies.filter(d=>d.category===cat).length;
-      const vc=Object.keys(vendorCat).filter(v=>vendorCat[v]===cat).length;
+      const amt=byCat[cat]||0;
+      const cnt=priceDisc.filter(d=>d.overcharge>0&&vCat[d.vendor_id]===cat).length;
+      const vc=Object.keys(vCat).filter(v=>vCat[v]===cat).length;
       return `<div class="cat-cell">
         <div class="cat-name">${cat}</div>
         <div class="cat-amt">${inr(amt)}</div>
-        <div class="cat-meta">${cnt} discrepancies · ${vc} vendors</div>
+        <div class="cat-meta">${cnt} overcharges · ${vc} vendors</div>
       </div>`;
     }).join('');
 
-  // ── CHARTS ──
-  const chartColors=vendorsSorted.map((_,i)=>i<3?'rgba(192,57,43,0.8)':i<6?'rgba(183,96,10,0.6)':'rgba(26,86,176,0.4)');
-  const borderColors=vendorsSorted.map((_,i)=>i<3?'#C0392B':i<6?'#B7600A':'#1A56B0');
-  new Chart(document.getElementById('vendor-chart'),{
-    type:'bar',
-    data:{labels:vendorsSorted.map(([vid])=>vendorNames[vid]||vid),
-      datasets:[{data:vendorsSorted.map(([,v])=>Math.round(v.overcharge)),
-        backgroundColor:chartColors,borderColor:borderColors,borderWidth:1,borderRadius:2}]},
-    options:{responsive:true,plugins:{legend:{display:false},
-      tooltip:{callbacks:{label:ctx=>'₹'+ctx.parsed.y.toLocaleString('en-IN')}}},
-      scales:{
-        x:{ticks:{color:'#888',font:{size:10,family:'JetBrains Mono'}},grid:{color:'rgba(0,0,0,0.05)'}},
-        y:{ticks:{color:'#888',font:{family:'JetBrains Mono'},callback:v=>'₹'+(v/100000).toFixed(0)+'L'},grid:{color:'rgba(0,0,0,0.05)'}}
-      }}
-  });
+  // Charts
+  const chartClrs=vendorsSorted.map((_,i)=>i<3?'rgba(192,57,43,.8)':i<6?'rgba(183,96,10,.6)':'rgba(26,86,176,.4)');
+  const chartBrd=vendorsSorted.map((_,i)=>i<3?'#C0392B':i<6?'#B7600A':'#1A56B0');
+  new Chart(document.getElementById('vendor-chart'),{type:'bar',
+    data:{labels:vendorsSorted.map(([vid])=>vNames[vid]||vid),
+      datasets:[{data:vendorsSorted.map(([,v])=>Math.round(v.overcharge)),backgroundColor:chartClrs,borderColor:chartBrd,borderWidth:1,borderRadius:2}]},
+    options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>'₹'+ctx.parsed.y.toLocaleString('en-IN')}}},
+      scales:{x:{ticks:{color:'#888',font:{size:10,family:'JetBrains Mono'}},grid:{color:'rgba(0,0,0,.05)'}},
+        y:{ticks:{color:'#888',font:{family:'JetBrains Mono'},callback:v=>'₹'+(v/100000).toFixed(0)+'L'},grid:{color:'rgba(0,0,0,.05)'}}}}});
 
   const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  new Chart(document.getElementById('trend-chart'),{
-    type:'line',
-    data:{labels:months,datasets:[{data:monthlyOC,borderColor:'#C0392B',
-      backgroundColor:'rgba(192,57,43,0.08)',fill:true,tension:0.4,
-      pointBackgroundColor:'#C0392B',pointRadius:3}]},
-    options:{responsive:true,plugins:{legend:{display:false},
-      tooltip:{callbacks:{label:ctx=>'₹'+Math.round(ctx.parsed.y).toLocaleString('en-IN')}}},
-      scales:{
-        x:{ticks:{color:'#888',font:{family:'JetBrains Mono',size:10}},grid:{color:'rgba(0,0,0,0.05)'}},
-        y:{ticks:{color:'#888',font:{family:'JetBrains Mono',size:10},callback:v=>'₹'+(v/100000).toFixed(0)+'L'},grid:{color:'rgba(0,0,0,0.05)'}}
-      }}
-  });
-  new Chart(document.getElementById('count-chart'),{
-    type:'bar',
-    data:{labels:months,datasets:[{data:monthlyCt,backgroundColor:'rgba(26,86,176,0.5)',borderColor:'#1A56B0',borderWidth:1,borderRadius:2}]},
+  new Chart(document.getElementById('trend-chart'),{type:'line',
+    data:{labels:months,datasets:[{data:monthOC,borderColor:'#C0392B',backgroundColor:'rgba(192,57,43,.08)',fill:true,tension:.4,pointBackgroundColor:'#C0392B',pointRadius:3}]},
+    options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>'₹'+Math.round(ctx.parsed.y).toLocaleString('en-IN')}}},
+      scales:{x:{ticks:{color:'#888',font:{family:'JetBrains Mono',size:10}},grid:{color:'rgba(0,0,0,.05)'}},
+        y:{ticks:{color:'#888',font:{family:'JetBrains Mono',size:10},callback:v=>'₹'+(v/100000).toFixed(0)+'L'},grid:{color:'rgba(0,0,0,.05)'}}}}});
+  new Chart(document.getElementById('count-chart'),{type:'bar',
+    data:{labels:months,datasets:[{data:monthCt,backgroundColor:'rgba(26,86,176,.5)',borderColor:'#1A56B0',borderWidth:1,borderRadius:2}]},
     options:{responsive:true,plugins:{legend:{display:false}},
-      scales:{
-        x:{ticks:{color:'#888',font:{family:'JetBrains Mono',size:10}},grid:{color:'rgba(0,0,0,0.05)'}},
-        y:{ticks:{color:'#888',font:{family:'JetBrains Mono',size:10}},grid:{color:'rgba(0,0,0,0.05)'}}
-      }}
+      scales:{x:{ticks:{color:'#888',font:{family:'JetBrains Mono',size:10}},grid:{color:'rgba(0,0,0,.05)'}},
+        y:{ticks:{color:'#888',font:{family:'JetBrains Mono',size:10}},grid:{color:'rgba(0,0,0,.05)'}}}}});
+
+  // ── PRICE TAB ──
+  const pricePos=priceDisc.filter(d=>d.overcharge>0);
+  document.getElementById('price-lede-stat').textContent=
+    `${pricePos.length.toLocaleString()} overcharged lines · Total: ${inr(totalOC)} · Across all 15 vendors`;
+
+  // Top 3 vendor cards
+  document.getElementById('price-vendor-summary').innerHTML=
+    vendorsSorted.slice(0,6).map(([vid,v],i)=>`
+    <div class="vs-card">
+      <div class="vs-rank">#${i+1} vendor</div>
+      <div class="vs-name">${vNames[vid]||vid}</div>
+      <div class="vs-amount ${i<3?'red':'amber'}">${inr(v.overcharge)}</div>
+      <div class="vs-meta">${v.count} overcharged line items</div>
+    </div>`).join('');
+
+  // Item chart
+  const itemMap={};
+  for(const d of pricePos){
+    if(!itemMap[d.item_name]) itemMap[d.item_name]=0;
+    itemMap[d.item_name]+=d.overcharge;
+  }
+  const topItems=Object.entries(itemMap).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  new Chart(document.getElementById('item-chart'),{type:'bar',
+    data:{labels:topItems.map(([k])=>k),datasets:[{data:topItems.map(([,v])=>Math.round(v)),backgroundColor:'rgba(192,57,43,.7)',borderColor:'#C0392B',borderWidth:1,borderRadius:2}]},
+    options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>'₹'+ctx.parsed.x.toLocaleString('en-IN')}}},
+      scales:{x:{ticks:{color:'#888',font:{family:'JetBrains Mono',size:10},callback:v=>'₹'+(v/100000).toFixed(1)+'L'},grid:{color:'rgba(0,0,0,.05)'}},
+        y:{ticks:{color:'#555',font:{size:11}},grid:{display:false}}}}});
+
+  // Vendor filter for price tab
+  vendorsSorted.forEach(([vid])=>{
+    const o=document.createElement('option');
+    o.value=vid;o.textContent=`${vid} · ${vNames[vid]||vid}`;
+    document.getElementById('price-vendor').appendChild(o);
   });
+  document.getElementById('price-search').addEventListener('input',applyPriceFilter);
+  document.getElementById('price-vendor').addEventListener('change',applyPriceFilter);
+  applyPriceFilter();
+
+  // ── GST TAB ──
+  document.getElementById('gst-lede-stat').textContent=
+    `${gstCount.toLocaleString()} violations · Across ${[...new Set(gstViol.map(g=>g.vendor_id))].length} vendors`;
+
+  // GST shift patterns
+  const shiftMap={};
+  for(const g of gstViol){
+    if(!shiftMap[g.shift]) shiftMap[g.shift]={count:0,vendors:new Set()};
+    shiftMap[g.shift].count++;
+    shiftMap[g.shift].vendors.add(g.vendor_id);
+  }
+  const shiftSorted=Object.entries(shiftMap).sort((a,b)=>b[1].count-a[1].count);
+  document.getElementById('gst-shift-summary').innerHTML=shiftSorted.slice(0,6).map(([shift,v])=>`
+    <div class="vs-card">
+      <div class="vs-rank">GST shift</div>
+      <div class="vs-name" style="font-family:var(--mono);font-size:14px">${shift}</div>
+      <div class="vs-amount blue">${v.count}</div>
+      <div class="vs-meta">violations · ${v.vendors.size} vendors</div>
+    </div>`).join('');
+
+  // GST vendor chart
+  const gstByVendor={};
+  for(const g of gstViol){
+    if(!gstByVendor[g.vendor_id]) gstByVendor[g.vendor_id]=0;
+    gstByVendor[g.vendor_id]++;
+  }
+  const gstVendorSorted=Object.entries(gstByVendor).sort((a,b)=>b[1]-a[1]);
+  new Chart(document.getElementById('gst-chart'),{type:'bar',
+    data:{labels:gstVendorSorted.map(([vid])=>vNames[vid]||vid),datasets:[{data:gstVendorSorted.map(([,v])=>v),backgroundColor:'rgba(26,86,176,.6)',borderColor:'#1A56B0',borderWidth:1,borderRadius:2}]},
+    options:{responsive:true,plugins:{legend:{display:false}},
+      scales:{x:{ticks:{color:'#888',font:{size:10,family:'JetBrains Mono'}},grid:{color:'rgba(0,0,0,.05)'}},
+        y:{ticks:{color:'#888',font:{family:'JetBrains Mono',size:10}},grid:{color:'rgba(0,0,0,.05)'}}}}});
+
+  gstVendorSorted.forEach(([vid])=>{
+    const o=document.createElement('option');
+    o.value=vid;o.textContent=`${vid} · ${vNames[vid]||vid}`;
+    document.getElementById('gst-vendor').appendChild(o);
+  });
+  document.getElementById('gst-search').addEventListener('input',applyGSTFilter);
+  document.getElementById('gst-vendor').addEventListener('change',applyGSTFilter);
+  applyGSTFilter();
 
   // ── PHANTOM TAB ──
-  const phantomTotal2=phantomItems.reduce((s,p)=>s+p.billed_amount,0);
-  document.getElementById('phantom-stat').textContent=
-    `${phantomItems.length} phantom items · Total charged: ${inr(phantomTotal2)} · Across ${phantomVendorCount} vendors`;
-
-  // Negotiation intelligence per vendor
   const phantomByVendor={};
-  for(const p of phantomItems){
-    if(!phantomByVendor[p.vendor_id]) phantomByVendor[p.vendor_id]={total:0,items:[],count:0};
+  for(const p of phantomAll){
+    if(!phantomByVendor[p.vendor_id]) phantomByVendor[p.vendor_id]={total:0,count:0,items:[]};
     phantomByVendor[p.vendor_id].total+=p.billed_amount;
     phantomByVendor[p.vendor_id].count++;
     if(!phantomByVendor[p.vendor_id].items.includes(p.item_name))
       phantomByVendor[p.vendor_id].items.push(p.item_name);
   }
-  const negSorted=Object.entries(phantomByVendor).sort((a,b)=>b[1].total-a[1].total);
+  const pvSorted=Object.entries(phantomByVendor).sort((a,b)=>b[1].total-a[1].total);
 
-  document.getElementById('neg-grid').innerHTML=negSorted.map(([vid,v])=>{
-    // Round proposal: nearest 500 above average per-invoice phantom charge
-    const avgPerInvoice=v.total/v.count;
-    const proposed=Math.ceil(avgPerInvoice/500)*500;
-    const uniqueItems=[...new Set(v.items)].slice(0,4);
-    return `<div class="neg-card">
-      <div class="neg-vendor">${vid} · ${vendorNames[vid]||vid}</div>
-      <div class="neg-total">${inr(v.total)}</div>
-      <div class="neg-count">${v.count} phantom charges · avg ${inr(avgPerInvoice)} each</div>
-      <div class="neg-items">${uniqueItems.map(i=>`<span class="neg-item-tag">${i}</span>`).join('')}</div>
-      <div class="neg-proposal">
-        <div class="neg-proposal-label">Proposed contract addition</div>
-        <div class="neg-proposal-text">Add a single contractualised line item covering all miscellaneous charges. Eliminates phantom billing permanently.</div>
-        <div class="neg-proposal-amount">₹${proposed.toLocaleString('en-IN')} / invoice</div>
-      </div>
-    </div>`;
-  }).join('');
+  document.getElementById('phantom-lede-stat').textContent=
+    `${phantomAll.length} phantom items · Total billed: ${inr(phantomTotal)} · Across ${phantomVendors} vendors`;
 
-  document.getElementById('phantom-body').innerHTML=phantomItems.map(p=>`
-    <tr>
-      <td class="td-mono">${p.invoice_id}</td>
-      <td><span class="vendor-tag">${p.vendor_id}</span> <span style="color:var(--muted);font-size:12px;margin-left:6px">${p.vendor_name}</span></td>
-      <td style="color:var(--red)">${p.item_name}</td>
-      <td style="color:var(--muted)">${p.quantity}</td>
-      <td class="td-mono">${inrFull(p.unit_price)}</td>
-      <td class="td-red">${inrFull(p.billed_amount)}</td>
-      <td><span class="badge badge-price">${p.pattern}</span></td>
-    </tr>`).join('');
+  document.getElementById('phantom-vendor-grid').innerHTML=pvSorted.map(([vid,v])=>`
+    <div class="pv-card">
+      <div class="pv-vendor">${vid}</div>
+      <div class="pv-name">${vNames[vid]||vid}</div>
+      <div class="pv-amount">${inr(v.total)}</div>
+      <div class="pv-count">${v.count} line items</div>
+      <div class="pv-items">${[...new Set(v.items)].slice(0,5).map(i=>`<span class="pv-tag">${i}</span>`).join('')}</div>
+    </div>`).join('');
+
+  const pvFilter=document.getElementById('phantom-vendor-filter');
+  pvSorted.forEach(([vid])=>{
+    const o=document.createElement('option');
+    o.value=vid;o.textContent=`${vid} · ${vNames[vid]||vid}`;
+    pvFilter.appendChild(o);
+  });
+  document.getElementById('phantom-search').addEventListener('input',applyPhantomFilter);
+  pvFilter.addEventListener('change',applyPhantomFilter);
+  applyPhantomFilter();
 
   // ── PRIORITY TAB ──
-  document.getElementById('pq-count').textContent=priorityInvoices.length.toLocaleString();
-  document.getElementById('pq-total').textContent=inr(priorityInvoices.reduce((s,i)=>s+i.total,0));
-  document.getElementById('pq-errors').textContent=priorityInvoices.filter(i=>i.errors>0).length.toLocaleString();
-  document.getElementById('pq-vendors').textContent=[...new Set(priorityInvoices.map(i=>i.vendor_id))].length.toLocaleString();
-  prioritySorted=[...priorityInvoices];
-  renderPriorityTable();
-
-  // ── HSN TAB ──
-  document.getElementById('hsn-stat').textContent=
-    `${hsnMismatches.length} HSN mismatches found · Extra GST paid: ${inr(hsnMismatches.filter(h=>h.extra_tax>0).reduce((s,h)=>s+h.extra_tax,0))}`;
-  document.getElementById('hsn-body').innerHTML=hsnMismatches.map(h=>`
-    <tr>
-      <td class="td-mono">${h.invoice_id}</td>
-      <td><span class="vendor-tag">${h.vendor_id}</span> <span style="color:var(--muted);font-size:12px;margin-left:6px">${h.vendor_name}</span></td>
-      <td style="color:var(--ink2)">${h.item_name}</td>
-      <td class="td-red">${h.billed_hsn}</td>
-      <td class="td-ok">${h.correct_hsn}</td>
-      <td class="td-red">${h.billed_gst}%</td>
-      <td class="td-ok">${h.correct_gst}%</td>
-      <td class="${h.extra_tax>0?'td-red':'td-ok'}">${h.extra_tax>0?'+'+inrFull(h.extra_tax):'—'}</td>
-    </tr>`).join('');
-
-  // ── VENDOR FILTER ──
-  vendorsSorted.forEach(([vid])=>{
-    const opt=document.createElement('option');
-    opt.value=vid;opt.textContent=`${vid} · ${vendorNames[vid]||vid}`;
-    document.getElementById('filter-vendor').appendChild(opt);
-  });
-
-  document.getElementById('search').addEventListener('input',applyFilters);
-  document.getElementById('filter-type').addEventListener('change',applyFilters);
-  document.getElementById('filter-vendor').addEventListener('change',applyFilters);
+  document.getElementById('pq-count').textContent=priorityAll.length.toLocaleString();
+  document.getElementById('pq-total').textContent=inr(priorityAll.reduce((s,i)=>s+i.total,0));
+  document.getElementById('pq-with-errors').textContent=priorityAll.filter(i=>i.errors>0).length.toLocaleString();
+  document.getElementById('pq-overcharge').textContent=inr(priorityAll.reduce((s,i)=>s+i.overcharge,0));
+  document.getElementById('priority-lede-stat').textContent=
+    `${priorityAll.length} invoices above ₹10L · Combined value: ${inr(priorityAll.reduce((s,i)=>s+i.total,0))}`;
+  pqFilt=[...priorityAll];
+  renderPQ();
 
   document.getElementById('loading-screen').style.display='none';
   document.getElementById('app').style.display='block';
-  applyFilters();
 }
 
+// ── PRICE FILTER & TABLE ──
+function applyPriceFilter(){
+  const q=document.getElementById('price-search').value.toLowerCase();
+  const v=document.getElementById('price-vendor').value;
+  priceFilt=priceDisc.filter(d=>d.overcharge>0&&
+    (!q||d.invoice_id.toLowerCase().includes(q)||d.vendor_name.toLowerCase().includes(q)||d.item_name.toLowerCase().includes(q))&&
+    (!v||d.vendor_id===v));
+  priceFilt.sort((a,b)=>typeof a[priceSortK]==='string'?priceSortD*a[priceSortK].localeCompare(b[priceSortK]):priceSortD*(a[priceSortK]-b[priceSortK]));
+  priceP=1;
+  document.getElementById('price-count').textContent=`${priceFilt.length.toLocaleString()} rows`;
+  renderPrice();renderPricePg();
+}
+function sortPrice(k){if(priceSortK===k)priceSortD*=-1;else{priceSortK=k;priceSortD=-1;}applyPriceFilter();}
+function renderPrice(){
+  const rows=priceFilt.slice((priceP-1)*PER,priceP*PER);
+  document.getElementById('price-body').innerHTML=rows.map(d=>`<tr>
+    <td class="td-mono">${d.invoice_id}</td>
+    <td><span class="vendor-tag">${d.vendor_id}</span> <span style="color:var(--muted);font-size:12px;margin-left:6px">${d.vendor_name}</span></td>
+    <td>${d.item_name}</td>
+    <td class="td-mono">${d.quantity}</td>
+    <td class="td-mono">${inr(d.contracted_rate)}</td>
+    <td class="td-mono">${inrF(d.billed_amount)}</td>
+    <td class="td-red">+${inr(d.overcharge)}</td>
+    <td class="td-mono" style="color:var(--amber)">${d.overcharge_pct>0?'+':''+(d.overcharge_pct||0).toFixed(1)}%</td>
+  </tr>`).join('');
+}
+function renderPricePg(){renderPg('price-pagination',priceFilt.length,priceP,n=>{priceP=n;renderPrice();renderPricePg();})}
+
+// ── GST FILTER & TABLE ──
+function applyGSTFilter(){
+  const q=document.getElementById('gst-search').value.toLowerCase();
+  const v=document.getElementById('gst-vendor').value;
+  gstFilt=gstViol.filter(d=>
+    (!q||d.invoice_id.toLowerCase().includes(q)||d.vendor_name.toLowerCase().includes(q)||d.item_name.toLowerCase().includes(q))&&
+    (!v||d.vendor_id===v));
+  gstFilt.sort((a,b)=>typeof a[gstSortK]==='string'?gstSortD*a[gstSortK].localeCompare(b[gstSortK]):gstSortD*(a[gstSortK]-b[gstSortK]));
+  gstP=1;
+  document.getElementById('gst-count').textContent=`${gstFilt.length.toLocaleString()} rows`;
+  renderGST();renderGSTPg();
+}
+function sortGST(k){if(gstSortK===k)gstSortD*=-1;else{gstSortK=k;gstSortD=-1;}applyGSTFilter();}
+function renderGST(){
+  const rows=gstFilt.slice((gstP-1)*PER,gstP*PER);
+  document.getElementById('gst-body').innerHTML=rows.map(d=>`<tr>
+    <td class="td-mono">${d.invoice_id}</td>
+    <td><span class="vendor-tag">${d.vendor_id}</span> <span style="color:var(--muted);font-size:12px;margin-left:6px">${d.vendor_name}</span></td>
+    <td>${d.item_name}</td>
+    <td class="td-mono">${d.quantity}</td>
+    <td class="td-mono">${inrF(d.billed_amount)}</td>
+    <td class="td-red">${d.billed_gst}%</td>
+    <td class="td-green">${d.correct_gst}%</td>
+    <td><span class="badge badge-gst">${d.shift}</span></td>
+  </tr>`).join('');
+}
+function renderGSTPg(){renderPg('gst-pagination',gstFilt.length,gstP,n=>{gstP=n;renderGST();renderGSTPg();})}
+
+// ── PHANTOM FILTER & TABLE ──
+function applyPhantomFilter(){
+  const q=document.getElementById('phantom-search').value.toLowerCase();
+  const v=document.getElementById('phantom-vendor-filter').value;
+  phantomFilt=phantomAll.filter(d=>
+    (!q||d.invoice_id.toLowerCase().includes(q)||d.vendor_name.toLowerCase().includes(q)||d.item_name.toLowerCase().includes(q))&&
+    (!v||d.vendor_id===v));
+  phantomP=1;
+  document.getElementById('phantom-count').textContent=`${phantomFilt.length.toLocaleString()} rows`;
+  renderPhantom();renderPhantomPg();
+}
+function renderPhantom(){
+  const rows=phantomFilt.slice((phantomP-1)*PER,phantomP*PER);
+  document.getElementById('phantom-body').innerHTML=rows.map(d=>`<tr>
+    <td class="td-mono">${d.invoice_id}</td>
+    <td><span class="vendor-tag">${d.vendor_id}</span> <span style="color:var(--muted);font-size:12px;margin-left:6px">${d.vendor_name}</span></td>
+    <td style="color:var(--amber)">${d.item_name}</td>
+    <td class="td-mono">${d.quantity}</td>
+    <td class="td-mono">${inrF(d.unit_price)}</td>
+    <td class="td-amber">${inrF(d.billed_amount)}</td>
+  </tr>`).join('');
+}
+function renderPhantomPg(){renderPg('phantom-pagination',phantomFilt.length,phantomP,n=>{phantomP=n;renderPhantom();renderPhantomPg();})}
+
 // ── PRIORITY TABLE ──
-function renderPriorityTable(){
-  document.getElementById('priority-body').innerHTML=prioritySorted.map(inv=>{
-    const hasErrors=inv.errors>0;
-    const flag=inv.total>=10000000?'⚑ ₹1Cr+':inv.total>=5000000?'⚑ ₹50L+':'⚑ ₹10L+';
+function sortPQ(k){
+  if(pqSortK===k)pqSortD*=-1;else{pqSortK=k;pqSortD=-1;}
+  pqFilt.sort((a,b)=>typeof a[k]==='string'?pqSortD*a[k].localeCompare(b[k]):pqSortD*(a[k]-b[k]));
+  renderPQ();
+}
+function renderPQ(){
+  document.getElementById('priority-body').innerHTML=pqFilt.map(inv=>{
+    const flag=inv.total>=10000000?'₹1Cr+':inv.total>=5000000?'₹50L+':'₹10L+';
     return `<tr>
       <td class="td-mono">${inv.invoice_id}</td>
       <td><span class="vendor-tag">${inv.vendor_id}</span> <span style="color:var(--muted);font-size:12px;margin-left:6px">${inv.vendor_name}</span></td>
-      <td class="td-amber" style="font-family:var(--font-mono);font-weight:600">${inr(inv.total)}</td>
+      <td class="td-amber" style="font-weight:600">${inr(inv.total)}</td>
       <td style="color:var(--muted);font-size:12px">${inv.invoice_date||'—'}</td>
-      <td class="${hasErrors?'td-red':'td-ok'}">${inv.errors||0}</td>
-      <td class="${inv.overcharge>0?'td-red':'td-ok'}">${inv.overcharge>0?'+'+inr(inv.overcharge):'—'}</td>
-      <td><span class="badge ${hasErrors?'badge-priority':'badge-gst'}">${hasErrors?flag:'Clean'}</span></td>
+      <td class="${inv.errors>0?'td-red':'td-green'}">${inv.errors||0}</td>
+      <td class="${inv.overcharge>0?'td-red':'td-green'}">${inv.overcharge>0?'+'+inr(inv.overcharge):'—'}</td>
+      <td><span class="badge ${inv.errors>0?'badge-flag':'badge-clean'}">${inv.errors>0?'⚑ '+flag:'Clean'}</span></td>
     </tr>`;
   }).join('');
 }
 
-function sortPriority(key){
-  if(prioritySortKey===key) prioritySortDir*=-1;
-  else{prioritySortKey=key;prioritySortDir=-1;}
-  prioritySorted.sort((a,b)=>typeof a[key]==='string'?prioritySortDir*a[key].localeCompare(b[key]):prioritySortDir*(a[key]-b[key]));
-  renderPriorityTable();
-}
-
-// ── DISCREPANCIES TABLE ──
-function applyFilters(){
-  const q=document.getElementById('search').value.toLowerCase();
-  const type=document.getElementById('filter-type').value;
-  const vendor=document.getElementById('filter-vendor').value;
-  filtered=allDiscrepancies.filter(d=>
-    (!q||d.invoice_id.toLowerCase().includes(q)||d.vendor_name.toLowerCase().includes(q)||d.vendor_id.toLowerCase().includes(q)||d.item_name.toLowerCase().includes(q))
-    &&(!type||d.type===type)&&(!vendor||d.vendor_id===vendor));
-  filtered.sort((a,b)=>{const av=a[sortKey],bv=b[sortKey];return typeof av==='string'?sortDir*av.localeCompare(bv):sortDir*(av-bv);});
-  currentPage=1;
-  document.getElementById('tbl-count').textContent=`${filtered.length.toLocaleString()} rows`;
-  renderTable();renderPagination();
-}
-
-function sortTable(key){
-  if(sortKey===key) sortDir*=-1;else{sortKey=key;sortDir=-1;}
-  applyFilters();
-}
-
-function renderTable(){
-  const rows=filtered.slice((currentPage-1)*PER_PAGE,currentPage*PER_PAGE);
-  document.getElementById('table-body').innerHTML=rows.map(d=>{
-    const badge=d.type==='both'?`<span class="badge badge-both">Both</span>`
-      :d.type==='price'?`<span class="badge badge-price">Price</span>`
-      :`<span class="badge badge-gst">GST</span>`;
-    const gst=d.gst_wrong?`<span style="color:var(--blue);font-family:var(--font-mono);font-size:11px">${d.billed_gst}%→${d.correct_gst}%</span>`:`<span style="color:var(--dim)">✓</span>`;
-    const oc=d.overcharge>0?`<span class="td-red">+${inr(d.overcharge)}</span>`
-      :d.overcharge<0?`<span class="td-blue">${inr(d.overcharge)}</span>`:`<span style="color:var(--dim)">—</span>`;
-    return `<tr>
-      <td class="td-mono">${d.invoice_id}</td>
-      <td><span class="vendor-tag">${d.vendor_id}</span> <span style="color:var(--muted);font-size:12px;margin-left:6px">${d.vendor_name}</span></td>
-      <td style="color:var(--ink2)">${d.item_name}</td>
-      <td style="color:var(--muted)">${d.quantity}</td>
-      <td class="td-mono" style="color:var(--muted)">${inr(d.contracted_rate)}</td>
-      <td class="td-mono">${inr(d.billed_amount)}</td>
-      <td>${oc}</td><td>${gst}</td><td>${badge}</td></tr>`;
-  }).join('');
-}
-
-function renderPagination(){
-  const total=Math.ceil(filtered.length/PER_PAGE);
-  const pg=document.getElementById('pagination');
-  if(total<=1){pg.innerHTML='';return;}
-  let html=`<button class="pg-btn" onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''}>← Prev</button>`;
-  for(let i=1;i<=total;i++){
-    if(i===1||i===total||Math.abs(i-currentPage)<=2)
-      html+=`<button class="pg-btn ${i===currentPage?'active':''}" onclick="goPage(${i})">${i}</button>`;
-    else if(Math.abs(i-currentPage)===3) html+=`<span style="color:var(--dim);padding:0 4px">…</span>`;
+// ── SHARED PAGINATION ──
+function renderPg(id,total,current,cb){
+  const pages=Math.ceil(total/PER);
+  const el=document.getElementById(id);
+  if(pages<=1){el.innerHTML='';return;}
+  let html=`<button class="pg-btn" onclick="(${cb})(${current-1})" ${current===1?'disabled':''}>← Prev</button>`;
+  for(let i=1;i<=pages;i++){
+    if(i===1||i===pages||Math.abs(i-current)<=2)
+      html+=`<button class="pg-btn ${i===current?'active':''}" onclick="(${cb})(${i})">${i}</button>`;
+    else if(Math.abs(i-current)===3) html+=`<span style="color:var(--dim);padding:0 4px">…</span>`;
   }
-  html+=`<button class="pg-btn" onclick="goPage(${currentPage+1})" ${currentPage===total?'disabled':''}>Next →</button>`;
-  pg.innerHTML=html;
-}
-
-function goPage(n){
-  const total=Math.ceil(filtered.length/PER_PAGE);
-  if(n<1||n>total) return;
-  currentPage=n;renderTable();renderPagination();
-  document.querySelector('.tbl-wrap').scrollIntoView({behavior:'smooth'});
+  html+=`<button class="pg-btn" onclick="(${cb})(${current+1})" ${current===pages?'disabled':''}>Next →</button>`;
+  el.innerHTML=html;
 }
 
 // ── EXPORTS ──
-function exportCSV(){
-  const h=['Invoice ID','Vendor ID','Vendor Name','Item','Qty','Contracted Rate','Billed Amount','Expected Amount','Overcharge','Billed GST%','Correct GST%','GST Error','Type'];
-  const r=filtered.map(d=>[d.invoice_id,d.vendor_id,d.vendor_name,`"${d.item_name}"`,d.quantity,d.contracted_rate,d.billed_amount,d.expected_amount,d.overcharge,d.billed_gst,d.correct_gst,d.gst_wrong?'YES':'NO',d.type].join(','));
-  dl([h.join(','),...r].join('\n'),'mosaic_discrepancies.csv');
+function dl(content,filename){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([content],{type:'text/csv'}));a.download=filename;a.click();}
+function exportPriceCSV(){
+  const h='Invoice ID,Vendor ID,Vendor Name,Item,Qty,Contracted Rate,Billed Amount,Expected Amount,Overcharge,Overcharge%';
+  const r=priceFilt.map(d=>[d.invoice_id,d.vendor_id,d.vendor_name,`"${d.item_name}"`,d.quantity,d.contracted_rate,d.billed_amount,d.expected_amount,d.overcharge,d.overcharge_pct].join(','));
+  dl([h,...r].join('\n'),'mosaic_price_discrepancies.csv');
+}
+function exportGSTCSV(){
+  const h='Invoice ID,Vendor ID,Vendor Name,Item,Qty,Billed Amount,Billed GST%,Correct GST%,Shift';
+  const r=gstFilt.map(d=>[d.invoice_id,d.vendor_id,d.vendor_name,`"${d.item_name}"`,d.quantity,d.billed_amount,d.billed_gst,d.correct_gst,d.shift].join(','));
+  dl([h,...r].join('\n'),'mosaic_gst_violations.csv');
 }
 function exportPhantomCSV(){
-  const h=['Invoice ID','Vendor ID','Vendor Name','Item','Qty','Unit Price','Amount Charged','Pattern'];
-  const r=phantomItems.map(p=>[p.invoice_id,p.vendor_id,p.vendor_name,`"${p.item_name}"`,p.quantity,p.unit_price,p.billed_amount,p.pattern].join(','));
-  dl([h.join(','),...r].join('\n'),'mosaic_phantom_items.csv');
-}
-function exportHSNCSV(){
-  const h=['Invoice ID','Vendor ID','Vendor Name','Item','Billed HSN','Correct HSN','Billed GST%','Correct GST%','Extra Tax Paid'];
-  const r=hsnMismatches.map(h=>[h.invoice_id,h.vendor_id,h.vendor_name,`"${h.item_name}"`,h.billed_hsn,h.correct_hsn,h.billed_gst,h.correct_gst,h.extra_tax].join(','));
-  dl([h.join(','),...r].join('\n'),'mosaic_hsn_mismatches.csv');
-}
-function dl(content,filename){
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([content],{type:'text/csv'}));
-  a.download=filename;a.click();
+  const h='Invoice ID,Vendor ID,Vendor Name,Item,Qty,Unit Price,Amount Charged';
+  const r=phantomFilt.map(d=>[d.invoice_id,d.vendor_id,d.vendor_name,`"${d.item_name}"`,d.quantity,d.unit_price,d.billed_amount].join(','));
+  dl([h,...r].join('\n'),'mosaic_phantom_items.csv');
 }
 
 init();
