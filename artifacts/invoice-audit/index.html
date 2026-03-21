@@ -202,7 +202,6 @@ tbody td{padding:9px 12px;vertical-align:middle}
     <div class="tab active" onclick="sw('ov')">Overview</div>
     <div class="tab" onclick="sw('inv')">All Invoices</div>
     <div class="tab" onclick="sw('ph')">Phantom Items</div>
-    <div class="tab" onclick="sw('pri')">Audit Priority</div>
     <div class="tab" onclick="sw('disc')">Discrepancies</div>
   </div>
 
@@ -309,22 +308,7 @@ tbody td{padding:9px 12px;vertical-align:middle}
           <option value="clean">Clean</option>
         </select>
         <select class="sel" id="inv-vendor"><option value="">All vendors</option></select>
-        <select class="sel" id="inv-month">
-          <option value="">All months</option>
-          <option value="2025-01">Jan 2025</option>
-          <option value="2025-02">Feb 2025</option>
-          <option value="2025-03">Mar 2025</option>
-          <option value="2025-04">Apr 2025</option>
-          <option value="2025-05">May 2025</option>
-          <option value="2025-06">Jun 2025</option>
-          <option value="2025-07">Jul 2025</option>
-          <option value="2025-08">Aug 2025</option>
-          <option value="2025-09">Sep 2025</option>
-          <option value="2025-10">Oct 2025</option>
-          <option value="2025-11">Nov 2025</option>
-          <option value="2025-12">Dec 2025</option>
-        </select>
-        <span class="date-sep">or</span>
+        
         <input class="inp inp-date" id="inv-from" type="date" title="From date">
         <span class="date-sep">→</span>
         <input class="inp inp-date" id="inv-to" type="date" title="To date">
@@ -365,45 +349,37 @@ tbody td{padding:9px 12px;vertical-align:middle}
         <div style="font-size:12px;color:var(--muted)">Items billed with no rate card entry. Requires vendor dialogue before recovery.</div>
         <div class="ph-stat" id="ph-stat">—</div>
       </div>
-      <div class="sec">Negotiation intelligence — per vendor</div>
-      <div class="neg-grid" id="neg-grid"></div>
-      <div class="sec">All phantom line items</div>
-      <div class="tbl-w">
-        <table>
-          <thead><tr><th>Invoice</th><th>Vendor</th><th>Item</th><th>Qty</th><th>Unit price</th><th>Charged</th><th>Pattern</th></tr></thead>
-          <tbody id="ph-body"></tbody>
-        </table>
-      </div>
-      <button class="btn-exp" style="margin-top:10px;background:var(--red-bg);color:var(--red);border-color:#f5c6c6" onclick="expPhCSV()">⬇ Download CSV</button>
-    </div>
-
-    <!-- ══ PRIORITY ══ -->
-    <div class="tp" id="tp-pri">
-      <div class="pri-hdr">
-        <div class="pri-title">Audit Priority Queue</div>
-        <div style="font-size:12px;color:var(--muted)">Invoices above ₹10L. A 1% error here = more than many vendors' total overcharge.</div>
-      </div>
-      <div class="inv-stats" style="margin-bottom:16px">
-        <div class="ist"><div class="isv a" id="pri-cnt">—</div><div class="isl">Above ₹10L</div></div>
-        <div class="ist"><div class="isv r" id="pri-val">—</div><div class="isl">Total value</div></div>
-        <div class="ist"><div class="isv r" id="pri-err">—</div><div class="isl">With errors</div></div>
-        <div class="ist"><div class="isv a" id="pri-vnd">—</div><div class="isl">Vendors</div></div>
+      <div class="tbl-controls">
+        <input class="inp inp-w200" id="ph-q" type="text" placeholder="Invoice ID, vendor, item...">
+        <select class="sel" id="ph-vendor"><option value="">All vendors</option></select>
+        <select class="sel" id="ph-pattern">
+          <option value="">All patterns</option>
+          <option value="fee">Fee</option>
+          <option value="levy">Levy</option>
+          <option value="charge">Charge</option>
+          <option value="other">Other</option>
+        </select>
+        <button class="btn-exp" onclick="expPhCSV()">⬇ CSV</button>
+        <div class="tbl-ct" id="ph-ct"></div>
       </div>
       <div class="tbl-w">
         <table>
           <thead><tr>
-            <th onclick="sortPri('invoice_id')">Invoice ↕</th>
-            <th onclick="sortPri('vendor_name')">Vendor ↕</th>
-            <th onclick="sortPri('total')">Total ↕</th>
-            <th>Date</th>
-            <th onclick="sortPri('errors')">Errors ↕</th>
-            <th onclick="sortPri('overcharge')">Overcharge ↕</th>
-            <th>Status</th>
+            <th onclick="sortPh('invoice_id')">Invoice ↕</th>
+            <th onclick="sortPh('vendor_name')">Vendor ↕</th>
+            <th onclick="sortPh('item_name')">Item ↕</th>
+            <th onclick="sortPh('quantity')">Qty ↕</th>
+            <th onclick="sortPh('unit_price')">Unit price ↕</th>
+            <th onclick="sortPh('billed_amount')">Charged ↕</th>
+            <th>Pattern</th>
           </tr></thead>
-          <tbody id="pri-body"></tbody>
+          <tbody id="ph-body"></tbody>
         </table>
       </div>
+      <div class="pag" id="ph-pag"></div>
     </div>
+
+    
 
     <!-- ══ DISCREPANCIES ══ -->
     <div class="tp" id="tp-disc">
@@ -546,8 +522,7 @@ async function init(){
   const invArr=Object.values(invAuditMap).map(inv=>({...inv,flags:[...inv.flags]}));
   const flaggedInvs=invArr.filter(inv=>inv.errors>0||inv.phantom_count>0);
   const cleanInvs=invArr.filter(inv=>inv.errors===0&&inv.phantom_count===0);
-  priorityInvs=invArr.filter(inv=>inv.total>=1000000).sort((a,b)=>b.total-a.total);
-  priSorted=[...priorityInvs];
+  
 
   const vSorted=Object.entries(byV).sort((a,b)=>b[1].oc-a[1].oc);
   const top=vSorted[0];
@@ -641,39 +616,18 @@ async function init(){
 
   // PHANTOM TAB
   document.getElementById('ph-stat').textContent=`${phantomItems.length} items · ${inr(phTotal)} · across ${phVends} vendors`;
-  const phByV={};
-  for(const p of phantomItems){
-    if(!phByV[p.vendor_id])phByV[p.vendor_id]={total:0,cnt:0,items:[]};
-    phByV[p.vendor_id].total+=p.billed_amount;phByV[p.vendor_id].cnt++;
-    if(!phByV[p.vendor_id].items.includes(p.item_name))phByV[p.vendor_id].items.push(p.item_name);
-  }
-  document.getElementById('neg-grid').innerHTML=Object.entries(phByV).sort((a,b)=>b[1].total-a[1].total).map(([v,d])=>{
-    const avg=d.total/d.cnt;
-    const prop=Math.ceil(avg/500)*500;
-    return `<div class="neg">
-      <div class="neg-v">${v} · ${vN[v]||v}</div>
-      <div class="neg-amt">${inr(d.total)}</div>
-      <div class="neg-ct">${d.cnt} charges · avg ${inr(avg)}/invoice</div>
-      <div class="neg-tags">${[...new Set(d.items)].slice(0,3).map(i=>`<span class="pill p-a">${i}</span>`).join('')}</div>
-      <div class="neg-prop"><div class="neg-prop-l">Proposed contract addition</div><div class="neg-prop-amt">₹${prop.toLocaleString('en-IN')} / invoice</div></div>
-    </div>`;
-  }).join('');
-  document.getElementById('ph-body').innerHTML=phantomItems.map(p=>`<tr>
-    <td class="mono">${p.invoice_id}</td>
-    <td><span class="vtag">${p.vendor_id}</span> <span style="color:var(--muted);font-size:11px;margin-left:4px">${p.vendor_name}</span></td>
-    <td style="color:var(--red)">${p.item_name}</td>
-    <td class="mono">${p.quantity}</td>
-    <td class="mono">${inrF(p.unit_price)}</td>
-    <td style="color:var(--red);font-family:var(--mono);font-weight:600">${inrF(p.billed_amount)}</td>
-    <td><span class="pill p-a">${p.pattern}</span></td>
-  </tr>`).join('');
+  vSorted.forEach(([v])=>{
+    const o=document.createElement('option');
+    o.value=v;o.textContent=`${v} · ${vN[v]||v}`;
+    document.getElementById('ph-vendor').appendChild(o);
+  });
+  phFiltered=[...phantomItems];
+  applyPhFilters();
+  document.getElementById('ph-q').addEventListener('input',applyPhFilters);
+  document.getElementById('ph-vendor').addEventListener('change',applyPhFilters);
+  document.getElementById('ph-pattern').addEventListener('change',applyPhFilters);
 
-  // PRIORITY TAB
-  document.getElementById('pri-cnt').textContent=priorityInvs.length.toLocaleString();
-  document.getElementById('pri-val').textContent=inr(priorityInvs.reduce((s,i)=>s+i.total,0));
-  document.getElementById('pri-err').textContent=priorityInvs.filter(i=>i.errors>0||i.phantom_count>0).length.toLocaleString();
-  document.getElementById('pri-vnd').textContent=[...new Set(priorityInvs.map(i=>i.vendor_id))].length.toLocaleString();
-  renderPri();
+  
 
   // DISCREPANCY TAB
   discFiltered=[...discrepancies];
@@ -777,23 +731,7 @@ function renderInvPag(){
 }
 function invGo(n){const t=Math.ceil(invFiltered.length/PP);if(n<1||n>t)return;invPage=n;renderInv();renderInvPag();document.querySelector('#tp-inv .tbl-w').scrollIntoView({behavior:'smooth'});}
 
-// ── PRIORITY ──
-function renderPri(){
-  document.getElementById('pri-body').innerHTML=priSorted.map(inv=>{
-    const hasErr=inv.errors>0||inv.phantom_count>0;
-    const flag=inv.total>=10000000?'₹1Cr+':inv.total>=5000000?'₹50L+':'₹10L+';
-    return `<tr>
-      <td class="mono">${inv.invoice_id}</td>
-      <td><span class="vtag">${inv.vendor_id}</span> <span style="color:var(--ink2);font-size:12px;margin-left:4px">${inv.vendor_name}</span></td>
-      <td style="font-family:var(--mono);font-weight:600;color:var(--amber)">${inr(inv.total)}</td>
-      <td class="mono">${inv.invoice_date||'—'}</td>
-      <td style="${hasErr?'color:var(--red);font-family:var(--mono);font-weight:600':'color:var(--dim)'}">${inv.errors||inv.phantom_count||'—'}</td>
-      <td style="${inv.overcharge>0?'color:var(--red);font-family:var(--mono);font-weight:600':'color:var(--dim)'}">${inv.overcharge>0?'+'+inr(inv.overcharge):'—'}</td>
-      <td><span class="pill ${hasErr?'p-r':'p-g'}">${hasErr?'⚑ '+flag:'Clean'}</span></td>
-    </tr>`;
-  }).join('');
-}
-function sortPri(k){if(priSK===k)priSD*=-1;else{priSK=k;priSD=-1;}priSorted.sort((a,b)=>typeof a[k]==='string'?priSD*a[k].localeCompare(b[k]):priSD*(a[k]-b[k]));renderPri();}
+
 
 // ── DISCREPANCIES ──
 function applyDiscFilters(){
@@ -831,6 +769,47 @@ function renderDiscPag(){
 }
 function discGo(n){const t=Math.ceil(discFiltered.length/PP);if(n<1||n>t)return;discPage=n;renderDisc();renderDiscPag();document.querySelector('#tp-disc .tbl-w').scrollIntoView({behavior:'smooth'});}
 
+  // ── PHANTOM TABLE ──
+  let phFiltered=[],phPage=1,phSK='billed_amount',phSD=-1;
+  function applyPhFilters(){
+    const q=document.getElementById('ph-q').value.toLowerCase();
+    const vendor=document.getElementById('ph-vendor').value;
+    const pattern=document.getElementById('ph-pattern').value;
+    phFiltered=phantomItems.filter(p=>
+      (!q||p.invoice_id.toLowerCase().includes(q)||p.vendor_name.toLowerCase().includes(q)||p.vendor_id.toLowerCase().includes(q)||p.item_name.toLowerCase().includes(q))
+      &&(!vendor||p.vendor_id===vendor)
+      &&(!pattern||p.pattern===pattern));
+    phFiltered.sort((a,b)=>typeof a[phSK]==='string'?phSD*a[phSK].localeCompare(b[phSK]):phSD*(a[phSK]-b[phSK]));
+    phPage=1;
+    document.getElementById('ph-ct').textContent=`${phFiltered.length.toLocaleString()} items`;
+    renderPh();renderPhPag();
+  }
+  function sortPh(k){if(phSK===k)phSD*=-1;else{phSK=k;phSD=-1;}applyPhFilters();}
+  function renderPh(){
+    const rows=phFiltered.slice((phPage-1)*PP,phPage*PP);
+    document.getElementById('ph-body').innerHTML=rows.map(p=>`<tr>
+      <td class="mono">${p.invoice_id}</td>
+      <td><span class="vtag">${p.vendor_id}</span> <span style="color:var(--muted);font-size:11px;margin-left:4px">${p.vendor_name}</span></td>
+      <td style="color:var(--red)">${p.item_name}</td>
+      <td class="mono">${p.quantity}</td>
+      <td class="mono">${inrF(p.unit_price)}</td>
+      <td style="color:var(--red);font-family:var(--mono);font-weight:600">${inrF(p.billed_amount)}</td>
+      <td><span class="pill p-a">${p.pattern}</span></td>
+    </tr>`).join('');
+  }
+  function renderPhPag(){
+    const tot=Math.ceil(phFiltered.length/PP);
+    const p=document.getElementById('ph-pag');
+    if(tot<=1){p.innerHTML='';return;}
+    let h=`<button class="pg" onclick="phGo(${phPage-1})" ${phPage===1?'disabled':''}>← Prev</button>`;
+    for(let i=1;i<=tot;i++){
+      if(i===1||i===tot||Math.abs(i-phPage)<=2)h+=`<button class="pg ${i===phPage?'on':''}" onclick="phGo(${i})">${i}</button>`;
+      else if(Math.abs(i-phPage)===3)h+=`<span style="color:var(--dim);padding:0 3px">…</span>`;
+    }
+    h+=`<button class="pg" onclick="phGo(${phPage+1})" ${phPage===tot?'disabled':''}>Next →</button>`;
+    p.innerHTML=h;
+  }
+  function phGo(n){const t=Math.ceil(phFiltered.length/PP);if(n<1||n>t)return;phPage=n;renderPh();renderPhPag();document.querySelector('#tp-ph .tbl-w').scrollIntoView({behavior:'smooth'});}
 // ── EXPORTS ──
 function expInvCSV(){
   const h=['Invoice ID','Vendor ID','Vendor Name','Date','Total','Errors','Overcharge','Phantom Items','Phantom Amount','Flags'];
