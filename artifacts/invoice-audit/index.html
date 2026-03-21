@@ -22,22 +22,22 @@ body{font-family:var(--sans);background:var(--cream);color:var(--ink);min-height
 /* LOADER */
 #loader{position:fixed;inset:0;background:var(--cream);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px}
 .ld-title{font-family:var(--serif);font-size:20px;color:var(--ink)}
-.ld-label{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:1px}
-.ld-bar-w{width:220px;height:2px;background:var(--rule)}
-.ld-bar{height:2px;background:var(--red);width:0%;transition:width .3s}
+.ld-lbl{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:1px}
+.ld-bw{width:220px;height:2px;background:var(--rule)}
+.ld-b{height:2px;background:var(--red);width:0%;transition:width .3s}
 .ld-ct{font-family:var(--mono);font-size:10px;color:var(--dim)}
 
 /* MASTHEAD */
 .mast{border-bottom:3px solid var(--ink);padding:14px 2rem 10px;display:flex;align-items:flex-end;justify-content:space-between;position:sticky;top:0;z-index:100;background:var(--cream)}
-.mast-kicker{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:3px}
-.mast-title{font-family:var(--serif);font-size:22px;font-weight:900;color:var(--ink);line-height:1}
+.mast-k{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:3px}
+.mast-t{font-family:var(--serif);font-size:22px;font-weight:900;color:var(--ink);line-height:1}
 .mast-r{font-family:var(--mono);font-size:10px;color:var(--muted);text-align:right;line-height:1.7}
 .live{color:var(--red);display:flex;align-items:center;gap:4px;justify-content:flex-end}
 .live-dot{width:5px;height:5px;background:var(--red);border-radius:50%;animation:blink 1.5s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
 
 /* TABS */
-.tab-bar{border-bottom:1px solid var(--rule);padding:0 2rem;display:flex;gap:0;position:sticky;top:57px;z-index:99;background:var(--cream)}
+.tab-bar{border-bottom:1px solid var(--rule);padding:0 2rem;display:flex;position:sticky;top:57px;z-index:99;background:var(--cream)}
 .tab{font-family:var(--mono);font-size:10px;color:var(--muted);padding:9px 16px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
 .tab:hover{color:var(--ink)}
 .tab.active{color:var(--red);border-bottom-color:var(--red)}
@@ -46,68 +46,87 @@ body{font-family:var(--sans);background:var(--cream);color:var(--ink);min-height
 
 /* CONTAINER */
 .c{max-width:1200px;margin:0 auto;padding:2rem}
-.sec{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;margin-top:2rem;display:flex;align-items:center;gap:10px}
+.sec{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;margin-top:1.8rem;display:flex;align-items:center;gap:10px}
 .sec::after{content:'';flex:1;height:1px;background:var(--rule)}
 
-/* HERO */
-.hero{margin-bottom:18px}
+/* HERO ROW */
+.hero-row{display:grid;grid-template-columns:1fr auto;gap:32px;align-items:center;border-bottom:1px solid var(--rule);padding-bottom:20px;margin-bottom:18px}
 .hero-eye{font-family:var(--mono);font-size:10px;color:var(--red);letter-spacing:2px;text-transform:uppercase;margin-bottom:2px}
-.hero-num{font-family:var(--serif);font-size:80px;font-weight:900;color:var(--red);line-height:.9;letter-spacing:-3px;margin-bottom:8px}
+.hero-num{font-family:var(--serif);font-size:78px;font-weight:900;color:var(--red);line-height:.9;letter-spacing:-3px;margin-bottom:8px}
 .hero-sub{font-size:12px;color:var(--muted)}
 .hero-sub b{color:var(--amber)}
 
-/* STATS ROW */
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);margin-bottom:16px}
-.stat{background:var(--cream);padding:12px 14px}
-.sv{font-family:var(--serif);font-size:28px;font-weight:700;line-height:1;margin-bottom:3px}
-.sv.r{color:var(--red)}.sv.a{color:var(--amber)}.sv.b{color:var(--blue)}.sv.g{color:var(--green)}
-.sl{font-family:var(--mono);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+/* DONUT */
+.donut-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:140px}
+.donut-title{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;text-align:center}
+.donut-canvas-wrap{position:relative;width:110px;height:110px}
+.donut-canvas-wrap canvas{position:absolute;inset:0}
+.donut-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none}
+.donut-pct{font-family:var(--serif);font-size:18px;font-weight:700;color:var(--red);line-height:1}
+.donut-lbl{font-family:var(--mono);font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:1px}
+.donut-legend{display:flex;flex-direction:column;gap:4px}
+.dl{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted)}
+.dl-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
 
-/* REASONS */
-.reasons{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);margin-bottom:16px}
-.rsn{background:var(--cream);padding:12px 14px;position:relative}
-.rsn-n{font-family:var(--mono);font-size:28px;color:var(--cream3);position:absolute;top:8px;right:10px;line-height:1}
-.rsn-tag{display:inline-block;font-family:var(--mono);font-size:9px;padding:2px 6px;border-radius:2px;margin-bottom:6px}
+/* 3 REASON CARDS */
+.reason-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);margin-bottom:16px}
+.rc{background:var(--cream);padding:14px 16px;border-top:3px solid transparent}
+.rc.r{border-top-color:var(--red)}
+.rc.b{border-top-color:var(--blue)}
+.rc.a{border-top-color:var(--amber)}
+.rc-tag{display:inline-block;font-family:var(--mono);font-size:9px;padding:2px 7px;border-radius:2px;margin-bottom:8px}
 .tr{background:var(--red-bg);color:var(--red);border:1px solid #f5c6c6}
-.ta{background:var(--amber-bg);color:var(--amber);border:1px solid #f5d99a}
 .tb{background:var(--blue-bg);color:var(--blue);border:1px solid #b8d0f8}
-.rsn-val{font-family:var(--serif);font-size:22px;font-weight:700;color:var(--ink);line-height:1;margin-bottom:2px}
-.rsn-sub{font-size:10px;color:var(--muted)}
+.ta{background:var(--amber-bg);color:var(--amber);border:1px solid #f5d99a}
+.rc-big{font-family:var(--serif);font-size:26px;font-weight:700;line-height:1;margin-bottom:3px}
+.rc-big.r{color:var(--red)}.rc-big.b{color:var(--blue)}.rc-big.a{color:var(--amber)}
+.rc-mid{font-size:12px;font-weight:500;color:var(--ink2);margin-bottom:2px}
+.rc-div{height:1px;background:var(--cream3);margin:8px 0}
+.rc-sub{font-size:10px;color:var(--muted)}
 
-/* BOTTOM ROW */
+/* OFFENDER + RUNNERS */
 .bot{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--rule);border:1px solid var(--rule);margin-bottom:16px}
-.offender{background:var(--ink);padding:14px 18px}
+.offender{background:var(--ink);padding:16px 20px}
 .off-l{font-family:var(--mono);font-size:9px;color:#555;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
-.off-name{font-size:13px;font-weight:600;color:#fff;margin-bottom:3px}
-.off-amt{font-family:var(--serif);font-size:30px;font-weight:700;color:var(--red);line-height:1;margin-bottom:3px}
+.off-name{font-size:14px;font-weight:600;color:#fff;margin-bottom:3px}
+.off-amt{font-family:var(--serif);font-size:32px;font-weight:700;color:var(--red);line-height:1;margin-bottom:4px}
 .off-sub{font-family:var(--mono);font-size:10px;color:#555}
-.cov{background:var(--cream);padding:14px 18px}
-.cov-l{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
-.cov-nums{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
-.cov-big{font-family:var(--serif);font-size:30px;font-weight:700;color:var(--red)}
-.cov-sm{font-family:var(--serif);font-size:30px;font-weight:700;color:var(--ink)}
-.cov-lbl{font-size:10px;color:var(--muted)}
-.cov-bar{background:var(--cream3);height:5px;border-radius:1px;margin-bottom:4px}
-.cov-fill{height:5px;background:var(--red);border-radius:1px;transition:width .8s ease}
-.cov-pct{font-family:var(--mono);font-size:10px;color:var(--red)}
+.runners{background:var(--cream);padding:16px 20px}
+.run-l{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
+.run-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--cream3);font-size:12px}
+.run-row:last-child{border-bottom:none}
+.run-name{color:var(--ink2)}
+.run-amt{font-family:var(--mono);font-size:11px;color:var(--red);font-weight:600}
 
-/* CHART */
-.chart-box{border:1px solid var(--rule);padding:18px;background:var(--cream);margin-bottom:8px}
-.chart-box canvas{max-height:220px}
-.chart-lbl{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
+/* CHARTS */
+.charts-2{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--rule);border:1px solid var(--rule);margin-bottom:8px}
+.chart-box{background:var(--cream);padding:18px;border:none}
+.chart-heading{font-family:var(--serif);font-size:17px;font-weight:700;color:var(--ink);margin-bottom:2px}
+.chart-sub-lbl{font-size:11px;color:var(--muted);margin-bottom:14px}
+.chart-box canvas{max-height:200px}
 
-/* INVOICE TABLE */
+/* INVOICE TAB */
+.inv-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);margin-bottom:16px}
+.ist{background:var(--cream);padding:12px 14px}
+.isv{font-family:var(--serif);font-size:26px;font-weight:700;line-height:1;margin-bottom:3px}
+.isv.r{color:var(--red)}.isv.g{color:var(--green)}.isv.a{color:var(--amber)}
+.isl{font-family:var(--mono);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+
 .tbl-controls{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
 .inp{background:var(--cream);border:1px solid var(--rule);color:var(--ink);padding:7px 11px;border-radius:2px;font-size:12px;outline:none;font-family:var(--sans)}
 .inp:focus{border-color:var(--ink)}
-.inp-search{width:200px}
+.inp-w200{width:200px}
+.inp-date{width:130px;font-family:var(--mono);font-size:11px}
 .sel{background:var(--cream);border:1px solid var(--rule);color:var(--ink);padding:7px 10px;border-radius:2px;font-size:12px;outline:none;cursor:pointer;font-family:var(--sans)}
 .sel:focus{border-color:var(--ink)}
-.tbl-ct{font-family:var(--mono);font-size:10px;color:var(--muted);margin-left:auto}
-.btn-exp{background:var(--green-bg);color:var(--green);border:1px solid #a8dbbe;padding:7px 12px;border-radius:2px;font-family:var(--mono);font-size:10px;cursor:pointer;letter-spacing:.5px}
+.date-sep{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.btn-exp{background:var(--green-bg);color:var(--green);border:1px solid #a8dbbe;padding:7px 12px;border-radius:2px;font-family:var(--mono);font-size:10px;cursor:pointer;letter-spacing:.5px;transition:all .15s}
 .btn-exp:hover{background:#d0eedc}
+.btn-clr{background:var(--cream2);color:var(--muted);border:1px solid var(--rule);padding:7px 10px;border-radius:2px;font-family:var(--mono);font-size:10px;cursor:pointer;transition:all .15s}
+.btn-clr:hover{color:var(--ink)}
+.tbl-ct{font-family:var(--mono);font-size:10px;color:var(--muted);margin-left:auto}
 
-.tbl-w{border:1px solid var(--rule);overflow:hidden;border-radius:2px}
+.tbl-w{border:1px solid var(--rule);overflow:hidden}
 table{width:100%;border-collapse:collapse;font-size:12px}
 thead th{background:var(--cream2);padding:8px 12px;text-align:left;font-family:var(--mono);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--rule);cursor:pointer;white-space:nowrap}
 thead th:hover{color:var(--ink)}
@@ -125,7 +144,7 @@ tbody td{padding:9px 12px;vertical-align:middle}
 .p-g{background:var(--green-bg);color:var(--green);border:1px solid #a8dbbe}
 
 /* PHANTOM */
-.ph-header{border-left:4px solid var(--red);padding:14px 18px;background:#fff8f8;border-top:1px solid var(--rule);border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);margin-bottom:16px}
+.ph-hdr{border-left:4px solid var(--red);padding:14px 18px;background:#fff8f8;border:1px solid var(--rule);border-left:4px solid var(--red);margin-bottom:16px}
 .ph-title{font-family:var(--serif);font-size:18px;color:var(--red);margin-bottom:4px}
 .ph-stat{font-family:var(--mono);font-size:11px;color:var(--red);margin-top:6px}
 .neg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);margin-bottom:16px}
@@ -134,14 +153,13 @@ tbody td{padding:9px 12px;vertical-align:middle}
 .neg-amt{font-family:var(--serif);font-size:22px;font-weight:700;color:var(--red);line-height:1;margin-bottom:3px}
 .neg-ct{font-size:11px;color:var(--muted);margin-bottom:8px}
 .neg-tags{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:8px}
-.neg-prop{background:var(--ink);padding:8px 10px;border-radius:2px}
+.neg-prop{background:var(--ink);padding:8px 10px}
 .neg-prop-l{font-family:var(--mono);font-size:8px;color:#555;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px}
 .neg-prop-amt{font-family:var(--serif);font-size:15px;font-weight:700;color:#f5a623}
 
 /* PRIORITY */
-.pri-header{border-left:4px solid var(--amber);padding:14px 18px;background:#fffbf5;border-top:1px solid var(--rule);border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);margin-bottom:16px}
+.pri-hdr{border-left:4px solid var(--amber);padding:14px 18px;background:#fffbf5;border-top:1px solid var(--rule);border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);margin-bottom:16px}
 .pri-title{font-family:var(--serif);font-size:18px;color:var(--amber);margin-bottom:4px}
-.pri-stat{font-family:var(--mono);font-size:11px;color:var(--amber);margin-top:6px}
 
 /* PAGINATION */
 .pag{display:flex;justify-content:center;gap:4px;margin-top:14px;flex-wrap:wrap}
@@ -150,12 +168,12 @@ tbody td{padding:9px 12px;vertical-align:middle}
 .pg:disabled{opacity:.3;cursor:default}
 
 .footer{text-align:center;padding:1.5rem;font-family:var(--mono);font-size:9px;color:var(--dim);border-top:1px solid var(--rule);margin-top:2rem;letter-spacing:1px}
-
 @media(max-width:800px){
-  .stats,.reasons{grid-template-columns:1fr 1fr}
-  .bot,.neg-grid{grid-template-columns:1fr}
-  .hero-num{font-size:56px}
+  .reason-cards,.bot,.charts-2,.neg-grid{grid-template-columns:1fr}
+  .hero-row{grid-template-columns:1fr}
+  .hero-num{font-size:52px}
   .c{padding:1rem}
+  .inv-stats{grid-template-columns:1fr 1fr}
 }
 </style>
 </head>
@@ -163,19 +181,19 @@ tbody td{padding:9px 12px;vertical-align:middle}
 
 <div id="loader">
   <div class="ld-title">Invoice Audit Intelligence</div>
-  <div class="ld-label" id="ld-lbl">Connecting...</div>
-  <div class="ld-bar-w"><div class="ld-bar" id="ld-bar"></div></div>
+  <div class="ld-lbl" id="ld-lbl">Connecting...</div>
+  <div class="ld-bw"><div class="ld-b" id="ld-b"></div></div>
   <div class="ld-ct" id="ld-ct"></div>
 </div>
 
 <div id="app" style="display:none">
   <div class="mast">
     <div>
-      <div class="mast-kicker">Mosaic Wellness · Finance</div>
-      <div class="mast-title">Invoice Audit Intelligence</div>
+      <div class="mast-k">Mosaic Wellness · Finance</div>
+      <div class="mast-t">Invoice Audit Intelligence</div>
     </div>
     <div class="mast-r">
-      <div id="mast-meta">FY 2025 · 21,800 line items</div>
+      <div id="mast-meta">FY 2025</div>
       <div class="live"><div class="live-dot"></div>Live</div>
     </div>
   </div>
@@ -190,24 +208,59 @@ tbody td{padding:9px 12px;vertical-align:middle}
 
   <div class="c">
 
-    <!-- OVERVIEW -->
+    <!-- ══ OVERVIEW ══ -->
     <div class="tp active" id="tp-ov">
-      <div class="hero">
-        <div class="hero-eye">OVERCHARGED · CONTRACTED ITEMS</div>
-        <div class="hero-num" id="h-oc">—</div>
-        <div class="hero-sub">on contracted items &nbsp;·&nbsp; <b id="h-ph-sub">+ ₹— phantom under investigation</b></div>
+
+      <!-- HERO + DONUT -->
+      <div class="hero-row">
+        <div>
+          <div class="hero-eye">Overcharged · Contracted Items</div>
+          <div class="hero-num" id="h-oc">—</div>
+          <div class="hero-sub">on contracted items &nbsp;·&nbsp; <b id="h-ph-sub">loading...</b></div>
+        </div>
+        <div class="donut-wrap">
+          <div class="donut-title">Invoice Coverage</div>
+          <div class="donut-canvas-wrap">
+            <canvas id="donut-chart" width="110" height="110"></canvas>
+            <div class="donut-center">
+              <div class="donut-pct" id="donut-pct">—</div>
+              <div class="donut-lbl">flagged</div>
+            </div>
+          </div>
+          <div class="donut-legend">
+            <div class="dl"><div class="dl-dot" style="background:var(--red)"></div><span id="dl-flag">— flagged</span></div>
+            <div class="dl"><div class="dl-dot" style="background:var(--cream3)"></div><span id="dl-clean">— clean</span></div>
+          </div>
+        </div>
       </div>
 
-      <div class="stats">
-        <div class="stat"><div class="sv r" id="s-vendors">—</div><div class="sl">Vendors flagged</div></div>
-        <div class="stat"><div class="sv r" id="s-errors">—</div><div class="sl">Price errors</div></div>
-        <div class="stat"><div class="sv b" id="s-gst">—</div><div class="sl">GST errors</div></div>
-        <div class="stat"><div class="sv a" id="s-ph">—</div><div class="sl">Phantom items</div></div>
+      <!-- 3 REASON CARDS -->
+      <div class="sec">3 reasons · ranked by impact</div>
+      <div class="reason-cards">
+        <div class="rc r">
+          <div class="rc-tag tr">01 · Price overcharge</div>
+          <div class="rc-big r" id="rc1-big">—</div>
+          <div class="rc-mid" id="rc1-mid">—</div>
+          <div class="rc-div"></div>
+          <div class="rc-sub">Billed above contracted unit rate</div>
+        </div>
+        <div class="rc b">
+          <div class="rc-tag tb">02 · GST inflation</div>
+          <div class="rc-big b" id="rc2-big">—</div>
+          <div class="rc-mid" id="rc2-mid">—</div>
+          <div class="rc-div"></div>
+          <div class="rc-sub">Correct price · inflated GST rate</div>
+        </div>
+        <div class="rc a">
+          <div class="rc-tag ta">03 · Phantom billing</div>
+          <div class="rc-big a" id="rc3-big">—</div>
+          <div class="rc-mid" id="rc3-mid">—</div>
+          <div class="rc-div"></div>
+          <div class="rc-sub">Not in rate card · under renegotiation</div>
+        </div>
       </div>
 
-      <div class="sec">Why — top 3 reasons</div>
-      <div class="reasons" id="reasons-grid"></div>
-
+      <!-- TOP OFFENDER + RUNNERS -->
       <div class="bot">
         <div class="offender">
           <div class="off-l">Top offender</div>
@@ -215,35 +268,39 @@ tbody td{padding:9px 12px;vertical-align:middle}
           <div class="off-amt" id="off-amt">—</div>
           <div class="off-sub" id="off-sub">—</div>
         </div>
-        <div class="cov">
-          <div class="cov-l">Invoice coverage</div>
-          <div class="cov-nums">
-            <div><div class="cov-big" id="cov-flagged">—</div><div class="cov-lbl">flagged</div></div>
-            <div style="text-align:right"><div class="cov-sm" id="cov-total">—</div><div class="cov-lbl">total</div></div>
-          </div>
-          <div class="cov-bar"><div class="cov-fill" id="cov-fill" style="width:0%"></div></div>
-          <div class="cov-pct" id="cov-pct">—</div>
+        <div class="runners">
+          <div class="run-l">Runner ups</div>
+          <div id="runners-list"></div>
         </div>
       </div>
 
-      <div class="sec">Overcharge by vendor</div>
-      <div class="chart-box">
-        <div class="chart-lbl">₹ overcharged per vendor</div>
-        <canvas id="vc"></canvas>
+      <!-- CHARTS -->
+      <div class="charts-2">
+        <div class="chart-box">
+          <div class="chart-heading">Overcharge by Vendor</div>
+          <div class="chart-sub-lbl">Top 3 in red · sorted descending</div>
+          <canvas id="vc"></canvas>
+        </div>
+        <div class="chart-box">
+          <div class="chart-heading">Monthly Overcharge</div>
+          <div class="chart-sub-lbl">₹ overcharged per month · FY 2025</div>
+          <canvas id="mc"></canvas>
+        </div>
       </div>
+
     </div>
 
-    <!-- ALL INVOICES -->
+    <!-- ══ ALL INVOICES ══ -->
     <div class="tp" id="tp-inv">
-      <div class="stats" style="margin-top:0;margin-bottom:16px">
-        <div class="stat"><div class="sv r" id="inv-s-total">—</div><div class="sl">Total invoices</div></div>
-        <div class="stat"><div class="sv r" id="inv-s-flagged">—</div><div class="sl">Flagged</div></div>
-        <div class="stat"><div class="sv g" id="inv-s-clean">—</div><div class="sl">Clean</div></div>
-        <div class="stat"><div class="sv a" id="inv-s-pct">—</div><div class="sl">Flag rate</div></div>
+      <div class="inv-stats">
+        <div class="ist"><div class="isv" id="is-total">—</div><div class="isl">Total invoices</div></div>
+        <div class="ist"><div class="isv r" id="is-flagged">—</div><div class="isl">Flagged</div></div>
+        <div class="ist"><div class="isv g" id="is-clean">—</div><div class="isl">Clean</div></div>
+        <div class="ist"><div class="isv a" id="is-pct">—</div><div class="isl">Flag rate</div></div>
       </div>
 
       <div class="tbl-controls">
-        <input class="inp inp-search" id="inv-search" type="text" placeholder="Invoice ID, vendor...">
+        <input class="inp inp-w200" id="inv-q" type="text" placeholder="Invoice ID, vendor...">
         <select class="sel" id="inv-flag">
           <option value="">All flags</option>
           <option value="overcharge">Overcharge</option>
@@ -251,9 +308,27 @@ tbody td{padding:9px 12px;vertical-align:middle}
           <option value="phantom">Phantom</option>
           <option value="clean">Clean</option>
         </select>
-        <select class="sel" id="inv-vendor">
-          <option value="">All vendors</option>
+        <select class="sel" id="inv-vendor"><option value="">All vendors</option></select>
+        <select class="sel" id="inv-month">
+          <option value="">All months</option>
+          <option value="2025-01">Jan 2025</option>
+          <option value="2025-02">Feb 2025</option>
+          <option value="2025-03">Mar 2025</option>
+          <option value="2025-04">Apr 2025</option>
+          <option value="2025-05">May 2025</option>
+          <option value="2025-06">Jun 2025</option>
+          <option value="2025-07">Jul 2025</option>
+          <option value="2025-08">Aug 2025</option>
+          <option value="2025-09">Sep 2025</option>
+          <option value="2025-10">Oct 2025</option>
+          <option value="2025-11">Nov 2025</option>
+          <option value="2025-12">Dec 2025</option>
         </select>
+        <span class="date-sep">or</span>
+        <input class="inp inp-date" id="inv-from" type="date" title="From date">
+        <span class="date-sep">→</span>
+        <input class="inp inp-date" id="inv-to" type="date" title="To date">
+        <button class="btn-clr" onclick="clearInvFilters()">Clear</button>
         <select class="sel" id="inv-sort">
           <option value="total-desc">Amount ↓</option>
           <option value="total-asc">Amount ↑</option>
@@ -269,12 +344,12 @@ tbody td{padding:9px 12px;vertical-align:middle}
       <div class="tbl-w">
         <table>
           <thead><tr>
-            <th onclick="invSort('invoice_id')">Invoice</th>
-            <th onclick="invSort('vendor_name')">Vendor</th>
-            <th onclick="invSort('invoice_date')">Date</th>
-            <th onclick="invSort('total')">Amount</th>
-            <th onclick="invSort('errors')">Errors</th>
-            <th onclick="invSort('overcharge')">Overcharge</th>
+            <th onclick="invSortBy('invoice_id')">Invoice ↕</th>
+            <th onclick="invSortBy('vendor_name')">Vendor ↕</th>
+            <th onclick="invSortBy('invoice_date')">Date ↕</th>
+            <th onclick="invSortBy('total')">Amount ↕</th>
+            <th onclick="invSortBy('errors')">Errors ↕</th>
+            <th onclick="invSortBy('overcharge')">Overcharge ↕</th>
             <th>Flags</th>
           </tr></thead>
           <tbody id="inv-body"></tbody>
@@ -283,11 +358,11 @@ tbody td{padding:9px 12px;vertical-align:middle}
       <div class="pag" id="inv-pag"></div>
     </div>
 
-    <!-- PHANTOM -->
+    <!-- ══ PHANTOM ══ -->
     <div class="tp" id="tp-ph">
-      <div class="ph-header">
+      <div class="ph-hdr">
         <div class="ph-title">Phantom Billing</div>
-        <div style="font-size:12px;color:var(--muted)">Items billed with no rate card entry. Not a breach — but requires vendor dialogue and renegotiation.</div>
+        <div style="font-size:12px;color:var(--muted)">Items billed with no rate card entry. Requires vendor dialogue before recovery.</div>
         <div class="ph-stat" id="ph-stat">—</div>
       </div>
       <div class="sec">Negotiation intelligence — per vendor</div>
@@ -302,24 +377,23 @@ tbody td{padding:9px 12px;vertical-align:middle}
       <button class="btn-exp" style="margin-top:10px;background:var(--red-bg);color:var(--red);border-color:#f5c6c6" onclick="expPhCSV()">⬇ Download CSV</button>
     </div>
 
-    <!-- PRIORITY -->
+    <!-- ══ PRIORITY ══ -->
     <div class="tp" id="tp-pri">
-      <div class="pri-header">
+      <div class="pri-hdr">
         <div class="pri-title">Audit Priority Queue</div>
-        <div style="font-size:12px;color:var(--muted)">Invoices above ₹10L. A 1% error here = more than many vendors' entire overcharge.</div>
-        <div class="pri-stat" id="pri-stat">—</div>
+        <div style="font-size:12px;color:var(--muted)">Invoices above ₹10L. A 1% error here = more than many vendors' total overcharge.</div>
       </div>
-      <div class="stats" style="margin-bottom:16px">
-        <div class="stat"><div class="sv a" id="pri-count">—</div><div class="sl">Above ₹10L</div></div>
-        <div class="stat"><div class="sv r" id="pri-val">—</div><div class="sl">Total value</div></div>
-        <div class="stat"><div class="sv r" id="pri-err">—</div><div class="sl">With errors</div></div>
-        <div class="stat"><div class="sv a" id="pri-vend">—</div><div class="sl">Vendors</div></div>
+      <div class="inv-stats" style="margin-bottom:16px">
+        <div class="ist"><div class="isv a" id="pri-cnt">—</div><div class="isl">Above ₹10L</div></div>
+        <div class="ist"><div class="isv r" id="pri-val">—</div><div class="isl">Total value</div></div>
+        <div class="ist"><div class="isv r" id="pri-err">—</div><div class="isl">With errors</div></div>
+        <div class="ist"><div class="isv a" id="pri-vnd">—</div><div class="isl">Vendors</div></div>
       </div>
       <div class="tbl-w">
         <table>
           <thead><tr>
-            <th onclick="sortPri('invoice_id')">Invoice</th>
-            <th onclick="sortPri('vendor_name')">Vendor</th>
+            <th onclick="sortPri('invoice_id')">Invoice ↕</th>
+            <th onclick="sortPri('vendor_name')">Vendor ↕</th>
             <th onclick="sortPri('total')">Total ↕</th>
             <th>Date</th>
             <th onclick="sortPri('errors')">Errors ↕</th>
@@ -331,10 +405,10 @@ tbody td{padding:9px 12px;vertical-align:middle}
       </div>
     </div>
 
-    <!-- DISCREPANCIES -->
+    <!-- ══ DISCREPANCIES ══ -->
     <div class="tp" id="tp-disc">
       <div class="tbl-controls">
-        <input class="inp inp-search" id="d-search" type="text" placeholder="Invoice, vendor, item...">
+        <input class="inp inp-w200" id="d-q" type="text" placeholder="Invoice, vendor, item...">
         <select class="sel" id="d-type">
           <option value="">All types</option>
           <option value="price">Price</option>
@@ -348,15 +422,13 @@ tbody td{padding:9px 12px;vertical-align:middle}
       <div class="tbl-w">
         <table>
           <thead><tr>
-            <th onclick="sortDisc('invoice_id')">Invoice</th>
-            <th onclick="sortDisc('vendor_id')">Vendor</th>
+            <th onclick="sortDisc('invoice_id')">Invoice ↕</th>
+            <th onclick="sortDisc('vendor_id')">Vendor ↕</th>
             <th>Item</th>
-            <th onclick="sortDisc('quantity')">Qty</th>
-            <th>Contracted</th>
-            <th>Billed</th>
+            <th onclick="sortDisc('quantity')">Qty ↕</th>
+            <th>Contracted</th><th>Billed</th>
             <th onclick="sortDisc('overcharge')">Overcharge ↕</th>
-            <th>GST</th>
-            <th>Type</th>
+            <th>GST</th><th>Type</th>
           </tr></thead>
           <tbody id="d-body"></tbody>
         </table>
@@ -371,29 +443,25 @@ tbody td{padding:9px 12px;vertical-align:middle}
 <script>
 const BASE='https://mosaicfellowship.in/api/data/finance';
 const PP=50;
-
-// Data stores
 let lineItems=[],rateCard=[],invoices=[];
 let discrepancies=[],phantomItems=[],priorityInvs=[];
-let rateMap={},invMap={},invAuditMap={};
+let rateMap={},invAuditMap={};
+let invFiltered=[],invPage=1,invSK='total',invSD=-1;
+let discFiltered=[],discPage=1,discSK='overcharge',discSD=-1;
+let priSorted=[],priSK='total',priSD=-1;
 
-// Filtered/sorted states
-let invFiltered=[],invPage=1,invSortKey='total',invSortDir=-1;
-let discFiltered=[],discPage=1,discSortKey='overcharge',discSortDir=-1;
-let priSorted=[],priSortKey='total',priSortDir=-1;
+const vN={V01:'Delhivery',V02:'BlueDart',V03:'Ecom Express',V04:'Xpressbees',V05:'Ashok Packaging',V06:'Sri Lakshmi Plastics',V07:'Naveen Corrugators',V08:'Sai Pharma',V09:'Kaival Nutra',V10:'Primus Biotech',V11:'Herb Valley',V12:'DigiBoost Media',V13:'PixelCraft Studios',V14:'Brandwise Digital',V15:'CloudNine Ads'};
+const vC={V01:'Logistics',V02:'Logistics',V03:'Logistics',V04:'Logistics',V05:'Packaging',V06:'Packaging',V07:'Packaging',V08:'Raw Materials',V09:'Raw Materials',V10:'Raw Materials',V11:'Raw Materials',V12:'Marketing',V13:'Marketing',V14:'Marketing',V15:'Marketing'};
 
-const vNames={V01:'Delhivery',V02:'BlueDart',V03:'Ecom Express',V04:'Xpressbees',V05:'Ashok Packaging',V06:'Sri Lakshmi Plastics',V07:'Naveen Corrugators',V08:'Sai Pharma',V09:'Kaival Nutra',V10:'Primus Biotech',V11:'Herb Valley',V12:'DigiBoost Media',V13:'PixelCraft Studios',V14:'Brandwise Digital',V15:'CloudNine Ads'};
-const vCat={V01:'Logistics',V02:'Logistics',V03:'Logistics',V04:'Logistics',V05:'Packaging',V06:'Packaging',V07:'Packaging',V08:'Raw Materials',V09:'Raw Materials',V10:'Raw Materials',V11:'Raw Materials',V12:'Marketing',V13:'Marketing',V14:'Marketing',V15:'Marketing'};
-
-function sw(name){
+function sw(n){
   const ns=['ov','inv','ph','pri','disc'];
-  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',ns[i]===name));
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',ns[i]===n));
   document.querySelectorAll('.tp').forEach(p=>p.classList.remove('active'));
-  document.getElementById('tp-'+name).classList.add('active');
+  document.getElementById('tp-'+n).classList.add('active');
 }
 function ld(l,p,c){
   document.getElementById('ld-lbl').textContent=l;
-  document.getElementById('ld-bar').style.width=Math.min(p,100)+'%';
+  document.getElementById('ld-b').style.width=Math.min(p,100)+'%';
   if(c!==undefined)document.getElementById('ld-ct').textContent=c;
 }
 async function fetchAll(ep,lbl,tot){
@@ -408,14 +476,9 @@ async function fetchAll(ep,lbl,tot){
   }
   return all;
 }
-
 const inr=n=>'₹'+Math.abs(n).toLocaleString('en-IN',{maximumFractionDigits:0});
 const inrF=n=>'₹'+Math.abs(n).toLocaleString('en-IN',{maximumFractionDigits:2});
-
-function phPattern(name){
-  const n=name.toLowerCase();
-  return n.includes('fee')?'fee':n.includes('levy')?'levy':n.includes('charge')?'charge':n.includes('tax')?'tax':'other';
-}
+function phPat(name){const n=name.toLowerCase();return n.includes('fee')?'fee':n.includes('levy')?'levy':n.includes('charge')?'charge':n.includes('tax')?'tax':'other';}
 
 async function init(){
   rateCard=await fetchAll('rate-card','Rate Card',2);
@@ -424,174 +487,175 @@ async function init(){
   ld('Running audit engines...',99);
 
   for(const r of rateCard) rateMap[`${r.vendor_id}|${r.item_name}`]=r;
-  for(const inv of invoices) invMap[inv.invoice_id]=inv;
 
-  // Per-invoice audit tracking
   for(const inv of invoices){
     invAuditMap[inv.invoice_id]={
-      invoice_id:inv.invoice_id,
-      vendor_id:inv.vendor_id,
-      vendor_name:vNames[inv.vendor_id]||inv.vendor_id,
-      invoice_date:inv.invoice_date,
-      total:inv.total,
-      subtotal:inv.subtotal,
-      payment_terms:inv.payment_terms,
-      errors:0,overcharge:0,gst_errors:0,phantom_count:0,phantom_amt:0,
+      invoice_id:inv.invoice_id,vendor_id:inv.vendor_id,
+      vendor_name:vN[inv.vendor_id]||inv.vendor_id,
+      invoice_date:inv.invoice_date,total:inv.total,
+      errors:0,overcharge:0,gst_errors:0,
+      phantom_count:0,phantom_amt:0,
       flags:new Set()
     };
   }
 
   let totalOC=0,gstErrs=0;
-  const byVendor={};
+  const byV={};
+  const mOC=new Array(12).fill(0),mCt=new Array(12).fill(0);
 
   for(const li of lineItems){
     const key=`${li.vendor_id}|${li.item_name}`;
-    const contracted=rateMap[key];
+    const con=rateMap[key];
     const ia=invAuditMap[li.invoice_id];
 
-    if(!contracted){
-      phantomItems.push({...li,vendor_name:vNames[li.vendor_id]||li.vendor_id,pattern:phPattern(li.item_name)});
+    if(!con){
+      phantomItems.push({...li,vendor_name:vN[li.vendor_id]||li.vendor_id,pattern:phPat(li.item_name)});
       if(ia){ia.phantom_count++;ia.phantom_amt+=li.billed_amount;ia.flags.add('phantom');}
       continue;
     }
 
-    const exp=Math.round(li.quantity*contracted.contracted_rate*100)/100;
+    const exp=Math.round(li.quantity*con.contracted_rate*100)/100;
     const diff=Math.round((li.billed_amount-exp)*100)/100;
-    const gstWrong=li.billed_gst_rate!==contracted.correct_gst_rate;
+    const gW=li.billed_gst_rate!==con.correct_gst_rate;
 
-    if(Math.abs(diff)>0.5||gstWrong){
-      const type=(Math.abs(diff)>0.5&&gstWrong)?'both':(Math.abs(diff)>0.5)?'price':'gst';
+    if(Math.abs(diff)>0.5||gW){
+      const type=(Math.abs(diff)>0.5&&gW)?'both':(Math.abs(diff)>0.5)?'price':'gst';
+      const mIdx=Math.min(11,Math.floor((parseInt(li.invoice_id.replace('INV-',''))-1)/(5200/12)));
       discrepancies.push({
         invoice_id:li.invoice_id,vendor_id:li.vendor_id,
-        vendor_name:vNames[li.vendor_id]||li.vendor_id,
+        vendor_name:vN[li.vendor_id]||li.vendor_id,
         item_name:li.item_name,quantity:li.quantity,
-        contracted_rate:contracted.contracted_rate,
+        contracted_rate:con.contracted_rate,
         billed_amount:li.billed_amount,expected_amount:exp,
         overcharge:diff,billed_gst:li.billed_gst_rate,
-        correct_gst:contracted.correct_gst_rate,gst_wrong:gstWrong,type
+        correct_gst:con.correct_gst_rate,gst_wrong:gW,type
       });
-      if(!byVendor[li.vendor_id])byVendor[li.vendor_id]={oc:0,cnt:0,gst:0};
-      if(diff>0){byVendor[li.vendor_id].oc+=diff;totalOC+=diff;}
-      if(gstWrong){byVendor[li.vendor_id].gst++;gstErrs++;}
-      byVendor[li.vendor_id].cnt++;
+      if(!byV[li.vendor_id])byV[li.vendor_id]={oc:0,cnt:0};
+      if(diff>0){byV[li.vendor_id].oc+=diff;totalOC+=diff;mOC[mIdx]+=diff;}
+      if(gW)gstErrs++;
+      byV[li.vendor_id].cnt++;
+      mCt[mIdx]++;
       if(ia){
         ia.errors++;
         if(diff>0){ia.overcharge+=diff;ia.flags.add('overcharge');}
-        if(gstWrong){ia.gst_errors++;ia.flags.add('gst');}
+        if(gW){ia.gst_errors++;ia.flags.add('gst');}
       }
     }
   }
 
-  // Finalise invoice audit map
-  const invAuditArr=Object.values(invAuditMap).map(inv=>({
-    ...inv,
-    flags:inv.flags.size===0?['clean']:[...inv.flags]
-  }));
-
-  const flaggedInvs=invAuditArr.filter(inv=>!inv.flags.includes('clean')||inv.phantom_count>0);
-  const cleanInvs=invAuditArr.filter(inv=>inv.flags.includes('clean')&&inv.phantom_count===0);
-
-  // Priority invoices > 10L
-  priorityInvs=invAuditArr.filter(inv=>inv.total>=1000000).sort((a,b)=>b.total-a.total);
+  const invArr=Object.values(invAuditMap).map(inv=>({...inv,flags:[...inv.flags]}));
+  const flaggedInvs=invArr.filter(inv=>inv.errors>0||inv.phantom_count>0);
+  const cleanInvs=invArr.filter(inv=>inv.errors===0&&inv.phantom_count===0);
+  priorityInvs=invArr.filter(inv=>inv.total>=1000000).sort((a,b)=>b.total-a.total);
   priSorted=[...priorityInvs];
 
-  const vSorted=Object.entries(byVendor).sort((a,b)=>b[1].oc-a[1].oc);
-  const top3=vSorted.slice(0,3);
+  const vSorted=Object.entries(byV).sort((a,b)=>b[1].oc-a[1].oc);
+  const top=vSorted[0];
+  const runners=vSorted.slice(1,5);
   const phTotal=phantomItems.reduce((s,p)=>s+p.billed_amount,0);
   const phVends=[...new Set(phantomItems.map(p=>p.vendor_id))].length;
+  const priceOC=discrepancies.filter(d=>d.type==='price'||d.type==='both').reduce((s,d)=>s+(d.overcharge>0?d.overcharge:0),0);
+  const priceLines=discrepancies.filter(d=>d.type==='price'||d.type==='both').length;
+  const pct=Math.round(flaggedInvs.length/invoices.length*100);
 
-  // ── OVERVIEW ──
+  // HERO
   document.getElementById('h-oc').textContent=inr(totalOC);
   document.getElementById('h-ph-sub').textContent=`+ ${inr(phTotal)} phantom under investigation`;
-  document.getElementById('s-vendors').textContent=`${Object.keys(byVendor).length}/15`;
-  document.getElementById('s-errors').textContent=discrepancies.filter(d=>d.type==='price'||d.type==='both').length.toLocaleString();
-  document.getElementById('s-gst').textContent=gstErrs.toLocaleString();
-  document.getElementById('s-ph').textContent=phantomItems.length.toLocaleString();
-
-  // Reasons
-  const priceOC=discrepancies.filter(d=>d.type==='price'||d.type==='both').reduce((s,d)=>s+(d.overcharge>0?d.overcharge:0),0);
-  document.getElementById('reasons-grid').innerHTML=[
-    {n:'01',tag:'tr',tagTxt:'Price overcharge',val:inr(priceOC),sub:`${discrepancies.filter(d=>d.type==='price'||d.type==='both').length} line items`},
-    {n:'02',tag:'tb',tagTxt:'GST inflation',val:`${gstErrs} lines`,sub:'Wrong tax bracket applied'},
-    {n:'03',tag:'ta',tagTxt:'Phantom billing',val:inr(phTotal),sub:`${phantomItems.length} items · not in rate card`},
-  ].map(r=>`<div class="rsn">
-    <div class="rsn-n">${r.n}</div>
-    <div class="rsn-tag ${r.tag}">${r.tagTxt}</div>
-    <div class="rsn-val">${r.val}</div>
-    <div class="rsn-sub">${r.sub}</div>
-  </div>`).join('');
-
-  // Top offender
-  document.getElementById('off-name').textContent=vNames[top3[0][0]]||top3[0][0];
-  document.getElementById('off-amt').textContent=inr(top3[0][1].oc);
-  document.getElementById('off-sub').textContent=`${top3[0][1].cnt} errors · ${vCat[top3[0][0]]||'—'}`;
-
-  // Coverage
-  const flaggedCount=flaggedInvs.length;
-  const totalInvs=invoices.length;
-  const pct=Math.round(flaggedCount/totalInvs*100);
-  document.getElementById('cov-flagged').textContent=flaggedCount.toLocaleString();
-  document.getElementById('cov-total').textContent=totalInvs.toLocaleString();
-  document.getElementById('cov-fill').style.width=pct+'%';
-  document.getElementById('cov-pct').textContent=pct+'% flagged';
   document.getElementById('mast-meta').textContent=`FY 2025 · ${lineItems.length.toLocaleString()} line items`;
 
-  // Chart
+  // DONUT
+  document.getElementById('donut-pct').textContent=pct+'%';
+  document.getElementById('dl-flag').textContent=`${flaggedInvs.length.toLocaleString()} flagged`;
+  document.getElementById('dl-clean').textContent=`${cleanInvs.length.toLocaleString()} clean`;
+  new Chart(document.getElementById('donut-chart'),{
+    type:'doughnut',
+    data:{datasets:[{data:[flaggedInvs.length,cleanInvs.length],backgroundColor:['#C0392B','#E8E4DC'],borderWidth:0,hoverOffset:2}]},
+    options:{cutout:'70%',responsive:false,plugins:{legend:{display:false},tooltip:{enabled:false}},animation:{duration:800}}
+  });
+
+  // REASON CARDS
+  document.getElementById('rc1-big').textContent=inr(priceOC);
+  document.getElementById('rc1-mid').textContent=`${priceLines} line items`;
+  document.getElementById('rc2-big').textContent=`${gstErrs} lines`;
+  document.getElementById('rc2-mid').textContent='Wrong tax bracket applied';
+  document.getElementById('rc3-big').textContent=inr(phTotal);
+  document.getElementById('rc3-mid').textContent=`${phantomItems.length} items · not in rate card`;
+
+  // TOP OFFENDER
+  document.getElementById('off-name').textContent=vN[top[0]]||top[0];
+  document.getElementById('off-amt').textContent=inr(top[1].oc);
+  document.getElementById('off-sub').textContent=`${top[1].cnt} errors · ${vC[top[0]]||'—'} · ${top[0]}`;
+
+  // RUNNERS
+  document.getElementById('runners-list').innerHTML=runners.map(([v,d])=>
+    `<div class="run-row"><span class="run-name">${vN[v]||v}</span><span class="run-amt">${inr(d.oc)}</span></div>`
+  ).join('');
+
+  // VENDOR CHART
   new Chart(document.getElementById('vc'),{
     type:'bar',
     data:{
-      labels:vSorted.map(([v])=>vNames[v]||v),
+      labels:vSorted.map(([v])=>vN[v]||v),
       datasets:[{data:vSorted.map(([,v])=>Math.round(v.oc)),
-        backgroundColor:vSorted.map((_,i)=>i<3?'rgba(192,57,43,.8)':i<6?'rgba(183,96,10,.5)':'rgba(26,86,176,.3)'),
+        backgroundColor:vSorted.map((_,i)=>i<3?'rgba(192,57,43,.85)':i<6?'rgba(183,96,10,.5)':'rgba(26,86,176,.3)'),
         borderColor:vSorted.map((_,i)=>i<3?'#C0392B':i<6?'#B7600A':'#1A56B0'),
         borderWidth:1,borderRadius:2}]
     },
     options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'₹'+c.parsed.y.toLocaleString('en-IN')}}},
       scales:{
-        x:{ticks:{color:'#888',font:{size:10,family:'JetBrains Mono'}},grid:{color:'rgba(0,0,0,.05)'}},
-        y:{ticks:{color:'#888',font:{family:'JetBrains Mono'},callback:v=>'₹'+(v/100000).toFixed(0)+'L'},grid:{color:'rgba(0,0,0,.05)'}}
+        x:{ticks:{color:'#888',font:{size:9,family:'JetBrains Mono'}},grid:{color:'rgba(0,0,0,.04)'}},
+        y:{ticks:{color:'#888',font:{family:'JetBrains Mono',size:9},callback:v=>'₹'+(v/100000).toFixed(0)+'L'},grid:{color:'rgba(0,0,0,.04)'}}
       }}
   });
 
-  // ── INVOICES TAB ──
-  document.getElementById('inv-s-total').textContent=totalInvs.toLocaleString();
-  document.getElementById('inv-s-flagged').textContent=flaggedCount.toLocaleString();
-  document.getElementById('inv-s-clean').textContent=cleanInvs.length.toLocaleString();
-  document.getElementById('inv-s-pct').textContent=pct+'%';
-
-  // Vendor dropdown for invoices
-  vSorted.forEach(([v])=>{
-    const o=document.createElement('option');
-    o.value=v;o.textContent=`${v} · ${vNames[v]||v}`;
-    document.getElementById('inv-vendor').appendChild(o);
-    const o2=o.cloneNode(true);
-    document.getElementById('d-vendor').appendChild(o2);
+  // MONTHLY CHART
+  const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  new Chart(document.getElementById('mc'),{
+    type:'bar',
+    data:{labels:months,datasets:[{data:mOC,
+      backgroundColor:'rgba(192,57,43,.7)',borderColor:'#C0392B',borderWidth:1,borderRadius:2}]},
+    options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'₹'+Math.round(c.parsed.y).toLocaleString('en-IN')}}},
+      scales:{
+        x:{ticks:{color:'#888',font:{family:'JetBrains Mono',size:9}},grid:{color:'rgba(0,0,0,.04)'}},
+        y:{ticks:{color:'#888',font:{family:'JetBrains Mono',size:9},callback:v=>'₹'+(v/100000).toFixed(0)+'L'},grid:{color:'rgba(0,0,0,.04)'}}
+      }}
   });
 
-  invFiltered=[...invAuditArr];
+  // INVOICE TAB STATS
+  document.getElementById('is-total').textContent=invoices.length.toLocaleString();
+  document.getElementById('is-flagged').textContent=flaggedInvs.length.toLocaleString();
+  document.getElementById('is-clean').textContent=cleanInvs.length.toLocaleString();
+  document.getElementById('is-pct').textContent=pct+'%';
+
+  // Vendor dropdowns
+  vSorted.forEach(([v])=>{
+    [document.getElementById('inv-vendor'),document.getElementById('d-vendor')].forEach(sel=>{
+      const o=document.createElement('option');
+      o.value=v;o.textContent=`${v} · ${vN[v]||v}`;
+      sel.appendChild(o);
+    });
+  });
+
+  invFiltered=[...invArr];
   applyInvFilters();
 
-  // ── PHANTOM TAB ──
-  document.getElementById('ph-stat').textContent=`${phantomItems.length} items · ${inr(phTotal)} charged · across ${phVends} vendors`;
+  // PHANTOM TAB
+  document.getElementById('ph-stat').textContent=`${phantomItems.length} items · ${inr(phTotal)} · across ${phVends} vendors`;
   const phByV={};
   for(const p of phantomItems){
     if(!phByV[p.vendor_id])phByV[p.vendor_id]={total:0,cnt:0,items:[]};
-    phByV[p.vendor_id].total+=p.billed_amount;
-    phByV[p.vendor_id].cnt++;
+    phByV[p.vendor_id].total+=p.billed_amount;phByV[p.vendor_id].cnt++;
     if(!phByV[p.vendor_id].items.includes(p.item_name))phByV[p.vendor_id].items.push(p.item_name);
   }
   document.getElementById('neg-grid').innerHTML=Object.entries(phByV).sort((a,b)=>b[1].total-a[1].total).map(([v,d])=>{
     const avg=d.total/d.cnt;
     const prop=Math.ceil(avg/500)*500;
     return `<div class="neg">
-      <div class="neg-v">${v} · ${vNames[v]||v}</div>
+      <div class="neg-v">${v} · ${vN[v]||v}</div>
       <div class="neg-amt">${inr(d.total)}</div>
       <div class="neg-ct">${d.cnt} charges · avg ${inr(avg)}/invoice</div>
       <div class="neg-tags">${[...new Set(d.items)].slice(0,3).map(i=>`<span class="pill p-a">${i}</span>`).join('')}</div>
-      <div class="neg-prop">
-        <div class="neg-prop-l">Proposed contract addition</div>
-        <div class="neg-prop-amt">₹${prop.toLocaleString('en-IN')} / invoice</div>
-      </div>
+      <div class="neg-prop"><div class="neg-prop-l">Proposed contract addition</div><div class="neg-prop-amt">₹${prop.toLocaleString('en-IN')} / invoice</div></div>
     </div>`;
   }).join('');
   document.getElementById('ph-body').innerHTML=phantomItems.map(p=>`<tr>
@@ -604,89 +668,97 @@ async function init(){
     <td><span class="pill p-a">${p.pattern}</span></td>
   </tr>`).join('');
 
-  // ── PRIORITY TAB ──
-  document.getElementById('pri-count').textContent=priorityInvs.length.toLocaleString();
+  // PRIORITY TAB
+  document.getElementById('pri-cnt').textContent=priorityInvs.length.toLocaleString();
   document.getElementById('pri-val').textContent=inr(priorityInvs.reduce((s,i)=>s+i.total,0));
   document.getElementById('pri-err').textContent=priorityInvs.filter(i=>i.errors>0||i.phantom_count>0).length.toLocaleString();
-  document.getElementById('pri-vend').textContent=[...new Set(priorityInvs.map(i=>i.vendor_id))].length.toLocaleString();
-  document.getElementById('pri-stat').textContent=`${priorityInvs.length} invoices above ₹10L · total value ${inr(priorityInvs.reduce((s,i)=>s+i.total,0))}`;
-  renderPriTable();
+  document.getElementById('pri-vnd').textContent=[...new Set(priorityInvs.map(i=>i.vendor_id))].length.toLocaleString();
+  renderPri();
 
-  // ── DISCREPANCIES TAB ──
+  // DISCREPANCY TAB
   discFiltered=[...discrepancies];
   applyDiscFilters();
 
   // Event listeners
-  document.getElementById('inv-search').addEventListener('input',applyInvFilters);
-  document.getElementById('inv-flag').addEventListener('change',applyInvFilters);
-  document.getElementById('inv-vendor').addEventListener('change',applyInvFilters);
-  document.getElementById('inv-sort').addEventListener('change',applyInvFilters);
-  document.getElementById('d-search').addEventListener('input',applyDiscFilters);
-  document.getElementById('d-type').addEventListener('change',applyDiscFilters);
-  document.getElementById('d-vendor').addEventListener('change',applyDiscFilters);
+  ['inv-q','inv-flag','inv-vendor','inv-month','inv-from','inv-to','inv-sort'].forEach(id=>
+    document.getElementById(id).addEventListener('change',applyInvFilters));
+  document.getElementById('inv-q').addEventListener('input',applyInvFilters);
+  ['d-q','d-type','d-vendor'].forEach(id=>{
+    const el=document.getElementById(id);
+    el.addEventListener(el.tagName==='INPUT'?'input':'change',applyDiscFilters);
+  });
 
   document.getElementById('loader').style.display='none';
   document.getElementById('app').style.display='block';
 }
 
-// ── INVOICE TABLE ──
+// ── INVOICE FILTERS ──
 function applyInvFilters(){
-  const q=document.getElementById('inv-search').value.toLowerCase();
+  const q=document.getElementById('inv-q').value.toLowerCase();
   const flag=document.getElementById('inv-flag').value;
   const vendor=document.getElementById('inv-vendor').value;
+  const month=document.getElementById('inv-month').value;
+  const from=document.getElementById('inv-from').value;
+  const to=document.getElementById('inv-to').value;
   const sort=document.getElementById('inv-sort').value;
-  const [sk,sd]=sort.split('-');
 
-  invFiltered=Object.values(invAuditMap).map(inv=>({
-    ...inv,flags:inv.flags instanceof Set?[...inv.flags]:inv.flags
-  })).filter(inv=>{
-    const matchQ=!q||inv.invoice_id.toLowerCase().includes(q)||inv.vendor_name.toLowerCase().includes(q)||inv.vendor_id.toLowerCase().includes(q);
-    const matchFlag=!flag||(flag==='clean'?(inv.errors===0&&inv.phantom_count===0):inv.flags.includes(flag));
-    const matchV=!vendor||inv.vendor_id===vendor;
-    return matchQ&&matchFlag&&matchV;
+  invFiltered=Object.values(invAuditMap).map(inv=>({...inv,flags:inv.flags instanceof Set?[...inv.flags]:inv.flags})).filter(inv=>{
+    if(q&&!inv.invoice_id.toLowerCase().includes(q)&&!inv.vendor_name.toLowerCase().includes(q)&&!inv.vendor_id.toLowerCase().includes(q))return false;
+    if(vendor&&inv.vendor_id!==vendor)return false;
+    if(flag){
+      const isClean=inv.errors===0&&inv.phantom_count===0;
+      if(flag==='clean'&&!isClean)return false;
+      if(flag!=='clean'&&!inv.flags.includes(flag)&&!(flag==='phantom'&&inv.phantom_count>0))return false;
+    }
+    if(month&&(!inv.invoice_date||!inv.invoice_date.startsWith(month)))return false;
+    if(from&&inv.invoice_date&&inv.invoice_date<from)return false;
+    if(to&&inv.invoice_date&&inv.invoice_date>to)return false;
+    return true;
   });
 
+  // Sort
+  const [sk,sd]=sort.split('-');
+  const dir=sd==='asc'?1:-1;
   invFiltered.sort((a,b)=>{
-    const av=a[sk]==='errors'?a.errors:a[sk];
-    const bv=b[sk]==='errors'?b.errors:b[sk];
-    const dir=sd==='desc'?-1:1;
+    const av=sk==='date'?a.invoice_date:sk==='errors'?a.errors:a[sk];
+    const bv=sk==='date'?b.invoice_date:sk==='errors'?b.errors:b[sk];
     return typeof av==='string'?dir*av.localeCompare(bv):dir*(bv-av);
   });
 
   invPage=1;
   document.getElementById('inv-ct').textContent=`${invFiltered.length.toLocaleString()} invoices`;
-  renderInvTable();renderInvPag();
+  renderInv();renderInvPag();
 }
 
-function invSort(key){
-  invSortKey=key;
+function invSortBy(key){
+  document.getElementById('inv-sort').value=key+'-desc';
   applyInvFilters();
 }
 
-function renderInvTable(){
+function clearInvFilters(){
+  ['inv-q','inv-from','inv-to'].forEach(id=>document.getElementById(id).value='');
+  ['inv-flag','inv-vendor','inv-month','inv-sort'].forEach(id=>document.getElementById(id).selectedIndex=0);
+  applyInvFilters();
+}
+
+function renderInv(){
   const rows=invFiltered.slice((invPage-1)*PP,invPage*PP);
   document.getElementById('inv-body').innerHTML=rows.map(inv=>{
     const flags=inv.flags instanceof Set?[...inv.flags]:inv.flags;
-    const isClean=inv.errors===0&&inv.phantom_count===0;
-    const pills=isClean?`<span class="pill p-g">Clean</span>`:[
+    const clean=inv.errors===0&&inv.phantom_count===0;
+    const pills=clean?`<span class="pill p-g">Clean</span>`:[
       flags.includes('overcharge')?`<span class="pill p-r">Overcharge</span>`:'',
       flags.includes('gst')?`<span class="pill p-b">GST Error</span>`:'',
-      flags.includes('phantom')||inv.phantom_count>0?`<span class="pill p-a">Phantom</span>`:'',
+      (flags.includes('phantom')||inv.phantom_count>0)?`<span class="pill p-a">Phantom</span>`:'',
     ].join('');
-    const errTxt=inv.errors>0?`<span style="color:var(--red);font-family:var(--mono)">${inv.errors}</span>`:
-      inv.phantom_count>0?`<span style="color:var(--amber);font-family:var(--mono)">${inv.phantom_count}ph</span>`:
-      `<span style="color:var(--dim)">—</span>`;
-    const ocTxt=inv.overcharge>0?`<span style="color:var(--red);font-family:var(--mono);font-weight:600">+${inr(inv.overcharge)}</span>`:
-      inv.phantom_amt>0?`<span style="color:var(--amber);font-family:var(--mono)">${inr(inv.phantom_amt)}</span>`:
-      `<span style="color:var(--dim)">—</span>`;
+    const errTxt=inv.errors>0?`<span style="color:var(--red);font-family:var(--mono)">${inv.errors}</span>`:inv.phantom_count>0?`<span style="color:var(--amber);font-family:var(--mono)">${inv.phantom_count}ph</span>`:`<span style="color:var(--dim)">—</span>`;
+    const ocTxt=inv.overcharge>0?`<span style="color:var(--red);font-family:var(--mono);font-weight:600">+${inr(inv.overcharge)}</span>`:inv.phantom_amt>0?`<span style="color:var(--amber);font-family:var(--mono)">${inr(inv.phantom_amt)}</span>`:`<span style="color:var(--dim)">—</span>`;
     return `<tr>
       <td class="mono">${inv.invoice_id}</td>
       <td><span class="vtag">${inv.vendor_id}</span> <span style="color:var(--ink2);font-size:12px;margin-left:4px">${inv.vendor_name}</span></td>
       <td class="mono">${inv.invoice_date||'—'}</td>
       <td style="font-family:var(--mono);color:var(--ink2)">${inr(inv.total)}</td>
-      <td>${errTxt}</td>
-      <td>${ocTxt}</td>
-      <td>${pills}</td>
+      <td>${errTxt}</td><td>${ocTxt}</td><td>${pills}</td>
     </tr>`;
   }).join('');
 }
@@ -695,24 +767,18 @@ function renderInvPag(){
   const tot=Math.ceil(invFiltered.length/PP);
   const p=document.getElementById('inv-pag');
   if(tot<=1){p.innerHTML='';return;}
-  let h=`<button class="pg" onclick="invGoPage(${invPage-1})" ${invPage===1?'disabled':''}>← Prev</button>`;
+  let h=`<button class="pg" onclick="invGo(${invPage-1})" ${invPage===1?'disabled':''}>← Prev</button>`;
   for(let i=1;i<=tot;i++){
-    if(i===1||i===tot||Math.abs(i-invPage)<=2)h+=`<button class="pg ${i===invPage?'on':''}" onclick="invGoPage(${i})">${i}</button>`;
+    if(i===1||i===tot||Math.abs(i-invPage)<=2)h+=`<button class="pg ${i===invPage?'on':''}" onclick="invGo(${i})">${i}</button>`;
     else if(Math.abs(i-invPage)===3)h+=`<span style="color:var(--dim);padding:0 3px">…</span>`;
   }
-  h+=`<button class="pg" onclick="invGoPage(${invPage+1})" ${invPage===tot?'disabled':''}>Next →</button>`;
+  h+=`<button class="pg" onclick="invGo(${invPage+1})" ${invPage===tot?'disabled':''}>Next →</button>`;
   p.innerHTML=h;
 }
+function invGo(n){const t=Math.ceil(invFiltered.length/PP);if(n<1||n>t)return;invPage=n;renderInv();renderInvPag();document.querySelector('#tp-inv .tbl-w').scrollIntoView({behavior:'smooth'});}
 
-function invGoPage(n){
-  const tot=Math.ceil(invFiltered.length/PP);
-  if(n<1||n>tot)return;
-  invPage=n;renderInvTable();renderInvPag();
-  document.querySelector('#tp-inv .tbl-w').scrollIntoView({behavior:'smooth'});
-}
-
-// ── PRIORITY TABLE ──
-function renderPriTable(){
+// ── PRIORITY ──
+function renderPri(){
   document.getElementById('pri-body').innerHTML=priSorted.map(inv=>{
     const hasErr=inv.errors>0||inv.phantom_count>0;
     const flag=inv.total>=10000000?'₹1Cr+':inv.total>=5000000?'₹50L+':'₹10L+';
@@ -721,83 +787,54 @@ function renderPriTable(){
       <td><span class="vtag">${inv.vendor_id}</span> <span style="color:var(--ink2);font-size:12px;margin-left:4px">${inv.vendor_name}</span></td>
       <td style="font-family:var(--mono);font-weight:600;color:var(--amber)">${inr(inv.total)}</td>
       <td class="mono">${inv.invoice_date||'—'}</td>
-      <td class="${hasErr?'':'mono'}" style="${hasErr?'color:var(--red);font-family:var(--mono);font-weight:600':'color:var(--dim)'}">${inv.errors||inv.phantom_count||'—'}</td>
+      <td style="${hasErr?'color:var(--red);font-family:var(--mono);font-weight:600':'color:var(--dim)'}">${inv.errors||inv.phantom_count||'—'}</td>
       <td style="${inv.overcharge>0?'color:var(--red);font-family:var(--mono);font-weight:600':'color:var(--dim)'}">${inv.overcharge>0?'+'+inr(inv.overcharge):'—'}</td>
       <td><span class="pill ${hasErr?'p-r':'p-g'}">${hasErr?'⚑ '+flag:'Clean'}</span></td>
     </tr>`;
   }).join('');
 }
+function sortPri(k){if(priSK===k)priSD*=-1;else{priSK=k;priSD=-1;}priSorted.sort((a,b)=>typeof a[k]==='string'?priSD*a[k].localeCompare(b[k]):priSD*(a[k]-b[k]));renderPri();}
 
-function sortPri(key){
-  if(priSortKey===key)priSortDir*=-1;else{priSortKey=key;priSortDir=-1;}
-  priSorted.sort((a,b)=>typeof a[key]==='string'?priSortDir*a[key].localeCompare(b[key]):priSortDir*(a[key]-b[key]));
-  renderPriTable();
-}
-
-// ── DISCREPANCIES TABLE ──
+// ── DISCREPANCIES ──
 function applyDiscFilters(){
-  const q=document.getElementById('d-search').value.toLowerCase();
+  const q=document.getElementById('d-q').value.toLowerCase();
   const type=document.getElementById('d-type').value;
   const vendor=document.getElementById('d-vendor').value;
   discFiltered=discrepancies.filter(d=>
     (!q||d.invoice_id.toLowerCase().includes(q)||d.vendor_name.toLowerCase().includes(q)||d.vendor_id.toLowerCase().includes(q)||d.item_name.toLowerCase().includes(q))
     &&(!type||d.type===type)&&(!vendor||d.vendor_id===vendor));
-  discFiltered.sort((a,b)=>typeof a[discSortKey]==='string'?discSortDir*a[discSortKey].localeCompare(b[discSortKey]):discSortDir*(a[discSortKey]-b[discSortKey]));
+  discFiltered.sort((a,b)=>typeof a[discSK]==='string'?discSD*a[discSK].localeCompare(b[discSK]):discSD*(a[discSK]-b[discSK]));
   discPage=1;
   document.getElementById('d-ct').textContent=`${discFiltered.length.toLocaleString()} rows`;
-  renderDiscTable();renderDiscPag();
+  renderDisc();renderDiscPag();
 }
-
-function sortDisc(key){
-  if(discSortKey===key)discSortDir*=-1;else{discSortKey=key;discSortDir=-1;}
-  applyDiscFilters();
-}
-
-function renderDiscTable(){
-  const rows=discFiltered.slice((discPage-1)*PP,discPage*PP);
-  document.getElementById('d-body').innerHTML=rows.map(d=>{
+function sortDisc(k){if(discSK===k)discSD*=-1;else{discSK=k;discSD=-1;}applyDiscFilters();}
+function renderDisc(){
+  document.getElementById('d-body').innerHTML=discFiltered.slice((discPage-1)*PP,discPage*PP).map(d=>{
     const badge=d.type==='both'?`<span class="pill p-a">Both</span>`:d.type==='price'?`<span class="pill p-r">Price</span>`:`<span class="pill p-b">GST</span>`;
     const gst=d.gst_wrong?`<span style="color:var(--blue);font-family:var(--mono);font-size:10px">${d.billed_gst}%→${d.correct_gst}%</span>`:`<span style="color:var(--dim)">✓</span>`;
     const oc=d.overcharge>0?`<span style="color:var(--red);font-family:var(--mono);font-weight:600">+${inr(d.overcharge)}</span>`:d.overcharge<0?`<span style="color:var(--blue);font-family:var(--mono)">${inr(d.overcharge)}</span>`:`<span style="color:var(--dim)">—</span>`;
-    return `<tr>
-      <td class="mono">${d.invoice_id}</td>
-      <td><span class="vtag">${d.vendor_id}</span> <span style="color:var(--muted);font-size:11px;margin-left:4px">${d.vendor_name}</span></td>
-      <td style="color:var(--ink2)">${d.item_name}</td>
-      <td class="mono">${d.quantity}</td>
-      <td class="mono" style="color:var(--muted)">${inr(d.contracted_rate)}</td>
-      <td class="mono">${inr(d.billed_amount)}</td>
-      <td>${oc}</td><td>${gst}</td><td>${badge}</td>
-    </tr>`;
+    return `<tr><td class="mono">${d.invoice_id}</td><td><span class="vtag">${d.vendor_id}</span> <span style="color:var(--muted);font-size:11px;margin-left:4px">${d.vendor_name}</span></td><td style="color:var(--ink2)">${d.item_name}</td><td class="mono">${d.quantity}</td><td class="mono" style="color:var(--muted)">${inr(d.contracted_rate)}</td><td class="mono">${inr(d.billed_amount)}</td><td>${oc}</td><td>${gst}</td><td>${badge}</td></tr>`;
   }).join('');
 }
-
 function renderDiscPag(){
   const tot=Math.ceil(discFiltered.length/PP);
   const p=document.getElementById('d-pag');
   if(tot<=1){p.innerHTML='';return;}
-  let h=`<button class="pg" onclick="discGoPage(${discPage-1})" ${discPage===1?'disabled':''}>← Prev</button>`;
+  let h=`<button class="pg" onclick="discGo(${discPage-1})" ${discPage===1?'disabled':''}>← Prev</button>`;
   for(let i=1;i<=tot;i++){
-    if(i===1||i===tot||Math.abs(i-discPage)<=2)h+=`<button class="pg ${i===discPage?'on':''}" onclick="discGoPage(${i})">${i}</button>`;
+    if(i===1||i===tot||Math.abs(i-discPage)<=2)h+=`<button class="pg ${i===discPage?'on':''}" onclick="discGo(${i})">${i}</button>`;
     else if(Math.abs(i-discPage)===3)h+=`<span style="color:var(--dim);padding:0 3px">…</span>`;
   }
-  h+=`<button class="pg" onclick="discGoPage(${discPage+1})" ${discPage===tot?'disabled':''}>Next →</button>`;
+  h+=`<button class="pg" onclick="discGo(${discPage+1})" ${discPage===tot?'disabled':''}>Next →</button>`;
   p.innerHTML=h;
 }
-
-function discGoPage(n){
-  const tot=Math.ceil(discFiltered.length/PP);
-  if(n<1||n>tot)return;
-  discPage=n;renderDiscTable();renderDiscPag();
-  document.querySelector('#tp-disc .tbl-w').scrollIntoView({behavior:'smooth'});
-}
+function discGo(n){const t=Math.ceil(discFiltered.length/PP);if(n<1||n>t)return;discPage=n;renderDisc();renderDiscPag();document.querySelector('#tp-disc .tbl-w').scrollIntoView({behavior:'smooth'});}
 
 // ── EXPORTS ──
 function expInvCSV(){
-  const h=['Invoice ID','Vendor ID','Vendor Name','Date','Total','Errors','Overcharge','GST Errors','Phantom Items','Phantom Amount','Flags'];
-  const r=invFiltered.map(inv=>{
-    const flags=inv.flags instanceof Set?[...inv.flags]:inv.flags;
-    return[inv.invoice_id,inv.vendor_id,inv.vendor_name,inv.invoice_date,inv.total,inv.errors,inv.overcharge.toFixed(2),inv.gst_errors,inv.phantom_count,inv.phantom_amt.toFixed(2),flags.join('|')].join(',');
-  });
+  const h=['Invoice ID','Vendor ID','Vendor Name','Date','Total','Errors','Overcharge','Phantom Items','Phantom Amount','Flags'];
+  const r=invFiltered.map(inv=>{const f=inv.flags instanceof Set?[...inv.flags]:inv.flags;return[inv.invoice_id,inv.vendor_id,inv.vendor_name,inv.invoice_date,inv.total,inv.errors,inv.overcharge.toFixed(2),inv.phantom_count,inv.phantom_amt.toFixed(2),f.join('|')].join(',');});
   dl([h.join(','),...r].join('\n'),'mosaic_invoices.csv');
 }
 function expPhCSV(){
@@ -806,15 +843,11 @@ function expPhCSV(){
   dl([h.join(','),...r].join('\n'),'mosaic_phantom.csv');
 }
 function expDiscCSV(){
-  const h=['Invoice ID','Vendor ID','Vendor Name','Item','Qty','Contracted Rate','Billed','Expected','Overcharge','Billed GST%','Correct GST%','Type'];
+  const h=['Invoice ID','Vendor ID','Vendor Name','Item','Qty','Contracted','Billed','Expected','Overcharge','Billed GST%','Correct GST%','Type'];
   const r=discFiltered.map(d=>[d.invoice_id,d.vendor_id,d.vendor_name,`"${d.item_name}"`,d.quantity,d.contracted_rate,d.billed_amount,d.expected_amount,d.overcharge,d.billed_gst,d.correct_gst,d.type].join(','));
   dl([h.join(','),...r].join('\n'),'mosaic_discrepancies.csv');
 }
-function dl(content,filename){
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([content],{type:'text/csv'}));
-  a.download=filename;a.click();
-}
+function dl(c,f){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([c],{type:'text/csv'}));a.download=f;a.click();}
 
 init();
 </script>
