@@ -523,7 +523,7 @@ async function init(){
       byV[li.vendor_id].combined=(byV[li.vendor_id].oc||0)+(byV[li.vendor_id].gst||0)+(byV[li.vendor_id].phantom||0);
       const phMIdx=Math.min(11,Math.floor((parseInt(li.invoice_id.replace('INV-',''))-1)/(5200/12)));
       mPH[phMIdx]+=li.billed_amount;
-      if(invAuditMap[li.invoice_id]){mRev[phMIdx]+=li.billed_amount;}
+      
       continue;
     }
 
@@ -562,7 +562,7 @@ async function init(){
       if(!byV[li.vendor_id])byV[li.vendor_id]={oc:0,gst:0,phantom:0,combined:0,cnt:0};
       if(diff>0){byV[li.vendor_id].oc+=diff;priceOC+=diff;mOC[mIdx]+=diff;}
       if(gstExtra>0){mGST[mIdx]+=gstExtra;}
-      if(invAuditMap[li.invoice_id]){mRev[mIdx]+=li.billed_amount;}
+      
       if(gstExtra>0){byV[li.vendor_id].gst+=gstExtra;}
       byV[li.vendor_id].combined=(byV[li.vendor_id].oc||0)+(byV[li.vendor_id].gst||0)+(byV[li.vendor_id].phantom||0);
       byV[li.vendor_id].cnt++;
@@ -575,6 +575,12 @@ async function init(){
     }
   }
 
+  // Build mRev from invoice totals — correct total revenue per month
+  for(const inv of invoices){
+    const n=parseInt(inv.invoice_id.replace('INV-',''));
+    const idx=Math.min(11,Math.floor((n-1)/(5200/12)));
+    mRev[idx]+=inv.total;
+  }
   const totalRecoverable=priceOC+gstRupeeImpact;
   const invArr=Object.values(invAuditMap).map(inv=>({...inv,flags:[...inv.flags]}));
   const flaggedInvs=invArr.filter(inv=>inv.errors>0||inv.phantom_count>0);
