@@ -65,16 +65,6 @@ body{font-family:var(--sans);background:var(--cream);color:var(--ink);min-height
 .dl{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted)}
 .dl-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
 
-/* RECOVERABLE CARD */
-.recoverable-card{background:var(--ink);padding:18px 22px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:20px}
-.rec-eye{font-family:var(--mono);font-size:9px;color:#555;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
-.rec-amt{font-family:var(--serif);font-size:38px;font-weight:700;color:var(--red);line-height:1;margin-bottom:6px}
-.rec-breakdown{display:flex;gap:16px;flex-wrap:wrap}
-.rec-item{font-family:var(--mono);font-size:10px}
-.rec-item-lbl{color:#555}
-.rec-item-val{color:#aaa;margin-left:4px}
-.rec-action{background:var(--red);color:#fff;border:none;padding:10px 20px;font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;white-space:nowrap;flex-shrink:0}
-
 /* REASON CARDS — dynamic order */
 .reason-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);margin-bottom:16px}
 .rc{background:var(--cream);padding:14px 16px;border-top:3px solid transparent;position:relative}
@@ -243,21 +233,7 @@ tbody td{padding:9px 12px;vertical-align:middle;overflow:hidden;text-overflow:el
         </div>
       </div>
 
-      <!-- RECOVERABLE -->
-      <div class="recoverable-card">
-        <div>
-          <div class="rec-eye">Total recoverable · confirmed overcharges only · excludes phantom</div>
-          <div class="rec-amt" id="rec-amt">—</div>
-          <div class="rec-breakdown">
-            <div class="rec-item"><span class="rec-item-lbl">Price overcharge</span><span class="rec-item-val" id="rec-price">—</span></div>
-            <div class="rec-item" style="color:#555">+</div>
-            <div class="rec-item"><span class="rec-item-lbl">GST inflation</span><span class="rec-item-val" id="rec-gst">—</span></div>
-            <div class="rec-item" style="color:#555">=</div>
-            <div class="rec-item"><span class="rec-item-lbl" style="color:#aaa">Total</span><span class="rec-item-val" id="rec-total-sub" style="color:#fff">—</span></div>
-          </div>
-        </div>
-        <button class="rec-action">Issue Debit Notes →</button>
-      </div>
+      
 
       <!-- DYNAMIC REASON CARDS — ordered by impact -->
       <div class="sec" id="findings-sec">4 findings · ranked by impact</div>
@@ -602,11 +578,7 @@ async function init(){
     `<span style="color:var(--amber)">+ ${inr(phTotal)} phantom under investigation (separate)</span>`;
   document.getElementById('mast-meta').textContent=`FY 2025 · ${lineItems.length.toLocaleString()} line items`;
 
-  // ── RECOVERABLE CARD ──
-  document.getElementById('rec-amt').textContent=inr(totalRecoverable);
-  document.getElementById('rec-price').textContent=inr(priceOC);
-  document.getElementById('rec-gst').textContent=inr(gstRupeeImpact);
-  document.getElementById('rec-total-sub').textContent=inr(totalRecoverable);
+  
 
   // ── DONUT ──
   document.getElementById('donut-pct').textContent=pct+'%';
