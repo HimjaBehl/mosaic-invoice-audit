@@ -219,7 +219,7 @@ tbody td{padding:9px 12px;vertical-align:middle;overflow:hidden;text-overflow:el
     <div class="tp active" id="tp-ov">
       <div class="hero-row">
         <div>
-          <div class="hero-eye">Total Financial Exposure · FY 2025</div>
+          <div class="hero-eye">Total Recoverable Overcharge · FY 2025</div>
           <div class="hero-num" id="h-total">—</div>
           <div class="hero-sub" id="h-breakdown">loading...</div>
         </div>
@@ -531,7 +531,7 @@ async function init(){
     // We compute on base amount (expected_amount) to get clean extra GST
     let gstExtra=0;
     if(gW && li.billed_gst_rate > con.correct_gst_rate){
-      gstExtra=Math.round(exp*(li.billed_gst_rate-con.correct_gst_rate)/100*100)/100;
+      gstExtra=Math.round(li.billed_amount*(li.billed_gst_rate-con.correct_gst_rate)/100*100)/100;
       gstRupeeImpact+=gstExtra;
       gstErrCount++;
     }
@@ -579,16 +579,15 @@ async function init(){
   const allBilled=invoices.reduce((s,i)=>s+i.total,0);
 
   // HERO — total exposure
-  document.getElementById('h-total').textContent=inr(totalRecoverable+phTotal);
+  document.getElementById('h-total').textContent=inr(totalRecoverable);
   document.getElementById('h-breakdown').innerHTML=
-    `Price overcharge <b>${inr(priceOC)}</b> · GST inflation <b>${inr(gstRupeeImpact)}</b> · Phantom <b>${inr(phTotal)}</b>`;
+    `Price overcharge <b>${inr(priceOC)}</b> + GST inflation <b>${inr(gstRupeeImpact)}</b> = <b style="color:var(--ink)">${inr(totalRecoverable)}</b> &nbsp;·&nbsp; <span style="color:var(--amber)">+ ${inr(phTotal)} phantom under investigation</span>`;
   document.getElementById('mast-meta').textContent=`FY 2025 · ${lineItems.length.toLocaleString()} line items`;
 
   // RECOVERABLE
   document.getElementById('rec-amt').textContent=inr(totalRecoverable);
   document.getElementById('rec-sub').textContent=
-    `Price overcharge ${inr(priceOC)} + GST inflation ${inr(gstRupeeImpact)} · excludes phantom items`;
-
+    `Price overcharge ${inr(priceOC)}  +  GST inflation ${inr(gstRupeeImpact)}  =  ${inr(totalRecoverable)} · excludes phantom`;
   // DONUT
   document.getElementById('donut-pct').textContent=pct+'%';
   document.getElementById('dl-flag').textContent=`${flaggedInvs.length.toLocaleString()} flagged`;
@@ -603,7 +602,7 @@ async function init(){
   document.getElementById('rc1-big').textContent=inr(priceOC);
   document.getElementById('rc1-mid').textContent=`${priceLines} line items`;
   document.getElementById('rc2-big').textContent=inr(gstRupeeImpact);
-  document.getElementById('rc2-mid').textContent=`${gstErrCount} lines · extra tax paid`;
+  document.getElementById('rc2-mid').textContent=`${gstErrCount} lines · ₹${Math.round(gstRupeeImpact/gstErrCount).toLocaleString('en-IN')} avg per line`;
   document.getElementById('rc3-big').textContent=inr(phTotal);
   document.getElementById('rc3-mid').textContent=`${phantomItems.length} items · not in rate card`;
   document.getElementById('rc4-big').textContent=`${Object.keys(byV).length}/15`;
