@@ -217,21 +217,37 @@ tbody td{padding:9px 12px;vertical-align:middle;overflow:hidden;text-overflow:el
           <div class="hero-num" id="h-total">—</div>
           <div class="hero-sub" id="h-breakdown">loading...</div>
         </div>
-        <div class="donut-wrap">
-          <div class="donut-title">Invoice Coverage</div>
-          <div class="donut-canvas-wrap">
-            <canvas id="donut-chart" width="110" height="110"></canvas>
-            <div class="donut-center">
-              <div class="donut-pct" id="donut-pct">—</div>
-              <div class="donut-lbl">flagged</div>
+        <div style="display:flex;gap:24px;align-items:flex-start">
+          <div class="donut-wrap">
+            <div class="donut-title">Invoice Coverage</div>
+            <div class="donut-canvas-wrap">
+              <canvas id="donut-chart" width="110" height="110"></canvas>
+              <div class="donut-center">
+                <div class="donut-pct" id="donut-pct">—</div>
+                <div class="donut-lbl">flagged</div>
+              </div>
+            </div>
+            <div class="donut-legend">
+              <div class="dl"><div class="dl-dot" style="background:var(--red)"></div><span id="dl-flag">—</span></div>
+              <div class="dl"><div class="dl-dot" style="background:var(--cream3)"></div><span id="dl-clean">—</span></div>
             </div>
           </div>
-          <div class="donut-legend">
-            <div class="dl"><div class="dl-dot" style="background:var(--red)"></div><span id="dl-flag">—</span></div>
-            <div class="dl"><div class="dl-dot" style="background:var(--cream3)"></div><span id="dl-clean">—</span></div>
+          <div class="donut-wrap">
+            <div class="donut-title">Exposure Breakdown</div>
+            <div class="donut-canvas-wrap">
+              <canvas id="exposure-chart" width="110" height="110"></canvas>
+              <div class="donut-center">
+                <div class="donut-pct" id="exp-pct" style="font-size:10px;color:var(--ink)">—</div>
+                <div class="donut-lbl">total</div>
+              </div>
+            </div>
+            <div class="donut-legend">
+              <div class="dl"><div class="dl-dot" style="background:var(--blue)"></div><span id="dl-gst">— GST</span></div>
+              <div class="dl"><div class="dl-dot" style="background:var(--red)"></div><span id="dl-price">— Price</span></div>
+              <div class="dl"><div class="dl-dot" style="background:var(--amber)"></div><span id="dl-phantom">— Phantom</span></div>
+            </div>
           </div>
         </div>
-      </div>
 
       
 
@@ -588,6 +604,38 @@ async function init(){
     type:'doughnut',
     data:{datasets:[{data:[flaggedInvs.length,cleanInvs.length],backgroundColor:['#C0392B','#E8E4DC'],borderWidth:0,hoverOffset:2}]},
     options:{cutout:'70%',responsive:false,plugins:{legend:{display:false},tooltip:{enabled:false}},animation:{duration:800}}
+  });
+
+  // EXPOSURE BREAKDOWN DONUT
+  const expTotal=gstRupeeImpact+priceOC+phTotal;
+  document.getElementById('exp-pct').textContent=inr(expTotal).replace('₹','');
+  document.getElementById('dl-gst').textContent=`${(gstRupeeImpact/expTotal*100).toFixed(1)}% GST`;
+  document.getElementById('dl-price').textContent=`${(priceOC/expTotal*100).toFixed(1)}% Price`;
+  document.getElementById('dl-phantom').textContent=`${(phTotal/expTotal*100).toFixed(1)}% Phantom`;
+  new Chart(document.getElementById('exposure-chart'),{
+    type:'doughnut',
+    data:{
+      labels:['GST Inflation','Price Overcharge','Phantom'],
+      datasets:[{
+        data:[Math.round(gstRupeeImpact),Math.round(priceOC),Math.round(phTotal)],
+        backgroundColor:['#1A56B0','#C0392B','#B7600A'],
+        borderWidth:0,
+        hoverOffset:4
+      }]
+    },
+    options:{
+      cutout:'70%',
+      responsive:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          callbacks:{
+            label:c=>`${c.label}: ${inr(c.parsed)} (${(c.parsed/expTotal*100).toFixed(1)}%)`
+          }
+        }
+      },
+      animation:{duration:800}
+    }
   });
 
   // ── DYNAMIC REASON CARDS — sorted by rupee impact ──
