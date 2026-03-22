@@ -713,16 +713,12 @@ function exportCurrent(){if(currentView==='inv')expInvCSV();else expDiscCSV();}
 function renderInv(){
   const totalAmt=invFiltered.reduce((s,i)=>s+i.total,0);
   const totalOC=invFiltered.reduce((s,i)=>s+i.overcharge,0);
-  const totalErrors=invFiltered.reduce((s,i)=>s+i.errors,0);
-  const totalGST=invFiltered.reduce((s,i)=>s+i.gst_errors,0);
-  const totalPhantom=invFiltered.reduce((s,i)=>s+i.phantom_count,0);
+  
 
   document.getElementById('inv-sum-bar').innerHTML=
-    `<span class="sum-rows">${invFiltered.length.toLocaleString()} rows</span>`+
-    `<span class="sum-item"><span class="sum-label">Total:</span><span class="sum-val">${inr(totalAmt)}</span></span>`+
-    `<span class="sum-item"><span class="sum-label">GST errors:</span><span class="sum-val r">${totalGST||'—'}</span></span>`+
-    `<span class="sum-item"><span class="sum-label">Phantom:</span><span class="sum-val a">${totalPhantom||'—'}</span></span>`+
-    `<span class="sum-item"><span class="sum-label">Overcharge:</span><span class="sum-val r">${totalOC>0?'+'+inr(totalOC):'—'}</span></span>`;
+  `<span class="sum-rows">${invFiltered.length.toLocaleString()} rows</span>`+
+  `<span class="sum-item"><span class="sum-label">Amount:</span><span class="sum-val">${inr(totalAmt)}</span></span>`+
+  `<span class="sum-item"><span class="sum-label">Overcharge:</span><span class="sum-val r">${totalOC>0?'+'+inr(totalOC):'—'}</span></span>`;
 
   const rows=invFiltered.slice((invPage-1)*PP,invPage*PP);
   document.getElementById('inv-body').innerHTML=rows.map(inv=>{
