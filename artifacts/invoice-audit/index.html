@@ -136,15 +136,13 @@ body{font-family:var(--sans);background:var(--cream);color:var(--ink);min-height
 .btn-clr:hover{color:var(--ink)}
 .tbl-ct{font-family:var(--mono);font-size:10px;color:var(--muted);margin-left:auto}
 
-/* SUM BAR */
-.sum-bar{background:var(--cream3);border:1px solid var(--rule);border-bottom:none;padding:7px 12px;font-family:var(--mono);font-size:11px;font-weight:600;display:flex;align-items:center;gap:0;flex-wrap:wrap}
-.sum-item{display:flex;align-items:center;gap:6px;margin-right:24px}
-.sum-label{color:var(--muted);font-weight:400}
-.sum-val{color:var(--ink)}
-.sum-val.r{color:var(--red)}
-.sum-val.a{color:var(--amber)}
-.sum-rows{color:var(--muted);font-weight:400;margin-right:24px}
-
+  /* SUM BAR */
+  .sum-bar{background:var(--cream3);border:1px solid var(--rule);border-bottom:none;font-family:var(--mono);font-size:11px;font-weight:600;display:table;width:100%;table-layout:fixed}
+  .sum-bar-row{display:table-row}
+  .sum-cell{display:table-cell;padding:7px 12px;color:var(--ink);vertical-align:middle;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sum-cell.r{color:var(--red)}
+  .sum-cell.a{color:var(--amber)}
+  .sum-cell.muted{color:var(--muted);font-weight:400}
 /* TABLE */
 .tbl-w{border:1px solid var(--rule);overflow:hidden}
 table{width:100%;border-collapse:collapse;font-size:12px}
@@ -716,10 +714,15 @@ function renderInv(){
   
 
   document.getElementById('inv-sum-bar').innerHTML=
-  `<span class="sum-rows">${invFiltered.length.toLocaleString()} rows</span>`+
-  `<span class="sum-item"><span class="sum-label">Amount:</span><span class="sum-val">${inr(totalAmt)}</span></span>`+
-  `<span class="sum-item"><span class="sum-label">Overcharge:</span><span class="sum-val r">${totalOC>0?'+'+inr(totalOC):'—'}</span></span>`;
-
+  `<div class="sum-bar-row">
+    <div class="sum-cell muted">${invFiltered.length.toLocaleString()} rows</div>
+    <div class="sum-cell muted"></div>
+    <div class="sum-cell muted"></div>
+    <div class="sum-cell">${inr(totalAmt)}</div>
+    <div class="sum-cell muted">—</div>
+    <div class="sum-cell r">${totalOC>0?'+'+inr(totalOC):'—'}</div>
+    <div class="sum-cell muted"></div>
+  </div>`;
   const rows=invFiltered.slice((invPage-1)*PP,invPage*PP);
   document.getElementById('inv-body').innerHTML=rows.map(inv=>{
     const flags=inv.flags instanceof Set?[...inv.flags]:inv.flags;
@@ -769,11 +772,17 @@ function renderDisc(){
   const discGST=discFiltered.filter(d=>d.gst_wrong).length;
 
   document.getElementById('disc-sum-bar').innerHTML=
-    `<span class="sum-rows">${discFiltered.length.toLocaleString()} rows</span>`+
-    `<span class="sum-item"><span class="sum-label">Contracted:</span><span class="sum-val">${inr(discContracted)}</span></span>`+
-    `<span class="sum-item"><span class="sum-label">Billed:</span><span class="sum-val">${inr(discBilled)}</span></span>`+
-    `<span class="sum-item"><span class="sum-label">GST errors:</span><span class="sum-val r">${discGST||'—'}</span></span>`+
-    `<span class="sum-item"><span class="sum-label">Overcharge:</span><span class="sum-val r">${discOC>0?'+'+inr(discOC):'—'}</span></span>`;
+  `<div class="sum-bar-row">
+    <div class="sum-cell muted">${discFiltered.length.toLocaleString()} rows</div>
+    <div class="sum-cell muted"></div>
+    <div class="sum-cell muted"></div>
+    <div class="sum-cell muted"></div>
+    <div class="sum-cell">${inr(discContracted)}</div>
+    <div class="sum-cell">${inr(discBilled)}</div>
+    <div class="sum-cell r">${discOC>0?'+'+inr(discOC):'—'}</div>
+    <div class="sum-cell muted"></div>
+    <div class="sum-cell muted"></div>
+  </div>`;
 
   document.getElementById('disc-body').innerHTML=discFiltered.slice((discPage-1)*PP,discPage*PP).map(d=>{
     const badge=d.type==='both'?`<span class="pill p-a">Both</span>`:d.type==='price'?`<span class="pill p-r">Price</span>`:`<span class="pill p-b">GST</span>`;
@@ -825,9 +834,15 @@ function renderPh(){
   const phVendorCount=[...new Set(phFiltered.map(p=>p.vendor_id))].length;
 
   document.getElementById('ph-sum-bar').innerHTML=
-    `<span class="sum-rows">${phFiltered.length.toLocaleString()} rows</span>`+
-    `<span class="sum-item"><span class="sum-label">Vendors:</span><span class="sum-val">${phVendorCount}</span></span>`+
-    `<span class="sum-item"><span class="sum-label">Total charged:</span><span class="sum-val r">${inr(phTotalAmt)}</span></span>`;
+  `<div class="sum-bar-row">
+    <div class="sum-cell muted">${phFiltered.length.toLocaleString()} rows</div>
+    <div class="sum-cell muted"></div>
+    <div class="sum-cell muted"></div>
+    <div class="sum-cell muted"></div>
+    <div class="sum-cell muted"></div>
+    <div class="sum-cell r">${inr(phTotalAmt)}</div>
+    <div class="sum-cell muted"></div>
+  </div>`;
 
   document.getElementById('ph-body').innerHTML=phFiltered.slice((phPage-1)*PP,phPage*PP).map(p=>`<tr>
     <td class="mono">${p.invoice_id}</td>
