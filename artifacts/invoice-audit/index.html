@@ -68,16 +68,25 @@ body{font-family:var(--sans);background:var(--cream);color:var(--ink);min-height
 /* REASON CARDS */
 .reason-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);margin-bottom:16px}
 .rc{background:var(--cream);padding:14px 16px;border-top:3px solid transparent}
-.rc.r{border-top-color:var(--red)}.rc.b{border-top-color:var(--blue)}.rc.a{border-top-color:var(--amber)}
+.rc.r{border-top-color:var(--red)}.rc.b{border-top-color:var(--blue)}.rc.a{border-top-color:var(--amber)}.rc.g{border-top-color:var(--green)}
 .rc-tag{display:inline-block;font-family:var(--mono);font-size:9px;padding:2px 7px;border-radius:2px;margin-bottom:8px}
 .tr{background:var(--red-bg);color:var(--red);border:1px solid #f5c6c6}
 .tb{background:var(--blue-bg);color:var(--blue);border:1px solid #b8d0f8}
 .ta{background:var(--amber-bg);color:var(--amber);border:1px solid #f5d99a}
+.tg{background:var(--green-bg);color:var(--green);border:1px solid #a8dbbe}
 .rc-big{font-family:var(--serif);font-size:26px;font-weight:700;line-height:1;margin-bottom:3px}
-.rc-big.r{color:var(--red)}.rc-big.b{color:var(--blue)}.rc-big.a{color:var(--amber)}
+.rc-big.r{color:var(--red)}.rc-big.b{color:var(--blue)}.rc-big.a{color:var(--amber)}.rc-big.g{color:var(--green)}
 .rc-mid{font-size:12px;font-weight:500;color:var(--ink2);margin-bottom:2px}
 .rc-div{height:1px;background:var(--cream3);margin:8px 0}
 .rc-sub{font-size:10px;color:var(--muted)}
+
+/* RECOVERABLE CARD */
+.recoverable-card{background:var(--ink);padding:16px 20px;border-radius:2px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.rec-left{}
+.rec-eye{font-family:var(--mono);font-size:9px;color:#555;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
+.rec-amt{font-family:var(--serif);font-size:36px;font-weight:700;color:var(--red);line-height:1;margin-bottom:4px}
+.rec-sub{font-family:var(--mono);font-size:10px;color:#555}
+.rec-action{background:var(--red);color:#fff;border:none;padding:10px 20px;font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;border-radius:2px;white-space:nowrap}
 
 /* OFFENDER + RUNNERS */
 .bot{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--rule);border:1px solid var(--rule);margin-bottom:16px}
@@ -101,11 +110,11 @@ body{font-family:var(--sans);background:var(--cream);color:var(--ink);min-height
 .chart-box canvas{max-height:200px}
 
 /* STAT CARDS */
-.dyn-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);margin-bottom:16px}
-.dst{background:var(--cream);padding:12px 14px}
-.dsv{font-family:var(--serif);font-size:24px;font-weight:700;line-height:1;margin-bottom:2px}
-.dsv.r{color:var(--red)}.dsv.g{color:var(--green)}.dsv.a{color:var(--amber)}.dsv.b{color:var(--blue)}
-.dsl{font-family:var(--mono);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.stat-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);margin-bottom:16px}
+.sc{background:var(--cream);padding:12px 14px}
+.scv{font-family:var(--serif);font-size:24px;font-weight:700;line-height:1;margin-bottom:2px}
+.scv.r{color:var(--red)}.scv.a{color:var(--amber)}.scv.b{color:var(--blue)}.scv.g{color:var(--green)}
+.scl{font-family:var(--mono);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
 
 /* VIEW TOGGLE */
 .view-toggle{display:flex;gap:0;border:1px solid var(--rule);border-radius:3px;overflow:hidden;width:fit-content;margin-bottom:14px}
@@ -113,7 +122,7 @@ body{font-family:var(--sans);background:var(--cream);color:var(--ink);min-height
 .vt-btn.on{background:var(--ink);color:var(--cream)}
 
 /* FILTERS */
-.tbl-controls{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
+.tbl-controls{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center}
 .inp{background:var(--cream);border:1px solid var(--rule);color:var(--ink);padding:7px 11px;border-radius:2px;font-size:12px;outline:none;font-family:var(--sans)}
 .inp:focus{border-color:var(--ink)}
 .inp-w200{width:200px}
@@ -127,6 +136,15 @@ body{font-family:var(--sans);background:var(--cream);color:var(--ink);min-height
 .btn-clr:hover{color:var(--ink)}
 .tbl-ct{font-family:var(--mono);font-size:10px;color:var(--muted);margin-left:auto}
 
+/* SUM BAR */
+.sum-bar{background:var(--cream3);border:1px solid var(--rule);border-bottom:none;padding:7px 12px;font-family:var(--mono);font-size:11px;font-weight:600;display:flex;align-items:center;gap:0;flex-wrap:wrap}
+.sum-item{display:flex;align-items:center;gap:6px;margin-right:24px}
+.sum-label{color:var(--muted);font-weight:400}
+.sum-val{color:var(--ink)}
+.sum-val.r{color:var(--red)}
+.sum-val.a{color:var(--amber)}
+.sum-rows{color:var(--muted);font-weight:400;margin-right:24px}
+
 /* TABLE */
 .tbl-w{border:1px solid var(--rule);overflow:hidden}
 table{width:100%;border-collapse:collapse;font-size:12px}
@@ -135,7 +153,6 @@ thead th:hover{color:var(--ink)}
 tbody tr{border-bottom:1px solid #F0EDE6;transition:background .1s}
 tbody tr:hover{background:var(--cream2)}
 tbody td{padding:9px 12px;vertical-align:middle}
-.sum-row td{background:var(--cream3)!important;font-family:var(--mono);font-size:11px;font-weight:600;color:var(--ink);border-bottom:2px solid var(--rule)!important;padding:8px 12px}
 .mono{font-family:var(--mono);font-size:11px;color:var(--muted)}
 .vtag{display:inline-block;background:var(--cream2);border:1px solid var(--rule);border-radius:2px;padding:1px 5px;font-family:var(--mono);font-size:9px;color:var(--muted)}
 
@@ -150,6 +167,7 @@ tbody td{padding:9px 12px;vertical-align:middle}
 .ph-hdr{padding:16px 18px;background:#fff8f8;border:1px solid var(--rule);border-left:4px solid var(--red);margin-bottom:16px}
 .ph-title{font-family:var(--serif);font-size:18px;color:var(--red);margin-bottom:4px}
 .ph-stat{font-family:var(--mono);font-size:11px;color:var(--red);margin-top:6px}
+.ph-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--rule);border:none;margin-top:12px}
 
 /* PAGINATION */
 .pag{display:flex;justify-content:center;gap:4px;margin-top:14px;flex-wrap:wrap}
@@ -164,7 +182,8 @@ tbody td{padding:9px 12px;vertical-align:middle}
   .hero-row{grid-template-columns:1fr}
   .hero-num{font-size:52px}
   .c{padding:1rem}
-  .dyn-stats{grid-template-columns:1fr 1fr}
+  .stat-cards{grid-template-columns:1fr 1fr}
+  .recoverable-card{flex-direction:column;align-items:flex-start}
 }
 </style>
 </head>
@@ -219,6 +238,18 @@ tbody td{padding:9px 12px;vertical-align:middle}
             <div class="dl"><div class="dl-dot" style="background:var(--cream3)"></div><span id="dl-clean">—</span></div>
           </div>
         </div>
+      </div>
+
+      <!-- RECOVERABLE CARD -->
+      <div class="recoverable-card">
+        <div class="rec-left">
+          <div class="rec-eye">Total recoverable amount</div>
+          <div class="rec-amt" id="rec-amt">—</div>
+          <div class="rec-sub">Confirmed price overcharges only · excludes phantom items</div>
+        </div>
+        <button class="rec-action" onclick="alert('Issue debit notes to all 15 vendors for confirmed overcharges.')">
+          Issue Debit Notes →
+        </button>
       </div>
 
       <div class="sec">3 reasons · ranked by impact</div>
@@ -276,24 +307,12 @@ tbody td{padding:9px 12px;vertical-align:middle}
     <!-- INVOICES & ERRORS -->
     <div class="tp" id="tp-inv">
 
-      <!-- STAT CARDS -->
-      <div class="dyn-stats">
-        <div class="dst">
-          <div class="dsv r" id="ds-count">—</div>
-          <div class="dsl" id="ds-count-lbl">Invoices</div>
-        </div>
-        <div class="dst">
-          <div class="dsv r" id="ds-flagged">—</div>
-          <div class="dsl" id="ds-flagged-lbl">Flagged</div>
-        </div>
-        <div class="dst">
-          <div class="dsv a" id="ds-overcharge">—</div>
-          <div class="dsl" id="ds-overcharge-lbl">Overcharge</div>
-        </div>
-        <div class="dst">
-          <div class="dsv b" id="ds-total-amt">—</div>
-          <div class="dsl" id="ds-total-lbl">Total billed</div>
-        </div>
+      <!-- STATIC STAT CARDS -->
+      <div class="stat-cards">
+        <div class="sc"><div class="scv r" id="sc-total">—</div><div class="scl">Total invoices</div></div>
+        <div class="sc"><div class="scv r" id="sc-flagged">—</div><div class="scl">Flagged</div></div>
+        <div class="sc"><div class="scv a" id="sc-oc">—</div><div class="scl">Total overcharge</div></div>
+        <div class="sc"><div class="scv b" id="sc-billed">—</div><div class="scl">Total billed</div></div>
       </div>
 
       <!-- TOGGLE -->
@@ -323,7 +342,7 @@ tbody td{padding:9px 12px;vertical-align:middle}
 
       <!-- INVOICE VIEW -->
       <div id="inv-view">
-        <div id="inv-sum-bar" style="background:var(--cream3);border:1px solid var(--rule);border-bottom:none;padding:7px 12px;font-family:var(--mono);font-size:11px;font-weight:600;display:flex;gap:0"></div>
+        <div class="sum-bar" id="inv-sum-bar"></div>
         <div class="tbl-w">
           <table>
             <thead><tr>
@@ -335,7 +354,6 @@ tbody td{padding:9px 12px;vertical-align:middle}
               <th onclick="sortInv('overcharge')">Overcharge ↕</th>
               <th>Flags</th>
             </tr></thead>
-            
             <tbody id="inv-body"></tbody>
           </table>
         </div>
@@ -344,7 +362,6 @@ tbody td{padding:9px 12px;vertical-align:middle}
 
       <!-- LINE-ITEM VIEW -->
       <div id="disc-view" style="display:none">
-        <div id="disc-sum-bar" style="background:var(--cream3);border:1px solid var(--rule);border-bottom:none;padding:7px 12px;font-family:var(--mono);font-size:11px;font-weight:600;display:flex;gap:0"></div>
         <div class="tbl-controls" style="margin-bottom:8px">
           <select class="sel" id="sh-type">
             <option value="">All types</option>
@@ -353,6 +370,7 @@ tbody td{padding:9px 12px;vertical-align:middle}
             <option value="both">Both</option>
           </select>
         </div>
+        <div class="sum-bar" id="disc-sum-bar"></div>
         <div class="tbl-w">
           <table>
             <thead><tr>
@@ -360,13 +378,12 @@ tbody td{padding:9px 12px;vertical-align:middle}
               <th onclick="sortDisc('vendor_id')">Vendor ↕</th>
               <th>Item</th>
               <th onclick="sortDisc('quantity')">Qty ↕</th>
-              <th>Contracted</th>
-              <th>Billed</th>
+              <th onclick="sortDisc('contracted_rate')">Contracted ↕</th>
+              <th onclick="sortDisc('billed_amount')">Billed ↕</th>
               <th onclick="sortDisc('overcharge')">Overcharge ↕</th>
               <th>GST</th>
               <th>Type</th>
             </tr></thead>
-            
             <tbody id="disc-body"></tbody>
           </table>
         </div>
@@ -380,23 +397,11 @@ tbody td{padding:9px 12px;vertical-align:middle}
         <div class="ph-title">Phantom Billing</div>
         <div style="font-size:12px;color:var(--muted)">Items billed with no rate card entry. Requires vendor dialogue before recovery.</div>
         <div class="ph-stat" id="ph-stat">—</div>
-        <div class="dyn-stats" style="margin-top:12px;border:none;background:transparent">
-          <div class="dst" style="background:#fff8f8">
-            <div class="dsv r" id="ph-s-total">—</div>
-            <div class="dsl">Phantom items</div>
-          </div>
-          <div class="dst" style="background:#fff8f8">
-            <div class="dsv r" id="ph-s-amt">—</div>
-            <div class="dsl">Total charged</div>
-          </div>
-          <div class="dst" style="background:#fff8f8">
-            <div class="dsv a" id="ph-s-vends">—</div>
-            <div class="dsl">Vendors</div>
-          </div>
-          <div class="dst" style="background:#fff8f8">
-            <div class="dsv a" id="ph-s-avg">—</div>
-            <div class="dsl">Avg per invoice</div>
-          </div>
+        <div class="ph-stats">
+          <div class="sc" style="background:#fff8f8"><div class="scv r" id="ph-s-total">—</div><div class="scl">Phantom items</div></div>
+          <div class="sc" style="background:#fff8f8"><div class="scv r" id="ph-s-amt">—</div><div class="scl">Total charged</div></div>
+          <div class="sc" style="background:#fff8f8"><div class="scv a" id="ph-s-vends">—</div><div class="scl">Vendors</div></div>
+          <div class="sc" style="background:#fff8f8"><div class="scv a" id="ph-s-avg">—</div><div class="scl">Avg per invoice</div></div>
         </div>
       </div>
 
@@ -413,7 +418,7 @@ tbody td{padding:9px 12px;vertical-align:middle}
         <button class="btn-exp" onclick="expPhCSV()">⬇ CSV</button>
         <div class="tbl-ct" id="ph-ct"></div>
       </div>
-      <div id="ph-sum-bar" style="background:var(--cream3);border:1px solid var(--rule);border-bottom:none;padding:7px 12px;font-family:var(--mono);font-size:11px;font-weight:600;display:flex;gap:0"></div>
+      <div class="sum-bar" id="ph-sum-bar"></div>
       <div class="tbl-w">
         <table>
           <thead><tr>
@@ -425,7 +430,6 @@ tbody td{padding:9px 12px;vertical-align:middle}
             <th onclick="sortPh('billed_amount')">Charged ↕</th>
             <th>Pattern</th>
           </tr></thead>
-          
           <tbody id="ph-body"></tbody>
         </table>
       </div>
@@ -558,11 +562,13 @@ async function init(){
   const priceOC=discrepancies.filter(d=>d.type==='price'||d.type==='both').reduce((s,d)=>s+(d.overcharge>0?d.overcharge:0),0);
   const priceLines=discrepancies.filter(d=>d.type==='price'||d.type==='both').length;
   const pct=Math.round(flaggedInvs.length/invoices.length*100);
+  const allBilled=invoices.reduce((s,i)=>s+i.total,0);
 
   // OVERVIEW
   document.getElementById('h-oc').textContent=inr(totalOC);
   document.getElementById('h-ph-sub').textContent=`+ ${inr(phTotal)} phantom under investigation`;
   document.getElementById('mast-meta').textContent=`FY 2025 · ${lineItems.length.toLocaleString()} line items`;
+  document.getElementById('rec-amt').textContent=inr(totalOC);
   document.getElementById('donut-pct').textContent=pct+'%';
   document.getElementById('dl-flag').textContent=`${flaggedInvs.length.toLocaleString()} flagged`;
   document.getElementById('dl-clean').textContent=`${cleanInvs.length.toLocaleString()} clean`;
@@ -607,6 +613,12 @@ async function init(){
         y:{ticks:{color:'#888',font:{family:'JetBrains Mono',size:9},callback:v=>'₹'+(v/100000).toFixed(0)+'L'},grid:{color:'rgba(0,0,0,.04)'}}}}
   });
 
+  // STATIC STAT CARDS — set once
+  document.getElementById('sc-total').textContent=invoices.length.toLocaleString();
+  document.getElementById('sc-flagged').textContent=flaggedInvs.length.toLocaleString();
+  document.getElementById('sc-oc').textContent=inr(totalOC);
+  document.getElementById('sc-billed').textContent=inr(allBilled);
+
   // VENDOR DROPDOWNS
   vSorted.forEach(([v])=>{
     const o1=document.createElement('option');
@@ -616,26 +628,13 @@ async function init(){
     document.getElementById('ph-vendor').appendChild(o2);
   });
 
-  // PHANTOM STATS
+  // PHANTOM STATS — set once
   const phInvCount=[...new Set(phantomItems.map(p=>p.invoice_id))].length;
   document.getElementById('ph-stat').textContent=`${phantomItems.length} items · ${inr(phTotal)} · across ${phVends} vendors`;
   document.getElementById('ph-s-total').textContent=phantomItems.length.toLocaleString();
   document.getElementById('ph-s-amt').textContent=inr(phTotal);
   document.getElementById('ph-s-vends').textContent=phVends;
   document.getElementById('ph-s-avg').textContent=inr(phTotal/phInvCount);
-
-  // SET STAT CARDS ONCE — static, never change
-  const allFlagged=invArr.filter(i=>i.errors>0||i.phantom_count>0).length;
-  const allBilled=invoices.reduce((s,i)=>s+i.total,0);
-  const allOC=invArr.reduce((s,i)=>s+i.overcharge,0);
-  document.getElementById('ds-count').textContent=invoices.length.toLocaleString();
-  document.getElementById('ds-count-lbl').textContent='Invoices';
-  document.getElementById('ds-flagged').textContent=allFlagged.toLocaleString();
-  document.getElementById('ds-flagged-lbl').textContent='Flagged';
-  document.getElementById('ds-overcharge').textContent=inr(allOC);
-  document.getElementById('ds-overcharge-lbl').textContent='Overcharge';
-  document.getElementById('ds-total-amt').textContent=inr(allBilled);
-  document.getElementById('ds-total-lbl').textContent='Total billed';
 
   // INIT
   invFiltered=[...invArr];
@@ -663,7 +662,6 @@ function applySharedFilters(){
   const to=document.getElementById('sh-to').value;
   const type=document.getElementById('sh-type').value;
 
-  // Invoice filter
   invFiltered=Object.values(invAuditMap).map(inv=>({
     ...inv,flags:inv.flags instanceof Set?[...inv.flags]:inv.flags
   })).filter(inv=>{
@@ -680,23 +678,22 @@ function applySharedFilters(){
   });
   invFiltered.sort((a,b)=>invSD*(typeof a[invSK]==='string'?a[invSK].localeCompare(b[invSK]):(b[invSK]-a[invSK])));
 
-  // Disc filter
   discFiltered=discrepancies.filter(d=>{
     if(q&&!d.invoice_id.toLowerCase().includes(q)&&!d.vendor_name.toLowerCase().includes(q)&&!d.vendor_id.toLowerCase().includes(q)&&!d.item_name.toLowerCase().includes(q))return false;
     if(vendor&&d.vendor_id!==vendor)return false;
     if(type&&d.type!==type)return false;
     if(from&&d.invoice_date&&d.invoice_date<from)return false;
     if(to&&d.invoice_date&&d.invoice_date>to)return false;
-    if(flag==='clean')return false;
+    if(flag==='clean'||flag==='phantom')return false;
     if(flag==='overcharge'&&d.overcharge<=0&&!d.gst_wrong)return false;
     if(flag==='gst'&&!d.gst_wrong)return false;
-    if(flag==='phantom')return false;
     return true;
   });
   discFiltered.sort((a,b)=>discSD*(typeof a[discSK]==='string'?a[discSK].localeCompare(b[discSK]):(a[discSK]-b[discSK])));
 
-  // count label only
-  document.getElementById('sh-ct').textContent=currentView==='inv'?`${invFiltered.length.toLocaleString()} invoices`:`${discFiltered.length.toLocaleString()} line items`;
+  document.getElementById('sh-ct').textContent=currentView==='inv'?
+    `${invFiltered.length.toLocaleString()} invoices`:
+    `${discFiltered.length.toLocaleString()} line items`;
 
   invPage=1;discPage=1;
   renderInv();renderInvPag();
@@ -705,28 +702,28 @@ function applySharedFilters(){
 
 function sortInv(k){if(invSK===k)invSD*=-1;else{invSK=k;invSD=-1;}applySharedFilters();}
 function sortDisc(k){if(discSK===k)discSD*=-1;else{discSK=k;discSD=-1;}applySharedFilters();}
-
 function clearFilters(){
   ['sh-q','sh-from','sh-to'].forEach(id=>document.getElementById(id).value='');
   ['sh-flag','sh-vendor','sh-type'].forEach(id=>document.getElementById(id).selectedIndex=0);
   applySharedFilters();
 }
-
 function exportCurrent(){if(currentView==='inv')expInvCSV();else expDiscCSV();}
 
 // ── RENDER INVOICE TABLE ──
 function renderInv(){
-  // PINNED SUM ROW
-  const totalBilled=invFiltered.reduce((s,i)=>s+i.total,0);
+  const totalAmt=invFiltered.reduce((s,i)=>s+i.total,0);
   const totalOC=invFiltered.reduce((s,i)=>s+i.overcharge,0);
   const totalErrors=invFiltered.reduce((s,i)=>s+i.errors,0);
-  document.getElementById('inv-sum-bar').innerHTML=
-  `<span style="color:var(--muted);margin-right:24px">${invFiltered.length.toLocaleString()} rows</span>`+
-  `<span style="margin-right:8px;color:var(--muted)">Amount:</span><span style="color:var(--ink);margin-right:24px">${inr(totalBilled)}</span>`+
-  `<span style="margin-right:8px;color:var(--muted)">Errors:</span><span style="color:var(--red);margin-right:24px">${totalErrors>0?totalErrors:'—'}</span>`+
-  `<span style="margin-right:8px;color:var(--muted)">Overcharge:</span><span style="color:var(--red)">${totalOC>0?'+'+inr(totalOC):'—'}</span>`;
+  const totalGST=invFiltered.reduce((s,i)=>s+i.gst_errors,0);
+  const totalPhantom=invFiltered.reduce((s,i)=>s+i.phantom_count,0);
 
-  // DATA ROWS
+  document.getElementById('inv-sum-bar').innerHTML=
+    `<span class="sum-rows">${invFiltered.length.toLocaleString()} rows</span>`+
+    `<span class="sum-item"><span class="sum-label">Total:</span><span class="sum-val">${inr(totalAmt)}</span></span>`+
+    `<span class="sum-item"><span class="sum-label">GST errors:</span><span class="sum-val r">${totalGST||'—'}</span></span>`+
+    `<span class="sum-item"><span class="sum-label">Phantom:</span><span class="sum-val a">${totalPhantom||'—'}</span></span>`+
+    `<span class="sum-item"><span class="sum-label">Overcharge:</span><span class="sum-val r">${totalOC>0?'+'+inr(totalOC):'—'}</span></span>`;
+
   const rows=invFiltered.slice((invPage-1)*PP,invPage*PP);
   document.getElementById('inv-body').innerHTML=rows.map(inv=>{
     const flags=inv.flags instanceof Set?[...inv.flags]:inv.flags;
@@ -747,7 +744,9 @@ function renderInv(){
       <td><span class="vtag">${inv.vendor_id}</span> <span style="color:var(--ink2);font-size:12px;margin-left:4px">${inv.vendor_name}</span></td>
       <td class="mono">${inv.invoice_date||'—'}</td>
       <td style="font-family:var(--mono);color:var(--ink2)">${inr(inv.total)}</td>
-      <td>${errTxt}</td><td>${ocTxt}</td><td>${pills}</td>
+      <td>${errTxt}</td>
+      <td>${ocTxt}</td>
+      <td>${pills}</td>
     </tr>`;
   }).join('');
 }
@@ -768,17 +767,18 @@ function invGo(n){const t=Math.ceil(invFiltered.length/PP);if(n<1||n>t)return;in
 
 // ── RENDER DISC TABLE ──
 function renderDisc(){
-  // PINNED SUM ROW
   const discOC=discFiltered.filter(d=>d.overcharge>0).reduce((s,d)=>s+d.overcharge,0);
   const discBilled=discFiltered.reduce((s,d)=>s+d.billed_amount,0);
   const discContracted=discFiltered.reduce((s,d)=>s+d.expected_amount,0);
-  document.getElementById('disc-sum-bar').innerHTML=
-  `<span style="color:var(--muted);margin-right:24px">${discFiltered.length.toLocaleString()} rows</span>`+
-  `<span style="margin-right:8px;color:var(--muted)">Contracted:</span><span style="color:var(--ink);margin-right:24px">${inr(discContracted)}</span>`+
-  `<span style="margin-right:8px;color:var(--muted)">Billed:</span><span style="color:var(--ink);margin-right:24px">${inr(discBilled)}</span>`+
-  `<span style="margin-right:8px;color:var(--muted)">Overcharge:</span><span style="color:var(--red)">${discOC>0?'+'+inr(discOC):'—'}</span>`;
+  const discGST=discFiltered.filter(d=>d.gst_wrong).length;
 
-  // DATA ROWS
+  document.getElementById('disc-sum-bar').innerHTML=
+    `<span class="sum-rows">${discFiltered.length.toLocaleString()} rows</span>`+
+    `<span class="sum-item"><span class="sum-label">Contracted:</span><span class="sum-val">${inr(discContracted)}</span></span>`+
+    `<span class="sum-item"><span class="sum-label">Billed:</span><span class="sum-val">${inr(discBilled)}</span></span>`+
+    `<span class="sum-item"><span class="sum-label">GST errors:</span><span class="sum-val r">${discGST||'—'}</span></span>`+
+    `<span class="sum-item"><span class="sum-label">Overcharge:</span><span class="sum-val r">${discOC>0?'+'+inr(discOC):'—'}</span></span>`;
+
   document.getElementById('disc-body').innerHTML=discFiltered.slice((discPage-1)*PP,discPage*PP).map(d=>{
     const badge=d.type==='both'?`<span class="pill p-a">Both</span>`:d.type==='price'?`<span class="pill p-r">Price</span>`:`<span class="pill p-b">GST</span>`;
     const gst=d.gst_wrong?`<span style="color:var(--blue);font-family:var(--mono);font-size:10px">${d.billed_gst}%→${d.correct_gst}%</span>`:`<span style="color:var(--dim)">✓</span>`;
@@ -825,13 +825,14 @@ function applyPhFilters(){
 function sortPh(k){if(phSK===k)phSD*=-1;else{phSK=k;phSD=-1;}applyPhFilters();}
 
 function renderPh(){
-  // PINNED SUM ROW
   const phTotalAmt=phFiltered.reduce((s,p)=>s+p.billed_amount,0);
+  const phVendorCount=[...new Set(phFiltered.map(p=>p.vendor_id))].length;
+
   document.getElementById('ph-sum-bar').innerHTML=
-  `<span style="color:var(--muted);margin-right:24px">${phFiltered.length.toLocaleString()} rows</span>`+
-  `<span style="margin-right:8px;color:var(--muted)">Total charged:</span><span style="color:var(--red)">${inr(phTotalAmt)}</span>`;
-  
-  // DATA ROWS
+    `<span class="sum-rows">${phFiltered.length.toLocaleString()} rows</span>`+
+    `<span class="sum-item"><span class="sum-label">Vendors:</span><span class="sum-val">${phVendorCount}</span></span>`+
+    `<span class="sum-item"><span class="sum-label">Total charged:</span><span class="sum-val r">${inr(phTotalAmt)}</span></span>`;
+
   document.getElementById('ph-body').innerHTML=phFiltered.slice((phPage-1)*PP,phPage*PP).map(p=>`<tr>
     <td class="mono">${p.invoice_id}</td>
     <td><span class="vtag">${p.vendor_id}</span> <span style="color:var(--muted);font-size:11px;margin-left:4px">${p.vendor_name}</span></td>
