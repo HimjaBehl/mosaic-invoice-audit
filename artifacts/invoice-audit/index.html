@@ -265,7 +265,7 @@ tbody td{padding:9px 12px;vertical-align:middle;overflow:hidden;text-overflow:el
 
       <div class="bot">
         <div class="offender">
-          <div class="off-l">Top offender · price overcharge</div>
+          <div class="off-l">Top offender · price + GST combined</div>
           <div class="off-name" id="off-name">—</div>
           <div class="off-amt" id="off-amt">—</div>
           <div class="off-sub" id="off-sub">—</div>
@@ -550,8 +550,10 @@ async function init(){
         type,invoice_date:invAuditMap[li.invoice_id]?.invoice_date||''
       });
 
-      if(!byV[li.vendor_id])byV[li.vendor_id]={oc:0,cnt:0};
+      if(!byV[li.vendor_id])byV[li.vendor_id]={oc:0,gst:0,combined:0,cnt:0};
       if(diff>0){byV[li.vendor_id].oc+=diff;priceOC+=diff;mOC[mIdx]+=diff;}
+      if(gstExtra>0){byV[li.vendor_id].gst+=gstExtra;}
+      byV[li.vendor_id].combined=(byV[li.vendor_id].oc||0)+(byV[li.vendor_id].gst||0);
       byV[li.vendor_id].cnt++;
 
       if(ia){
@@ -566,7 +568,8 @@ async function init(){
   const invArr=Object.values(invAuditMap).map(inv=>({...inv,flags:[...inv.flags]}));
   const flaggedInvs=invArr.filter(inv=>inv.errors>0||inv.phantom_count>0);
   const cleanInvs=invArr.filter(inv=>inv.errors===0&&inv.phantom_count===0);
-  const vSorted=Object.entries(byV).sort((a,b)=>b[1].oc-a[1].oc);
+  const vSorted=Object.entries(byV).sort((a,b)=>b[1].combined-a[1].combined);
+  const vSortedPriceOnly=Object.entries(byV).sort((a,b)=>b[1].oc-a[1].oc);
   const top=vSorted[0];
   const runners=vSorted.slice(1,5);
   const phTotal=phantomItems.reduce((s,p)=>s+p.billed_amount,0);
@@ -621,17 +624,17 @@ async function init(){
 
   // ── OFFENDER + RUNNERS ──
   document.getElementById('off-name').textContent=vN[top[0]]||top[0];
-  document.getElementById('off-amt').textContent=inr(top[1].oc);
-  document.getElementById('off-sub').textContent=`${top[1].cnt} errors · ${vC[top[0]]||'—'} · ${top[0]}`;
+  document.getElementById('off-amt').textContent=inr(top[1].combined);
+  document.getElementById('off-sub').textContent=`Price ${inr(top[1].oc)} + GST ${inr(top[1].gst||0)} · ${vC[top[0]]||'—'} · ${top[0]}`;
   document.getElementById('runners-list').innerHTML=runners.map(([v,d])=>
-    `<div class="run-row"><span class="run-name">${vN[v]||v}</span><span class="run-amt">${inr(d.oc)}</span></div>`
+    `<div class="run-row"><span class="run-name">${vN[v]||v}</span><span class="run-amt">${inr(d.combined)}</span></div>`
   ).join('');
 
   // ── CHARTS ──
   new Chart(document.getElementById('vc'),{
     type:'bar',
     data:{labels:vSorted.map(([v])=>vN[v]||v),
-      datasets:[{data:vSorted.map(([,v])=>Math.round(v.oc)),
+                 datasets:[{data:vSorted.map(([,v])=>Math.round(v.combined)),
         backgroundColor:vSorted.map((_,i)=>i<3?'rgba(192,57,43,.85)':i<6?'rgba(183,96,10,.5)':'rgba(26,86,176,.3)'),
         borderColor:vSorted.map((_,i)=>i<3?'#C0392B':i<6?'#B7600A':'#1A56B0'),
         borderWidth:1,borderRadius:2}]},
