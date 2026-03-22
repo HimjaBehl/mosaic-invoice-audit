@@ -323,6 +323,7 @@ tbody td{padding:9px 12px;vertical-align:middle}
 
       <!-- INVOICE VIEW -->
       <div id="inv-view">
+        <div id="inv-sum-bar" style="background:var(--cream3);border:1px solid var(--rule);border-bottom:none;padding:7px 12px;font-family:var(--mono);font-size:11px;font-weight:600;display:flex;gap:0"></div>
         <div class="tbl-w">
           <table>
             <thead><tr>
@@ -334,7 +335,7 @@ tbody td{padding:9px 12px;vertical-align:middle}
               <th onclick="sortInv('overcharge')">Overcharge ↕</th>
               <th>Flags</th>
             </tr></thead>
-            <tbody class="sum-row" id="inv-sum-row"></tbody>
+            
             <tbody id="inv-body"></tbody>
           </table>
         </div>
@@ -343,6 +344,7 @@ tbody td{padding:9px 12px;vertical-align:middle}
 
       <!-- LINE-ITEM VIEW -->
       <div id="disc-view" style="display:none">
+        <div id="disc-sum-bar" style="background:var(--cream3);border:1px solid var(--rule);border-bottom:none;padding:7px 12px;font-family:var(--mono);font-size:11px;font-weight:600;display:flex;gap:0"></div>
         <div class="tbl-controls" style="margin-bottom:8px">
           <select class="sel" id="sh-type">
             <option value="">All types</option>
@@ -364,7 +366,7 @@ tbody td{padding:9px 12px;vertical-align:middle}
               <th>GST</th>
               <th>Type</th>
             </tr></thead>
-            <tbody class="sum-row" id="disc-sum-row"></tbody>
+            
             <tbody id="disc-body"></tbody>
           </table>
         </div>
@@ -411,6 +413,7 @@ tbody td{padding:9px 12px;vertical-align:middle}
         <button class="btn-exp" onclick="expPhCSV()">⬇ CSV</button>
         <div class="tbl-ct" id="ph-ct"></div>
       </div>
+      <div id="ph-sum-bar" style="background:var(--cream3);border:1px solid var(--rule);border-bottom:none;padding:7px 12px;font-family:var(--mono);font-size:11px;font-weight:600;display:flex;gap:0"></div>
       <div class="tbl-w">
         <table>
           <thead><tr>
@@ -422,7 +425,7 @@ tbody td{padding:9px 12px;vertical-align:middle}
             <th onclick="sortPh('billed_amount')">Charged ↕</th>
             <th>Pattern</th>
           </tr></thead>
-          <tbody class="sum-row" id="ph-sum-row"></tbody>
+          
           <tbody id="ph-body"></tbody>
         </table>
       </div>
@@ -621,6 +624,19 @@ async function init(){
   document.getElementById('ph-s-vends').textContent=phVends;
   document.getElementById('ph-s-avg').textContent=inr(phTotal/phInvCount);
 
+  // SET STAT CARDS ONCE — static, never change
+  const allFlagged=invArr.filter(i=>i.errors>0||i.phantom_count>0).length;
+  const allBilled=invoices.reduce((s,i)=>s+i.total,0);
+  const allOC=invArr.reduce((s,i)=>s+i.overcharge,0);
+  document.getElementById('ds-count').textContent=invoices.length.toLocaleString();
+  document.getElementById('ds-count-lbl').textContent='Invoices';
+  document.getElementById('ds-flagged').textContent=allFlagged.toLocaleString();
+  document.getElementById('ds-flagged-lbl').textContent='Flagged';
+  document.getElementById('ds-overcharge').textContent=inr(allOC);
+  document.getElementById('ds-overcharge-lbl').textContent='Overcharge';
+  document.getElementById('ds-total-amt').textContent=inr(allBilled);
+  document.getElementById('ds-total-lbl').textContent='Total billed';
+
   // INIT
   invFiltered=[...invArr];
   discFiltered=[...discrepancies];
@@ -679,35 +695,8 @@ function applySharedFilters(){
   });
   discFiltered.sort((a,b)=>discSD*(typeof a[discSK]==='string'?a[discSK].localeCompare(b[discSK]):(a[discSK]-b[discSK])));
 
-  // UPDATE STAT CARDS
-  const flaggedCount=invFiltered.filter(i=>i.errors>0||i.phantom_count>0).length;
-  const totalBilled=invFiltered.reduce((s,i)=>s+i.total,0);
-  const totalOC=invFiltered.reduce((s,i)=>s+i.overcharge,0);
-
-  if(currentView==='inv'){
-    document.getElementById('ds-count').textContent=invFiltered.length.toLocaleString();
-    document.getElementById('ds-count-lbl').textContent='Invoices';
-    document.getElementById('ds-flagged').textContent=flaggedCount.toLocaleString();
-    document.getElementById('ds-flagged-lbl').textContent='Flagged';
-    document.getElementById('ds-overcharge').textContent=inr(totalOC);
-    document.getElementById('ds-overcharge-lbl').textContent='Overcharge';
-    document.getElementById('ds-total-amt').textContent=inr(totalBilled);
-    document.getElementById('ds-total-lbl').textContent='Total billed';
-    document.getElementById('sh-ct').textContent=`${invFiltered.length.toLocaleString()} invoices`;
-  } else {
-    const discOC=discFiltered.filter(d=>d.overcharge>0).reduce((s,d)=>s+d.overcharge,0);
-    const discGST=discFiltered.filter(d=>d.gst_wrong).length;
-    const discBilled=discFiltered.reduce((s,d)=>s+d.billed_amount,0);
-    document.getElementById('ds-count').textContent=discFiltered.length.toLocaleString();
-    document.getElementById('ds-count-lbl').textContent='Line items';
-    document.getElementById('ds-flagged').textContent=discFiltered.filter(d=>d.type==='price'||d.type==='both').length.toLocaleString();
-    document.getElementById('ds-flagged-lbl').textContent='Price errors';
-    document.getElementById('ds-overcharge').textContent=discGST.toLocaleString();
-    document.getElementById('ds-overcharge-lbl').textContent='GST errors';
-    document.getElementById('ds-total-amt').textContent=inr(discOC);
-    document.getElementById('ds-total-lbl').textContent='Overcharge';
-    document.getElementById('sh-ct').textContent=`${discFiltered.length.toLocaleString()} line items`;
-  }
+  // count label only
+  document.getElementById('sh-ct').textContent=currentView==='inv'?`${invFiltered.length.toLocaleString()} invoices`:`${discFiltered.length.toLocaleString()} line items`;
 
   invPage=1;discPage=1;
   renderInv();renderInvPag();
@@ -731,14 +720,11 @@ function renderInv(){
   const totalBilled=invFiltered.reduce((s,i)=>s+i.total,0);
   const totalOC=invFiltered.reduce((s,i)=>s+i.overcharge,0);
   const totalErrors=invFiltered.reduce((s,i)=>s+i.errors,0);
-  document.getElementById('inv-sum-row').innerHTML=`<tr>
-    <td style="color:var(--ink)">${invFiltered.length.toLocaleString()} rows</td>
-    <td></td><td></td>
-    <td style="color:var(--ink)">${inr(totalBilled)}</td>
-    <td style="color:var(--red)">${totalErrors>0?totalErrors:'—'}</td>
-    <td style="color:var(--red)">${totalOC>0?'+'+inr(totalOC):'—'}</td>
-    <td></td>
-  </tr>`;
+  document.getElementById('inv-sum-bar').innerHTML=
+  `<span style="color:var(--muted);margin-right:24px">${invFiltered.length.toLocaleString()} rows</span>`+
+  `<span style="margin-right:8px;color:var(--muted)">Amount:</span><span style="color:var(--ink);margin-right:24px">${inr(totalBilled)}</span>`+
+  `<span style="margin-right:8px;color:var(--muted)">Errors:</span><span style="color:var(--red);margin-right:24px">${totalErrors>0?totalErrors:'—'}</span>`+
+  `<span style="margin-right:8px;color:var(--muted)">Overcharge:</span><span style="color:var(--red)">${totalOC>0?'+'+inr(totalOC):'—'}</span>`;
 
   // DATA ROWS
   const rows=invFiltered.slice((invPage-1)*PP,invPage*PP);
@@ -786,14 +772,11 @@ function renderDisc(){
   const discOC=discFiltered.filter(d=>d.overcharge>0).reduce((s,d)=>s+d.overcharge,0);
   const discBilled=discFiltered.reduce((s,d)=>s+d.billed_amount,0);
   const discContracted=discFiltered.reduce((s,d)=>s+d.expected_amount,0);
-  document.getElementById('disc-sum-row').innerHTML=`<tr>
-    <td style="color:var(--ink)">${discFiltered.length.toLocaleString()} rows</td>
-    <td></td><td></td><td></td>
-    <td style="color:var(--ink)">${inr(discContracted)}</td>
-    <td style="color:var(--ink)">${inr(discBilled)}</td>
-    <td style="color:var(--red)">${discOC>0?'+'+inr(discOC):'—'}</td>
-    <td></td><td></td>
-  </tr>`;
+  document.getElementById('disc-sum-bar').innerHTML=
+  `<span style="color:var(--muted);margin-right:24px">${discFiltered.length.toLocaleString()} rows</span>`+
+  `<span style="margin-right:8px;color:var(--muted)">Contracted:</span><span style="color:var(--ink);margin-right:24px">${inr(discContracted)}</span>`+
+  `<span style="margin-right:8px;color:var(--muted)">Billed:</span><span style="color:var(--ink);margin-right:24px">${inr(discBilled)}</span>`+
+  `<span style="margin-right:8px;color:var(--muted)">Overcharge:</span><span style="color:var(--red)">${discOC>0?'+'+inr(discOC):'—'}</span>`;
 
   // DATA ROWS
   document.getElementById('disc-body').innerHTML=discFiltered.slice((discPage-1)*PP,discPage*PP).map(d=>{
@@ -844,13 +827,10 @@ function sortPh(k){if(phSK===k)phSD*=-1;else{phSK=k;phSD=-1;}applyPhFilters();}
 function renderPh(){
   // PINNED SUM ROW
   const phTotalAmt=phFiltered.reduce((s,p)=>s+p.billed_amount,0);
-  document.getElementById('ph-sum-row').innerHTML=`<tr>
-    <td style="color:var(--ink)">${phFiltered.length.toLocaleString()} rows</td>
-    <td></td><td></td><td></td><td></td>
-    <td style="color:var(--red)">${inr(phTotalAmt)}</td>
-    <td></td>
-  </tr>`;
-
+  document.getElementById('ph-sum-bar').innerHTML=
+  `<span style="color:var(--muted);margin-right:24px">${phFiltered.length.toLocaleString()} rows</span>`+
+  `<span style="margin-right:8px;color:var(--muted)">Total charged:</span><span style="color:var(--red)">${inr(phTotalAmt)}</span>`;
+  
   // DATA ROWS
   document.getElementById('ph-body').innerHTML=phFiltered.slice((phPage-1)*PP,phPage*PP).map(p=>`<tr>
     <td class="mono">${p.invoice_id}</td>
