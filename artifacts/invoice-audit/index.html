@@ -100,14 +100,12 @@ body{font-family:var(--sans);background:var(--cream);color:var(--ink);min-height
 .chart-sub-lbl{font-size:11px;color:var(--muted);margin-bottom:14px}
 .chart-box canvas{max-height:200px}
 
-/* DYNAMIC STATS ROW */
-.dyn-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);margin-bottom:16px;transition:all .2s}
+/* STAT CARDS */
+.dyn-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);margin-bottom:16px}
 .dst{background:var(--cream);padding:12px 14px}
-.dsv{font-family:var(--serif);font-size:24px;font-weight:700;line-height:1;margin-bottom:2px;transition:all .3s}
+.dsv{font-family:var(--serif);font-size:24px;font-weight:700;line-height:1;margin-bottom:2px}
 .dsv.r{color:var(--red)}.dsv.g{color:var(--green)}.dsv.a{color:var(--amber)}.dsv.b{color:var(--blue)}
 .dsl{font-family:var(--mono);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
-.dss{font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:2px;transition:all .3s}
-.dss.r{color:var(--red)}.dss.g{color:var(--green)}.dss.a{color:var(--amber)}
 
 /* VIEW TOGGLE */
 .view-toggle{display:flex;gap:0;border:1px solid var(--rule);border-radius:3px;overflow:hidden;width:fit-content;margin-bottom:14px}
@@ -137,6 +135,7 @@ thead th:hover{color:var(--ink)}
 tbody tr{border-bottom:1px solid #F0EDE6;transition:background .1s}
 tbody tr:hover{background:var(--cream2)}
 tbody td{padding:9px 12px;vertical-align:middle}
+.sum-row td{background:var(--cream3)!important;font-family:var(--mono);font-size:11px;font-weight:600;color:var(--ink);border-bottom:2px solid var(--rule)!important;padding:8px 12px}
 .mono{font-family:var(--mono);font-size:11px;color:var(--muted)}
 .vtag{display:inline-block;background:var(--cream2);border:1px solid var(--rule);border-radius:2px;padding:1px 5px;font-family:var(--mono);font-size:9px;color:var(--muted)}
 
@@ -198,7 +197,7 @@ tbody td{padding:9px 12px;vertical-align:middle}
 
   <div class="c">
 
-    <!-- ══ OVERVIEW ══ -->
+    <!-- OVERVIEW -->
     <div class="tp active" id="tp-ov">
       <div class="hero-row">
         <div>
@@ -274,34 +273,30 @@ tbody td{padding:9px 12px;vertical-align:middle}
       </div>
     </div>
 
-    <!-- ══ INVOICES & ERRORS (combined) ══ -->
+    <!-- INVOICES & ERRORS -->
     <div class="tp" id="tp-inv">
 
-      <!-- DYNAMIC STATS — update on filter -->
+      <!-- STAT CARDS -->
       <div class="dyn-stats">
         <div class="dst">
           <div class="dsv r" id="ds-count">—</div>
           <div class="dsl" id="ds-count-lbl">Invoices</div>
-          <div class="dss" id="ds-count-sub">—</div>
         </div>
         <div class="dst">
           <div class="dsv r" id="ds-flagged">—</div>
           <div class="dsl" id="ds-flagged-lbl">Flagged</div>
-          <div class="dss r" id="ds-flagged-sub">—</div>
         </div>
         <div class="dst">
           <div class="dsv a" id="ds-overcharge">—</div>
-          <div class="dsl">Overcharge</div>
-          <div class="dss a" id="ds-overcharge-sub">—</div>
+          <div class="dsl" id="ds-overcharge-lbl">Overcharge</div>
         </div>
         <div class="dst">
           <div class="dsv b" id="ds-total-amt">—</div>
-          <div class="dsl">Total billed</div>
-          <div class="dss" id="ds-total-sub">—</div>
+          <div class="dsl" id="ds-total-lbl">Total billed</div>
         </div>
       </div>
 
-      <!-- VIEW TOGGLE -->
+      <!-- TOGGLE -->
       <div class="view-toggle">
         <button class="vt-btn on" id="vt-inv" onclick="setView('inv')">Invoice view</button>
         <button class="vt-btn" id="vt-disc" onclick="setView('disc')">Line-item view</button>
@@ -322,11 +317,11 @@ tbody td{padding:9px 12px;vertical-align:middle}
         <span class="date-sep">→</span>
         <input class="inp inp-date" id="sh-to" type="date">
         <button class="btn-clr" onclick="clearFilters()">Clear</button>
-        <button class="btn-exp" id="exp-btn" onclick="exportCurrent()">⬇ CSV</button>
+        <button class="btn-exp" onclick="exportCurrent()">⬇ CSV</button>
         <div class="tbl-ct" id="sh-ct"></div>
       </div>
 
-      <!-- INVOICE VIEW TABLE -->
+      <!-- INVOICE VIEW -->
       <div id="inv-view">
         <div class="tbl-w">
           <table>
@@ -339,15 +334,16 @@ tbody td{padding:9px 12px;vertical-align:middle}
               <th onclick="sortInv('overcharge')">Overcharge ↕</th>
               <th>Flags</th>
             </tr></thead>
+            <tbody class="sum-row" id="inv-sum-row"></tbody>
             <tbody id="inv-body"></tbody>
           </table>
         </div>
         <div class="pag" id="inv-pag"></div>
       </div>
 
-      <!-- LINE-ITEM VIEW TABLE -->
+      <!-- LINE-ITEM VIEW -->
       <div id="disc-view" style="display:none">
-        <div class="tbl-controls" style="margin-top:8px;margin-bottom:8px">
+        <div class="tbl-controls" style="margin-bottom:8px">
           <select class="sel" id="sh-type">
             <option value="">All types</option>
             <option value="price">Price</option>
@@ -368,15 +364,15 @@ tbody td{padding:9px 12px;vertical-align:middle}
               <th>GST</th>
               <th>Type</th>
             </tr></thead>
+            <tbody class="sum-row" id="disc-sum-row"></tbody>
             <tbody id="disc-body"></tbody>
           </table>
         </div>
         <div class="pag" id="disc-pag"></div>
       </div>
-
     </div>
 
-    <!-- ══ PHANTOM ══ -->
+    <!-- PHANTOM -->
     <div class="tp" id="tp-ph">
       <div class="ph-hdr">
         <div class="ph-title">Phantom Billing</div>
@@ -426,6 +422,7 @@ tbody td{padding:9px 12px;vertical-align:middle}
             <th onclick="sortPh('billed_amount')">Charged ↕</th>
             <th>Pattern</th>
           </tr></thead>
+          <tbody class="sum-row" id="ph-sum-row"></tbody>
           <tbody id="ph-body"></tbody>
         </table>
       </div>
@@ -442,9 +439,7 @@ const PP=50;
 let lineItems=[],rateCard=[],invoices=[];
 let discrepancies=[],phantomItems=[];
 let rateMap={},invAuditMap={};
-
-// View state
-let currentView='inv'; // 'inv' or 'disc'
+let currentView='inv';
 let invFiltered=[],invPage=1,invSK='total',invSD=-1;
 let discFiltered=[],discPage=1,discSK='overcharge',discSD=-1;
 let phFiltered=[],phPage=1,phSK='billed_amount',phSD=-1;
@@ -510,7 +505,7 @@ async function init(){
 
   let totalOC=0,gstErrs=0;
   const byV={};
-  const mOC=new Array(12).fill(0),mCt=new Array(12).fill(0);
+  const mOC=new Array(12).fill(0);
 
   for(const li of lineItems){
     const key=`${li.vendor_id}|${li.item_name}`;
@@ -541,7 +536,6 @@ async function init(){
       if(diff>0){byV[li.vendor_id].oc+=diff;totalOC+=diff;mOC[mIdx]+=diff;}
       if(gW)gstErrs++;
       byV[li.vendor_id].cnt++;
-      mCt[mIdx]++;
       if(ia){
         ia.errors++;
         if(diff>0){ia.overcharge+=diff;ia.flags.add('overcharge');}
@@ -619,7 +613,7 @@ async function init(){
     document.getElementById('ph-vendor').appendChild(o2);
   });
 
-  // PHANTOM TAB
+  // PHANTOM STATS
   const phInvCount=[...new Set(phantomItems.map(p=>p.invoice_id))].length;
   document.getElementById('ph-stat').textContent=`${phantomItems.length} items · ${inr(phTotal)} · across ${phVends} vendors`;
   document.getElementById('ph-s-total').textContent=phantomItems.length.toLocaleString();
@@ -644,7 +638,7 @@ async function init(){
   document.getElementById('app').style.display='block';
 }
 
-// ── SHARED FILTERS (both views) ──
+// ── SHARED FILTERS ──
 function applySharedFilters(){
   const q=document.getElementById('sh-q').value.toLowerCase();
   const flag=document.getElementById('sh-flag').value;
@@ -653,7 +647,7 @@ function applySharedFilters(){
   const to=document.getElementById('sh-to').value;
   const type=document.getElementById('sh-type').value;
 
-  // Filter invoices
+  // Invoice filter
   invFiltered=Object.values(invAuditMap).map(inv=>({
     ...inv,flags:inv.flags instanceof Set?[...inv.flags]:inv.flags
   })).filter(inv=>{
@@ -670,54 +664,48 @@ function applySharedFilters(){
   });
   invFiltered.sort((a,b)=>invSD*(typeof a[invSK]==='string'?a[invSK].localeCompare(b[invSK]):(b[invSK]-a[invSK])));
 
-  // Filter discrepancies
+  // Disc filter
   discFiltered=discrepancies.filter(d=>{
     if(q&&!d.invoice_id.toLowerCase().includes(q)&&!d.vendor_name.toLowerCase().includes(q)&&!d.vendor_id.toLowerCase().includes(q)&&!d.item_name.toLowerCase().includes(q))return false;
     if(vendor&&d.vendor_id!==vendor)return false;
     if(type&&d.type!==type)return false;
     if(from&&d.invoice_date&&d.invoice_date<from)return false;
     if(to&&d.invoice_date&&d.invoice_date>to)return false;
-    // flag filter on discrepancies
-    if(flag&&flag!=='clean'&&flag!=='phantom'){
-      if(flag==='overcharge'&&d.overcharge<=0)return false;
-      if(flag==='gst'&&!d.gst_wrong)return false;
-    }
-    if(flag==='clean')return false; // no clean in disc view
+    if(flag==='clean')return false;
+    if(flag==='overcharge'&&d.overcharge<=0&&!d.gst_wrong)return false;
+    if(flag==='gst'&&!d.gst_wrong)return false;
+    if(flag==='phantom')return false;
     return true;
   });
   discFiltered.sort((a,b)=>discSD*(typeof a[discSK]==='string'?a[discSK].localeCompare(b[discSK]):(a[discSK]-b[discSK])));
 
-  // UPDATE DYNAMIC STATS
+  // UPDATE STAT CARDS
   const flaggedCount=invFiltered.filter(i=>i.errors>0||i.phantom_count>0).length;
   const totalBilled=invFiltered.reduce((s,i)=>s+i.total,0);
   const totalOC=invFiltered.reduce((s,i)=>s+i.overcharge,0);
-  const flaggedBilled=invFiltered.filter(i=>i.errors>0||i.phantom_count>0).reduce((s,i)=>s+i.total,0);
 
   if(currentView==='inv'){
     document.getElementById('ds-count').textContent=invFiltered.length.toLocaleString();
     document.getElementById('ds-count-lbl').textContent='Invoices';
-    document.getElementById('ds-count-sub').textContent=inr(totalBilled)+' billed';
     document.getElementById('ds-flagged').textContent=flaggedCount.toLocaleString();
     document.getElementById('ds-flagged-lbl').textContent='Flagged';
-    document.getElementById('ds-flagged-sub').textContent=inr(flaggedBilled)+' at risk';
     document.getElementById('ds-overcharge').textContent=inr(totalOC);
-    document.getElementById('ds-overcharge-sub').textContent='confirmed overcharge';
-    document.getElementById('ds-total-amt').textContent=inr(totalBilled-flaggedBilled);
-    document.getElementById('ds-total-sub').textContent='clean · verified';
+    document.getElementById('ds-overcharge-lbl').textContent='Overcharge';
+    document.getElementById('ds-total-amt').textContent=inr(totalBilled);
+    document.getElementById('ds-total-lbl').textContent='Total billed';
     document.getElementById('sh-ct').textContent=`${invFiltered.length.toLocaleString()} invoices`;
   } else {
     const discOC=discFiltered.filter(d=>d.overcharge>0).reduce((s,d)=>s+d.overcharge,0);
     const discGST=discFiltered.filter(d=>d.gst_wrong).length;
+    const discBilled=discFiltered.reduce((s,d)=>s+d.billed_amount,0);
     document.getElementById('ds-count').textContent=discFiltered.length.toLocaleString();
     document.getElementById('ds-count-lbl').textContent='Line items';
-    document.getElementById('ds-count-sub').textContent='matching filter';
     document.getElementById('ds-flagged').textContent=discFiltered.filter(d=>d.type==='price'||d.type==='both').length.toLocaleString();
     document.getElementById('ds-flagged-lbl').textContent='Price errors';
-    document.getElementById('ds-flagged-sub').textContent=inr(discOC)+' overcharged';
     document.getElementById('ds-overcharge').textContent=discGST.toLocaleString();
-    document.getElementById('ds-overcharge-sub').textContent='GST violations';
+    document.getElementById('ds-overcharge-lbl').textContent='GST errors';
     document.getElementById('ds-total-amt').textContent=inr(discOC);
-    document.getElementById('ds-total-sub').textContent='total overcharge';
+    document.getElementById('ds-total-lbl').textContent='Overcharge';
     document.getElementById('sh-ct').textContent=`${discFiltered.length.toLocaleString()} line items`;
   }
 
@@ -726,14 +714,8 @@ function applySharedFilters(){
   renderDisc();renderDiscPag();
 }
 
-function sortInv(k){
-  if(invSK===k)invSD*=-1;else{invSK=k;invSD=-1;}
-  applySharedFilters();
-}
-function sortDisc(k){
-  if(discSK===k)discSD*=-1;else{discSK=k;discSD=-1;}
-  applySharedFilters();
-}
+function sortInv(k){if(invSK===k)invSD*=-1;else{invSK=k;invSD=-1;}applySharedFilters();}
+function sortDisc(k){if(discSK===k)discSD*=-1;else{discSK=k;discSD=-1;}applySharedFilters();}
 
 function clearFilters(){
   ['sh-q','sh-from','sh-to'].forEach(id=>document.getElementById(id).value='');
@@ -741,14 +723,26 @@ function clearFilters(){
   applySharedFilters();
 }
 
-function exportCurrent(){
-  if(currentView==='inv') expInvCSV();
-  else expDiscCSV();
-}
+function exportCurrent(){if(currentView==='inv')expInvCSV();else expDiscCSV();}
 
-// RENDER INVOICE TABLE
+// ── RENDER INVOICE TABLE ──
 function renderInv(){
-  document.getElementById('inv-body').innerHTML=invFiltered.slice((invPage-1)*PP,invPage*PP).map(inv=>{
+  // PINNED SUM ROW
+  const totalBilled=invFiltered.reduce((s,i)=>s+i.total,0);
+  const totalOC=invFiltered.reduce((s,i)=>s+i.overcharge,0);
+  const totalErrors=invFiltered.reduce((s,i)=>s+i.errors,0);
+  document.getElementById('inv-sum-row').innerHTML=`<tr>
+    <td style="color:var(--ink)">${invFiltered.length.toLocaleString()} rows</td>
+    <td></td><td></td>
+    <td style="color:var(--ink)">${inr(totalBilled)}</td>
+    <td style="color:var(--red)">${totalErrors>0?totalErrors:'—'}</td>
+    <td style="color:var(--red)">${totalOC>0?'+'+inr(totalOC):'—'}</td>
+    <td></td>
+  </tr>`;
+
+  // DATA ROWS
+  const rows=invFiltered.slice((invPage-1)*PP,invPage*PP);
+  document.getElementById('inv-body').innerHTML=rows.map(inv=>{
     const flags=inv.flags instanceof Set?[...inv.flags]:inv.flags;
     const clean=inv.errors===0&&inv.phantom_count===0;
     const pills=clean?`<span class="pill p-g">Clean</span>`:[
@@ -771,12 +765,37 @@ function renderInv(){
     </tr>`;
   }).join('');
 }
-function renderInvPag(){
-  renderPag('inv-pag',invFiltered.length,invPage,n=>{invPage=n;renderInv();renderInvPag();});
-}
 
-// RENDER DISC TABLE
+function renderInvPag(){
+  const tot=Math.ceil(invFiltered.length/PP);
+  const p=document.getElementById('inv-pag');
+  if(tot<=1){p.innerHTML='';return;}
+  let h=`<button class="pg" onclick="invGo(${invPage-1})" ${invPage===1?'disabled':''}>← Prev</button>`;
+  for(let i=1;i<=tot;i++){
+    if(i===1||i===tot||Math.abs(i-invPage)<=2)h+=`<button class="pg ${i===invPage?'on':''}" onclick="invGo(${i})">${i}</button>`;
+    else if(Math.abs(i-invPage)===3)h+=`<span style="color:var(--dim);padding:0 3px">…</span>`;
+  }
+  h+=`<button class="pg" onclick="invGo(${invPage+1})" ${invPage===tot?'disabled':''}>Next →</button>`;
+  p.innerHTML=h;
+}
+function invGo(n){const t=Math.ceil(invFiltered.length/PP);if(n<1||n>t)return;invPage=n;renderInv();renderInvPag();document.querySelector('#inv-view .tbl-w').scrollIntoView({behavior:'smooth'});}
+
+// ── RENDER DISC TABLE ──
 function renderDisc(){
+  // PINNED SUM ROW
+  const discOC=discFiltered.filter(d=>d.overcharge>0).reduce((s,d)=>s+d.overcharge,0);
+  const discBilled=discFiltered.reduce((s,d)=>s+d.billed_amount,0);
+  const discContracted=discFiltered.reduce((s,d)=>s+d.expected_amount,0);
+  document.getElementById('disc-sum-row').innerHTML=`<tr>
+    <td style="color:var(--ink)">${discFiltered.length.toLocaleString()} rows</td>
+    <td></td><td></td><td></td>
+    <td style="color:var(--ink)">${inr(discContracted)}</td>
+    <td style="color:var(--ink)">${inr(discBilled)}</td>
+    <td style="color:var(--red)">${discOC>0?'+'+inr(discOC):'—'}</td>
+    <td></td><td></td>
+  </tr>`;
+
+  // DATA ROWS
   document.getElementById('disc-body').innerHTML=discFiltered.slice((discPage-1)*PP,discPage*PP).map(d=>{
     const badge=d.type==='both'?`<span class="pill p-a">Both</span>`:d.type==='price'?`<span class="pill p-r">Price</span>`:`<span class="pill p-b">GST</span>`;
     const gst=d.gst_wrong?`<span style="color:var(--blue);font-family:var(--mono);font-size:10px">${d.billed_gst}%→${d.correct_gst}%</span>`:`<span style="color:var(--dim)">✓</span>`;
@@ -792,25 +811,22 @@ function renderDisc(){
     </tr>`;
   }).join('');
 }
-function renderDiscPag(){
-  renderPag('disc-pag',discFiltered.length,discPage,n=>{discPage=n;renderDisc();renderDiscPag();});
-}
 
-// GENERIC PAGINATION
-function renderPag(id,total,current,goFn){
-  const tot=Math.ceil(total/PP);
-  const p=document.getElementById(id);
+function renderDiscPag(){
+  const tot=Math.ceil(discFiltered.length/PP);
+  const p=document.getElementById('disc-pag');
   if(tot<=1){p.innerHTML='';return;}
-  let h=`<button class="pg" onclick="(${goFn.toString()})(${current-1})" ${current===1?'disabled':''}>← Prev</button>`;
+  let h=`<button class="pg" onclick="discGo(${discPage-1})" ${discPage===1?'disabled':''}>← Prev</button>`;
   for(let i=1;i<=tot;i++){
-    if(i===1||i===tot||Math.abs(i-current)<=2)h+=`<button class="pg ${i===current?'on':''}" onclick="(${goFn.toString()})(${i})">${i}</button>`;
-    else if(Math.abs(i-current)===3)h+=`<span style="color:var(--dim);padding:0 3px">…</span>`;
+    if(i===1||i===tot||Math.abs(i-discPage)<=2)h+=`<button class="pg ${i===discPage?'on':''}" onclick="discGo(${i})">${i}</button>`;
+    else if(Math.abs(i-discPage)===3)h+=`<span style="color:var(--dim);padding:0 3px">…</span>`;
   }
-  h+=`<button class="pg" onclick="(${goFn.toString()})(${current+1})" ${current===tot?'disabled':''}>Next →</button>`;
+  h+=`<button class="pg" onclick="discGo(${discPage+1})" ${discPage===tot?'disabled':''}>Next →</button>`;
   p.innerHTML=h;
 }
+function discGo(n){const t=Math.ceil(discFiltered.length/PP);if(n<1||n>t)return;discPage=n;renderDisc();renderDiscPag();document.querySelector('#disc-view .tbl-w').scrollIntoView({behavior:'smooth'});}
 
-// PHANTOM
+// ── PHANTOM ──
 function applyPhFilters(){
   const q=document.getElementById('ph-q').value.toLowerCase();
   const vendor=document.getElementById('ph-vendor').value;
@@ -824,7 +840,18 @@ function applyPhFilters(){
   renderPh();renderPhPag();
 }
 function sortPh(k){if(phSK===k)phSD*=-1;else{phSK=k;phSD=-1;}applyPhFilters();}
+
 function renderPh(){
+  // PINNED SUM ROW
+  const phTotalAmt=phFiltered.reduce((s,p)=>s+p.billed_amount,0);
+  document.getElementById('ph-sum-row').innerHTML=`<tr>
+    <td style="color:var(--ink)">${phFiltered.length.toLocaleString()} rows</td>
+    <td></td><td></td><td></td><td></td>
+    <td style="color:var(--red)">${inr(phTotalAmt)}</td>
+    <td></td>
+  </tr>`;
+
+  // DATA ROWS
   document.getElementById('ph-body').innerHTML=phFiltered.slice((phPage-1)*PP,phPage*PP).map(p=>`<tr>
     <td class="mono">${p.invoice_id}</td>
     <td><span class="vtag">${p.vendor_id}</span> <span style="color:var(--muted);font-size:11px;margin-left:4px">${p.vendor_name}</span></td>
@@ -835,11 +862,22 @@ function renderPh(){
     <td><span class="pill p-a">${p.pattern}</span></td>
   </tr>`).join('');
 }
-function renderPhPag(){
-  renderPag('ph-pag',phFiltered.length,phPage,n=>{phPage=n;renderPh();renderPhPag();});
-}
 
-// EXPORTS
+function renderPhPag(){
+  const tot=Math.ceil(phFiltered.length/PP);
+  const p=document.getElementById('ph-pag');
+  if(tot<=1){p.innerHTML='';return;}
+  let h=`<button class="pg" onclick="phGo(${phPage-1})" ${phPage===1?'disabled':''}>← Prev</button>`;
+  for(let i=1;i<=tot;i++){
+    if(i===1||i===tot||Math.abs(i-phPage)<=2)h+=`<button class="pg ${i===phPage?'on':''}" onclick="phGo(${i})">${i}</button>`;
+    else if(Math.abs(i-phPage)===3)h+=`<span style="color:var(--dim);padding:0 3px">…</span>`;
+  }
+  h+=`<button class="pg" onclick="phGo(${phPage+1})" ${phPage===tot?'disabled':''}>Next →</button>`;
+  p.innerHTML=h;
+}
+function phGo(n){const t=Math.ceil(phFiltered.length/PP);if(n<1||n>t)return;phPage=n;renderPh();renderPhPag();document.querySelector('#tp-ph .tbl-w').scrollIntoView({behavior:'smooth'});}
+
+// ── EXPORTS ──
 function expInvCSV(){
   const h=['Invoice ID','Vendor ID','Vendor Name','Date','Total','Errors','Overcharge','Phantom Items','Phantom Amount','Flags'];
   const r=invFiltered.map(inv=>{
