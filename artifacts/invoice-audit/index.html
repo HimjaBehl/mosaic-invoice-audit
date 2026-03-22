@@ -279,12 +279,12 @@ tbody td{padding:9px 12px;vertical-align:middle;overflow:hidden;text-overflow:el
       <div class="charts-2">
         <div class="chart-box">
           <div class="chart-heading">Overcharge by Vendor</div>
-          <div class="chart-sub-lbl">Top 3 in red · sorted descending</div>
+          <div class="chart-sub-lbl">Red = price · Blue = GST · Amber = phantom · sorted by total</div>
           <canvas id="vc"></canvas>
         </div>
         <div class="chart-box">
           <div class="chart-heading">Monthly Overcharge</div>
-          <div class="chart-sub-lbl">₹ price overcharged per month · FY 2025</div>
+          <div class="chart-sub-lbl">Revenue vs overcharge (price + GST + phantom) · hover for %</div>
           <canvas id="mc"></canvas>
         </div>
       </div>
@@ -505,7 +505,10 @@ async function init(){
 
   let priceOC=0,gstRupeeImpact=0,gstErrCount=0;
   const byV={};
-  const mOC=new Array(12).fill(0);
+  const mOC=new Array(12).fill(0);    // price overcharge per month
+  const mGST=new Array(12).fill(0);   // gst inflation per month
+  const mPH=new Array(12).fill(0);    // phantom per month
+  const mRev=new Array(12).fill(0);   // total billed revenue per month
 
   for(const li of lineItems){
     const key=`${li.vendor_id}|${li.item_name}`;
@@ -515,6 +518,12 @@ async function init(){
     if(!con){
       phantomItems.push({...li,vendor_name:vN[li.vendor_id]||li.vendor_id,pattern:phPat(li.item_name)});
       if(ia){ia.phantom_count++;ia.phantom_amt+=li.billed_amount;ia.flags.add('phantom');}
+      if(!byV[li.vendor_id])byV[li.vendor_id]={oc:0,gst:0,phantom:0,combined:0,cnt:0};
+      byV[li.vendor_id].phantom+=li.billed_amount;
+      byV[li.vendor_id].combined=(byV[li.vendor_id].oc||0)+(byV[li.vendor_id].gst||0)+(byV[li.vendor_id].phantom||0);
+      const phMIdx=Math.min(11,Math.floor((parseInt(li.invoice_id.replace('INV-',''))-1)/(5200/12)));
+      mPH[phMIdx]+=li.billed_amount;
+      if(invAuditMap[li.invoice_id]){mRev[phMIdx]+=li.billed_amount;}
       continue;
     }
 
@@ -550,10 +559,12 @@ async function init(){
         type,invoice_date:invAuditMap[li.invoice_id]?.invoice_date||''
       });
 
-      if(!byV[li.vendor_id])byV[li.vendor_id]={oc:0,gst:0,combined:0,cnt:0};
+      if(!byV[li.vendor_id])byV[li.vendor_id]={oc:0,gst:0,phantom:0,combined:0,cnt:0};
       if(diff>0){byV[li.vendor_id].oc+=diff;priceOC+=diff;mOC[mIdx]+=diff;}
+      if(gstExtra>0){mGST[mIdx]+=gstExtra;}
+      if(invAuditMap[li.invoice_id]){mRev[mIdx]+=li.billed_amount;}
       if(gstExtra>0){byV[li.vendor_id].gst+=gstExtra;}
-      byV[li.vendor_id].combined=(byV[li.vendor_id].oc||0)+(byV[li.vendor_id].gst||0);
+      byV[li.vendor_id].combined=(byV[li.vendor_id].oc||0)+(byV[li.vendor_id].gst||0)+(byV[li.vendor_id].phantom||0);
       byV[li.vendor_id].cnt++;
 
       if(ia){
@@ -633,22 +644,131 @@ async function init(){
   // ── CHARTS ──
   new Chart(document.getElementById('vc'),{
     type:'bar',
-    data:{labels:vSorted.map(([v])=>vN[v]||v),
-                 datasets:[{data:vSorted.map(([,v])=>Math.round(v.combined)),
-        backgroundColor:vSorted.map((_,i)=>i<3?'rgba(192,57,43,.85)':i<6?'rgba(183,96,10,.5)':'rgba(26,86,176,.3)'),
-        borderColor:vSorted.map((_,i)=>i<3?'#C0392B':i<6?'#B7600A':'#1A56B0'),
-        borderWidth:1,borderRadius:2}]},
-    options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'₹'+c.parsed.y.toLocaleString('en-IN')}}},
-      scales:{x:{ticks:{color:'#888',font:{size:9,family:'JetBrains Mono'}},grid:{color:'rgba(0,0,0,.04)'}},
-        y:{ticks:{color:'#888',font:{family:'JetBrains Mono',size:9},callback:v=>'₹'+(v/100000).toFixed(0)+'L'},grid:{color:'rgba(0,0,0,.04)'}}}}
+    data:{
+      labels:vSorted.map(([v])=>vN[v]||v),
+      datasets:[
+        {
+          label:'Price OC',
+          data:vSorted.map(([,v])=>Math.round(v.oc||0)),
+          backgroundColor:'rgba(192,57,43,.85)',
+          borderColor:'#C0392B',
+          borderWidth:1,
+          stack:'s'
+        },
+        {
+          label:'GST Inflation',
+          data:vSorted.map(([,v])=>Math.round(v.gst||0)),
+          backgroundColor:'rgba(26,86,176,.75)',
+          borderColor:'#1A56B0',
+          borderWidth:1,
+          stack:'s'
+        },
+        {
+          label:'Phantom',
+          data:vSorted.map(([,v])=>Math.round(v.phantom||0)),
+          backgroundColor:'rgba(183,96,10,.65)',
+          borderColor:'#B7600A',
+          borderWidth:1,
+          stack:'s'
+        }
+      ]
+    },
+    options:{
+      responsive:true,
+      plugins:{
+        legend:{
+          display:true,
+          position:'top',
+          labels:{font:{family:'JetBrains Mono',size:9},color:'#888',boxWidth:10,padding:12}
+        },
+        tooltip:{
+          callbacks:{
+            label:c=>`${c.dataset.label}: ₹${c.parsed.y.toLocaleString('en-IN')}`
+          }
+        }
+      },
+      scales:{
+        x:{stacked:true,ticks:{color:'#888',font:{size:9,family:'JetBrains Mono'}},grid:{color:'rgba(0,0,0,.04)'}},
+        y:{stacked:true,ticks:{color:'#888',font:{family:'JetBrains Mono',size:9},callback:v=>'₹'+(v/100000).toFixed(0)+'L'},grid:{color:'rgba(0,0,0,.04)'}}
+      }
+    }
   });
+
+  // ── MONTHLY CHART ──
   const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const mPct=mRev.map((rev,i)=>{
+    const totalFlag=(mOC[i]||0)+(mGST[i]||0)+(mPH[i]||0);
+    return rev>0?+(totalFlag/rev*100).toFixed(1):0;
+  });
   new Chart(document.getElementById('mc'),{
     type:'bar',
-    data:{labels:months,datasets:[{data:mOC,backgroundColor:'rgba(192,57,43,.7)',borderColor:'#C0392B',borderWidth:1,borderRadius:2}]},
-    options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'₹'+Math.round(c.parsed.y).toLocaleString('en-IN')}}},
-      scales:{x:{ticks:{color:'#888',font:{family:'JetBrains Mono',size:9}},grid:{color:'rgba(0,0,0,.04)'}},
-        y:{ticks:{color:'#888',font:{family:'JetBrains Mono',size:9},callback:v=>'₹'+(v/100000).toFixed(0)+'L'},grid:{color:'rgba(0,0,0,.04)'}}}}
+    data:{
+      labels:months,
+      datasets:[
+        {
+          label:'Revenue',
+          data:mRev.map(v=>Math.round(v)),
+          backgroundColor:'rgba(216,212,204,.4)',
+          borderColor:'#D8D4CC',
+          borderWidth:1,
+          borderRadius:2,
+          order:2
+        },
+        {
+          label:'Price OC',
+          data:mOC.map(v=>Math.round(v)),
+          backgroundColor:'rgba(192,57,43,.8)',
+          borderColor:'#C0392B',
+          borderWidth:1,
+          borderRadius:0,
+          stack:'oc',
+          order:1
+        },
+        {
+          label:'GST Infl.',
+          data:mGST.map(v=>Math.round(v)),
+          backgroundColor:'rgba(26,86,176,.7)',
+          borderColor:'#1A56B0',
+          borderWidth:1,
+          borderRadius:0,
+          stack:'oc',
+          order:1
+        },
+        {
+          label:'Phantom',
+          data:mPH.map(v=>Math.round(v)),
+          backgroundColor:'rgba(183,96,10,.65)',
+          borderColor:'#B7600A',
+          borderWidth:1,
+          borderRadius:2,
+          stack:'oc',
+          order:1
+        }
+      ]
+    },
+    options:{
+      responsive:true,
+      plugins:{
+        legend:{
+          display:true,
+          position:'top',
+          labels:{font:{family:'JetBrains Mono',size:9},color:'#888',boxWidth:10,padding:10}
+        },
+        tooltip:{
+          callbacks:{
+            label:c=>`${c.dataset.label}: ₹${Math.round(c.parsed.y).toLocaleString('en-IN')}`,
+            afterBody:items=>{
+              const idx=items[0].dataIndex;
+              return [`% of revenue flagged: ${mPct[idx]}%`];
+            }
+          }
+        }
+      },
+      scales:{
+        x:{ticks:{color:'#888',font:{family:'JetBrains Mono',size:9}},grid:{color:'rgba(0,0,0,.04)'}},
+        y:{ticks:{color:'#888',font:{family:'JetBrains Mono',size:9},callback:v=>'₹'+(v/100000).toFixed(0)+'L'},grid:{color:'rgba(0,0,0,.04)'}}
+      }
+    }
   });
 
   // ── STATIC STAT CARDS — invoice tab ──
