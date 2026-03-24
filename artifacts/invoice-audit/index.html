@@ -304,8 +304,24 @@ tbody td{padding:9px 12px;vertical-align:middle;overflow:hidden;text-overflow:el
         </div>
         <div class="chart-box">
           <div class="chart-heading">Monthly Overcharge</div>
-          <div class="chart-sub-lbl">Revenue vs overcharge (price + GST + phantom) · hover for %</div>
-          <canvas id="mc"></canvas>
+          <div class="chart-sub-lbl">Price + GST + phantom per month · vs total revenue</div>
+          <div style="display:flex;gap:16px;align-items:flex-start">
+            <div style="flex:1;min-width:0"><canvas id="mc"></canvas></div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding-top:4px;min-width:90px">
+              <div style="font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;text-align:center">Overcharge<br>vs Revenue</div>
+              <div style="position:relative;width:80px;height:80px">
+                <canvas id="rev-donut" width="80" height="80" style="position:absolute;inset:0"></canvas>
+                <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none">
+                  <div id="rev-donut-pct" style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--red);line-height:1">—</div>
+                  <div style="font-family:var(--mono);font-size:7px;color:var(--muted);margin-top:2px">of rev</div>
+                </div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:3px;width:100%">
+                <div style="display:flex;align-items:center;gap:4px;font-size:9px;color:var(--muted);font-family:var(--mono)"><div style="width:6px;height:6px;background:var(--red);border-radius:1px;flex-shrink:0"></div><span id="rev-oc-lbl">—</span></div>
+                <div style="display:flex;align-items:center;gap:4px;font-size:9px;color:var(--muted);font-family:var(--mono)"><div style="width:6px;height:6px;background:var(--cream3);border-radius:1px;flex-shrink:0"></div><span id="rev-clean-lbl">—</span></div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -723,10 +739,9 @@ async function init(){
     data:{
       labels:months,
       datasets:[
-        {label:'Revenue',   data:mRev.map(v=>Math.round(v)), backgroundColor:'rgba(216,212,204,.4)',borderColor:'#D8D4CC',borderWidth:1,borderRadius:2,order:2},
-        {label:'Price OC',  data:mOC.map(v=>Math.round(v)),  backgroundColor:'rgba(192,57,43,.8)', borderColor:'#C0392B',borderWidth:1,stack:'oc',order:1},
-        {label:'GST Infl.', data:mGST.map(v=>Math.round(v)), backgroundColor:'rgba(26,86,176,.7)', borderColor:'#1A56B0',borderWidth:1,stack:'oc',order:1},
-        {label:'Phantom',   data:mPH.map(v=>Math.round(v)),  backgroundColor:'rgba(183,96,10,.65)',borderColor:'#B7600A',borderWidth:1,borderRadius:2,stack:'oc',order:1}
+        {label:'Price OC',  data:mOC.map(v=>Math.round(v)),  backgroundColor:'rgba(192,57,43,.8)', borderColor:'#C0392B',borderWidth:1,borderRadius:2,stack:'oc'},
+        {label:'GST Infl.', data:mGST.map(v=>Math.round(v)), backgroundColor:'rgba(26,86,176,.7)', borderColor:'#1A56B0',borderWidth:1,stack:'oc'},
+        {label:'Phantom',   data:mPH.map(v=>Math.round(v)),  backgroundColor:'rgba(183,96,10,.65)',borderColor:'#B7600A',borderWidth:1,borderRadius:2,stack:'oc'}
       ]
     },
     options:{
@@ -746,6 +761,25 @@ async function init(){
       }
     }
   });
+
+  // ── REVENUE vs OVERCHARGE DONUT ──
+  const totalFlagged=mOC.reduce((a,b)=>a+b,0)+mGST.reduce((a,b)=>a+b,0)+mPH.reduce((a,b)=>a+b,0);
+  const totalRev=mRev.reduce((a,b)=>a+b,0);
+  const revPct=totalRev>0?(totalFlagged/totalRev*100).toFixed(1):0;
+  document.getElementById('rev-donut-pct').textContent=revPct+'%';
+  document.getElementById('rev-oc-lbl').textContent=inr(totalFlagged)+' flagged';
+  document.getElementById('rev-clean-lbl').textContent=inr(totalRev-totalFlagged)+' clean';
+  new Chart(document.getElementById('rev-donut'),{
+    type:'doughnut',
+    data:{datasets:[{
+      data:[Math.round(totalFlagged),Math.round(Math.max(totalRev-totalFlagged,0))],
+      backgroundColor:['#C0392B','#E8E4DC'],
+      borderWidth:0,hoverOffset:2
+    }]},
+    options:{cutout:'72%',responsive:false,plugins:{legend:{display:false},tooltip:{enabled:false}},animation:{duration:800}}
+  });
+
+  // ── STAT CARDS ──
 
   // ── STAT CARDS ──
   document.getElementById('sc-total').textContent=invoices.length.toLocaleString();
