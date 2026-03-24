@@ -501,6 +501,29 @@ function ld(l,p,c){
   if(c!==undefined)document.getElementById('ld-ct').textContent=c;
 }
   async function fetchAll(ep,lbl,tot){
+    // only cache small datasets (rate-card, invoices) — line-items too large
+    const cacheable=ep!=='line-items';
+    const cKey=`mosaic_cache_${ep}`;
+    if(cacheable){
+      try{
+        const cached=localStorage.getItem(cKey);
+        if(cached){ld(`Loading ${lbl}...`,100,'from cache');return JSON.parse(cached);}
+      }catch(e){}
+    }
+    let pg=1,all=[];
+    while(true){
+      ld(`Fetching ${lbl} — ${pg}${tot?' / '+tot:''}`,tot?(pg/tot*100):50,`${all.length.toLocaleString()} rows`);
+      const r=await fetch(`${BASE}/${ep}?page=${pg}&limit=100`);
+      const d=await r.json();
+      all=all.concat(d.data);
+      if(!d.pagination.has_next)break;
+      pg++;
+    }
+    if(cacheable){
+      try{localStorage.setItem(cKey,JSON.stringify(all));}catch(e){}
+    }
+    return all;
+  async function fetchAll(ep,lbl,tot){
     const cKey=`mosaic_cache_${ep}`;
     const cached=localStorage.getItem(cKey);
     if(cached){
@@ -524,9 +547,11 @@ const inrF=n=>'₹'+Math.abs(n).toLocaleString('en-IN',{maximumFractionDigits:2}
 function phPat(n){const s=n.toLowerCase();return s.includes('fee')?'fee':s.includes('levy')?'levy':s.includes('charge')?'charge':s.includes('tax')?'tax':'other';}
 
 async function init(){
-  rateCard=await fetchAll('rate-card','Rate Card',2);
+  [rateCard,invoices]=await Promise.all([
+    fetchAll('rate-card','Rate Card',2),
+    fetchAll('invoices','Invoices',52)
+  ]);
   lineItems=await fetchAll('line-items','Line Items',218);
-  invoices=await fetchAll('invoices','Invoices',52);
   ld('Running audit engines...',99);
 
   for(const r of rateCard) rateMap[`${r.vendor_id}|${r.item_name}`]=r;
