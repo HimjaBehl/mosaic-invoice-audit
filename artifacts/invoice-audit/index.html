@@ -280,7 +280,7 @@ tbody td{padding:9px 12px;vertical-align:middle;overflow:hidden;text-overflow:el
       <div class="charts-2">
         <div class="chart-box">
           <div class="chart-heading">Overcharge by Vendor</div>
-          <div class="chart-sub-lbl">Total overcharge per vendor · Price OC + GST + Phantom · sorted by combined</div>
+          <div class="chart-sub-lbl">Total overcharge per vendor · Price OC + GST + Phantom </div>
           <canvas id="vc"></canvas>
         </div>
         <div class="chart-box">
@@ -315,8 +315,8 @@ tbody td{padding:9px 12px;vertical-align:middle;overflow:hidden;text-overflow:el
         <div class="sc"><div class="scv b" id="sc-gst">—</div><div class="scl">GST inflation</div></div>
       </div>
       <div class="view-toggle">
-        <button class="vt-btn on" id="vt-inv" onclick="setView('inv')">Invoice view</button>
-        <button class="vt-btn" id="vt-disc" onclick="setView('disc')">Line-item view</button>
+        <button class="vt-btn" id="vt-inv" onclick="setView('inv')">Invoice view</button>
+        <button class="vt-btn on" id="vt-disc" onclick="setView('disc')">Line-item view</button>
       </div>
       <div class="tbl-controls">
         <input class="inp inp-w200" id="sh-q" type="text" placeholder="Search...">
@@ -335,7 +335,7 @@ tbody td{padding:9px 12px;vertical-align:middle;overflow:hidden;text-overflow:el
         <button class="btn-exp" onclick="exportCurrent()">⬇ CSV</button>
         <div class="tbl-ct" id="sh-ct"></div>
       </div>
-      <div id="inv-view">
+        <div id="inv-view" style="display:none">
         <div class="sum-bar" id="inv-sum-bar"><div class="sum-bar-row"><div class="sum-cell muted">loading...</div></div></div>
         <div class="tbl-w"><table>
           <thead><tr>
@@ -352,7 +352,7 @@ tbody td{padding:9px 12px;vertical-align:middle;overflow:hidden;text-overflow:el
         </table></div>
         <div class="pag" id="inv-pag"></div>
       </div>
-      <div id="disc-view" style="display:none">
+        <div id="disc-view">
         <div class="tbl-controls" style="margin-bottom:8px">
           <select class="sel" id="sh-type">
             <option value="">All types</option>
@@ -429,7 +429,7 @@ const BASE='https://mosaicfellowship.in/api/data/finance';
 const PP=50;
 let lineItems=[],rateCard=[],invoices=[],discrepancies=[],phantomItems=[];
 let rateMap={},invAuditMap={};
-let currentView='inv';
+  let currentView='disc';
 let invFiltered=[],invPage=1,invSK='total',invSD=-1;
 let discFiltered=[],discPage=1,discSK='overcharge',discSD=-1;
 let phFiltered=[],phPage=1,phSK='billed_amount',phSD=-1;
@@ -555,9 +555,10 @@ async function init(){
   const expTotal=gstRupeeImpact+priceOC+phTotal;
 
   document.getElementById('h-total').textContent=inr(totalRecoverable);
+  document.getElementById('h-total').style.opacity='1';
   document.getElementById('h-breakdown').innerHTML=`Price overcharge <b>${inr(priceOC)}</b> + GST inflation <b>${inr(gstRupeeImpact)}</b><br><span style="color:var(--amber)">+ ${inr(phTotal)} phantom under investigation (separate)</span>`;
+  document.getElementById('h-breakdown').style.opacity='1';
   document.getElementById('mast-meta').textContent=`FY 2025 · ${lineItems.length.toLocaleString()} line items`;
-
   document.getElementById('donut-pct').textContent=pct+'%';
   document.getElementById('dl-flag').textContent=`${flaggedInvs.length.toLocaleString()} flagged`;
   document.getElementById('dl-clean').textContent=`${cleanInvs.length.toLocaleString()} clean`;
@@ -577,7 +578,8 @@ async function init(){
   document.getElementById('exec-list').innerHTML=[
     `<li><span class="n">01</span><span>All <b>15/15 vendors</b> show billing discrepancies — this is a <b>systemic failure</b> in invoice verification, not isolated errors.</span></li>`,
     `<li><span class="n">02</span><span>Total confirmed recoverable: <b>${inr(totalRecoverable)}</b> — comprising <b>${inr(priceOC)}</b> in price overcharges and <b>${inr(gstRupeeImpact)}</b> in GST inflation (<span class="hi">${gstPct}% of exposure</span>).</span></li>`,
-    `<li><span class="n">03</span><span>Top price offender: <b>${vN[p1[0]]}</b> — ${inr(p1[1].oc)} across ${p1[1].cnt} line items. Followed by <b>${vN[p2[0]]}</b> ${inr(p2[1].oc)} and <b>${vN[p3[0]]}</b> ${inr(p3[1].oc)}. Top GST offender: <b>${vN[topGSTVendor[0]]}</b> — ${inr(topGSTVendor[1].gst)} in GST inflation alone.</span></li>`,
+    `<li><span class="n">03</span><span>Top price offender: <b>${vN[p1[0]]}</b> — ${inr(p1[1].oc)} across ${p1[1].cnt} line items. Followed by <b>${vN[p2[0]]}</b> ${inr(p2[1].oc)} and <b>${vN[p3[0]]}</b> ${inr(p3[1].oc)}.</span></li>`,
+    `<li style="border-left:2px solid #1A56B0;padding-left:10px;margin-left:20px"><span class="n" style="color:#1A56B0">↳</span><span style="color:#bbb">Top GST offender: <b style="color:#fff">${vN[topGSTVendor[0]]}</b> — <b style="color:#1A56B0">${inr(topGSTVendor[1].gst)}</b> in GST inflation alone. All 4 marketing vendors applied <span style="color:#1A56B0">28% vs contracted 18%</span> — consistent across every line item.</span></li>`,
     `<li><span class="n">04</span><span><b>${gstErrCount} line items</b> billed at wrong GST rates — extra tax creates <span class="hi">compliance risk</span>. Incorrect ITC claims may trigger GST audit scrutiny.</span></li>`,
     `<li><span class="n">05</span><span><b>${phantomItems.length} phantom items</b> worth <b>${inr(phTotal)}</b> have no rate card entry — billed without contractual basis, requires immediate vendor dialogue.</span></li>`,
   ].join('');
@@ -758,7 +760,16 @@ function expDiscCSV(){const h=['Invoice ID','Vendor ID','Vendor Name','Item','Qt
 function expPhCSV(){const h=['Invoice ID','Vendor ID','Vendor Name','Item','Qty','Unit Price','Amount','Pattern'];const r=phantomItems.map(p=>[p.invoice_id,p.vendor_id,p.vendor_name,`"${p.item_name}"`,p.quantity,p.unit_price,p.billed_amount,p.pattern].join(','));dl([h.join(','),...r].join('\n'),'mosaic_phantom.csv');}
 function dl(c,f){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([c],{type:'text/csv'}));a.download=f;a.click();}
 
-init();
+  // Show skeleton values immediately — updates with real data after fetch
+  document.addEventListener('DOMContentLoaded',()=>{
+    document.getElementById('h-total').textContent='₹2.17Cr';
+    document.getElementById('h-breakdown').innerHTML=`Price overcharge <b>~₹30.9L</b> + GST inflation <b>~₹1.87Cr</b><br><span style="color:var(--amber)">+ ~₹9.9L phantom under investigation (separate)</span>`;
+    document.getElementById('mast-meta').textContent=`FY 2025 · 21,800 line items`;
+    document.getElementById('h-total').style.opacity='.45';
+    document.getElementById('h-breakdown').style.opacity='.45';
+  });
+
+  init();
 </script>
 </body>
 </html>
