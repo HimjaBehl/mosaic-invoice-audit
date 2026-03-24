@@ -175,7 +175,7 @@ tbody td{padding:9px 12px;vertical-align:middle;overflow:hidden;text-overflow:el
   <div class="ld-lbl" id="ld-lbl">Connecting...</div>
   <div class="ld-bw"><div class="ld-b" id="ld-b"></div></div>
   <div class="ld-ct" id="ld-ct"></div>
-  <div style="font-family:var(--mono);font-size:9px;color:var(--dim);margin-top:4px">First load ~15s · subsequent loads instant from cache</div>
+  <div style="font-family:var(--mono);font-size:9px;color:var(--dim);margin-top:4px">First load takes sometime · subsequent loads instant from cache</div>
 </div>
 <div id="app" style="display:none">
   <div class="mast">
@@ -280,7 +280,7 @@ tbody td{padding:9px 12px;vertical-align:middle;overflow:hidden;text-overflow:el
       <div class="charts-2">
         <div class="chart-box">
           <div class="chart-heading">Overcharge by Vendor</div>
-          <div class="chart-sub-lbl">Price overcharge per vendor · top 3 amber · sorted descending</div>
+          <div class="chart-sub-lbl">Total overcharge per vendor · Price OC + GST + Phantom · sorted by combined</div>
           <canvas id="vc"></canvas>
         </div>
         <div class="chart-box">
@@ -573,15 +573,21 @@ async function init(){
   const gstPct=Math.round(gstRupeeImpact/totalRecoverable*100);
   const undercharges=discrepancies.filter(d=>d.overcharge<-0.5);
   const underchargeAmt=undercharges.reduce((s,d)=>s+Math.abs(d.overcharge),0);
+  const topGSTVendor=Object.entries(byV).filter(([v])=>['V12','V13','V14','V15'].includes(v)).sort((a,b)=>b[1].gst-a[1].gst)[0];
   document.getElementById('exec-list').innerHTML=[
     `<li><span class="n">01</span><span>All <b>15/15 vendors</b> show billing discrepancies — this is a <b>systemic failure</b> in invoice verification, not isolated errors.</span></li>`,
     `<li><span class="n">02</span><span>Total confirmed recoverable: <b>${inr(totalRecoverable)}</b> — comprising <b>${inr(priceOC)}</b> in price overcharges and <b>${inr(gstRupeeImpact)}</b> in GST inflation (<span class="hi">${gstPct}% of exposure</span>).</span></li>`,
-    `<li><span class="n">03</span><span>Top price offender: <b>${vN[p1[0]]}</b> — ${inr(p1[1].oc)} across ${p1[1].cnt} line items. Followed by <b>${vN[p2[0]]}</b> ${inr(p2[1].oc)} and <b>${vN[p3[0]]}</b> ${inr(p3[1].oc)}.</span></li>`,
+    `<li><span class="n">03</span><span>Top price offender: <b>${vN[p1[0]]}</b> — ${inr(p1[1].oc)} across ${p1[1].cnt} line items. Followed by <b>${vN[p2[0]]}</b> ${inr(p2[1].oc)} and <b>${vN[p3[0]]}</b> ${inr(p3[1].oc)}. Top GST offender: <b>${vN[topGSTVendor[0]]}</b> — ${inr(topGSTVendor[1].gst)} in GST inflation alone.</span></li>`,
     `<li><span class="n">04</span><span><b>${gstErrCount} line items</b> billed at wrong GST rates — extra tax creates <span class="hi">compliance risk</span>. Incorrect ITC claims may trigger GST audit scrutiny.</span></li>`,
     `<li><span class="n">05</span><span><b>${phantomItems.length} phantom items</b> worth <b>${inr(phTotal)}</b> have no rate card entry — billed without contractual basis, requires immediate vendor dialogue.</span></li>`,
-    `<li><span class="n">06</span><span><b>Note:</b> Audit found <b>${undercharges.length.toLocaleString()}</b> lines where vendors billed <i>below</i> contracted rate (<span class="hi">${inr(underchargeAmt)}</span> in vendor's favour) — net credits, acknowledge but do not recover.</span></li>`,
-    `<li><span class="n">07</span><span><b>Recommended action:</b> Issue debit notes to all 15 vendors. Freeze incremental payments pending rate card re-confirmation. Make this audit a mandatory payment gate.</span></li>`,
   ].join('');
+  // Highlighted recommendations block
+  document.getElementById('exec-list').insertAdjacentHTML('afterend',
+    `<div style="margin-top:10px;padding:14px 18px;background:#1C1800;border-left:4px solid var(--amber);display:flex;align-items:center;gap:12px">
+      <span style="font-family:var(--mono);font-size:9px;color:var(--amber);letter-spacing:2px;text-transform:uppercase;white-space:nowrap">→ Action</span>
+      <span style="font-size:13px;color:#e8e0cc;line-height:1.5">Issue debit notes to all 15 vendors immediately for confirmed overcharges. Freeze incremental payments pending rate card re-confirmation. Implement this audit as a <b style="color:var(--amber)">mandatory payment gate</b> before any invoice is approved for payment.</span>
+    </div>`
+  );
 
   const mktV=['V12','V13','V14','V15'],logV=['V01','V02','V03','V04'],pkgV=['V05','V06','V07'],rawV=['V08','V09','V10','V11'];
   const catOC={mkt:0,log:0,pkg:0,raw:0};
@@ -609,7 +615,28 @@ async function init(){
   document.getElementById('off-sub').textContent=`Price ${inr(top[1].oc)} + GST ${inr(top[1].gst||0)} · ${vC[top[0]]||'—'} · ${top[0]}`;
   document.getElementById('runners-list').innerHTML=runners.map(([v,d])=>`<div class="run-row"><span class="run-name">${vN[v]||v}</span><span class="run-amt">${inr(d.combined)}</span></div>`).join('');
 
-  new Chart(document.getElementById('vc'),{type:'bar',data:{labels:vSortedPriceOnly.map(([v])=>vN[v]||v),datasets:[{data:vSortedPriceOnly.map(([,v])=>Math.round(v.oc||0)),backgroundColor:vSortedPriceOnly.map((_,i)=>i<3?'rgba(183,96,10,.9)':'rgba(160,155,148,.35)'),borderColor:vSortedPriceOnly.map((_,i)=>i<3?'#B7600A':'rgba(160,155,148,.5)'),borderWidth:1,borderRadius:3}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`Price OC: ₹${c.parsed.y.toLocaleString('en-IN')}`}}},scales:{x:{ticks:{color:'#888',font:{size:9,family:'JetBrains Mono'}},grid:{display:false}},y:{ticks:{color:'#888',font:{family:'JetBrains Mono',size:9},callback:v=>'₹'+(v/100000).toFixed(1)+'L'},grid:{color:'rgba(0,0,0,.04)'}}}}});
+  new Chart(document.getElementById('vc'),{
+    type:'bar',
+    data:{
+      labels:vSorted.map(([v])=>vN[v]||v),
+      datasets:[
+        {label:'Price OC', data:vSorted.map(([,v])=>Math.round(v.oc||0)),   backgroundColor:'rgba(192,57,43,.85)',borderColor:'#C0392B',borderWidth:1,stack:'s'},
+        {label:'GST Infl.',data:vSorted.map(([,v])=>Math.round(v.gst||0)),  backgroundColor:'rgba(26,86,176,.8)', borderColor:'#1A56B0',borderWidth:1,stack:'s'},
+        {label:'Phantom',  data:vSorted.map(([,v])=>Math.round(v.phantom||0)),backgroundColor:'rgba(183,96,10,.7)',borderColor:'#B7600A',borderWidth:1,stack:'s'}
+      ]
+    },
+    options:{
+      responsive:true,
+      plugins:{
+        legend:{display:true,position:'top',labels:{font:{family:'JetBrains Mono',size:9},color:'#888',boxWidth:10,padding:10}},
+        tooltip:{callbacks:{label:c=>`${c.dataset.label}: ₹${c.parsed.y.toLocaleString('en-IN')}`}}
+      },
+      scales:{
+        x:{stacked:true,ticks:{color:'#888',font:{size:9,family:'JetBrains Mono'}},grid:{display:false}},
+        y:{stacked:true,ticks:{color:'#888',font:{family:'JetBrains Mono',size:9},callback:v=>'₹'+(v/100000).toFixed(0)+'L'},grid:{color:'rgba(0,0,0,.04)'}}
+      }
+    }
+  });
 
   const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   const mPct=mRev.map((rev,i)=>{const f=(mOC[i]||0)+(mGST[i]||0)+(mPH[i]||0);return rev>0?+(f/rev*100).toFixed(1):0;});
