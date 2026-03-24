@@ -457,7 +457,7 @@ tbody td{padding:9px 12px;vertical-align:middle;overflow:hidden;text-overflow:el
     </div><!-- /tp-ph -->
 
   </div>
-  <div class="footer">MOSAIC WELLNESS · INVOICE AUDIT INTELLIGENCE · FY 2025 · LIVE DATA</div>
+  <div class="footer">MOSAIC WELLNESS · INVOICE AUDIT INTELLIGENCE · FY 2025 · LIVE DATA &nbsp;·&nbsp; <span onclick="localStorage.clear();location.reload()" style="cursor:pointer;text-decoration:underline;color:var(--muted)">Refresh data</span></div>
 </div>
 
 <script>
@@ -500,18 +500,25 @@ function ld(l,p,c){
   document.getElementById('ld-b').style.width=Math.min(p,100)+'%';
   if(c!==undefined)document.getElementById('ld-ct').textContent=c;
 }
-async function fetchAll(ep,lbl,tot){
-  let pg=1,all=[];
-  while(true){
-    ld(`Fetching ${lbl} — ${pg}${tot?' / '+tot:''}`,tot?(pg/tot*100):50,`${all.length.toLocaleString()} rows`);
-    const r=await fetch(`${BASE}/${ep}?page=${pg}&limit=100`);
-    const d=await r.json();
-    all=all.concat(d.data);
-    if(!d.pagination.has_next)break;
-    pg++;
+  async function fetchAll(ep,lbl,tot){
+    const cKey=`mosaic_cache_${ep}`;
+    const cached=localStorage.getItem(cKey);
+    if(cached){
+      ld(`Loading ${lbl}...`,100,'from cache');
+      return JSON.parse(cached);
+    }
+    let pg=1,all=[];
+    while(true){
+      ld(`Fetching ${lbl} — ${pg}${tot?' / '+tot:''}`,tot?(pg/tot*100):50,`${all.length.toLocaleString()} rows`);
+      const r=await fetch(`${BASE}/${ep}?page=${pg}&limit=100`);
+      const d=await r.json();
+      all=all.concat(d.data);
+      if(!d.pagination.has_next)break;
+      pg++;
+    }
+    localStorage.setItem(cKey,JSON.stringify(all));
+    return all;
   }
-  return all;
-}
 const inr=n=>'₹'+Math.abs(n).toLocaleString('en-IN',{maximumFractionDigits:0});
 const inrF=n=>'₹'+Math.abs(n).toLocaleString('en-IN',{maximumFractionDigits:2});
 function phPat(n){const s=n.toLowerCase();return s.includes('fee')?'fee':s.includes('levy')?'levy':s.includes('charge')?'charge':s.includes('tax')?'tax':'other';}
