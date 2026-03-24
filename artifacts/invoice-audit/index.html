@@ -299,7 +299,7 @@ tbody td{padding:9px 12px;vertical-align:middle;overflow:hidden;text-overflow:el
       <div class="charts-2">
         <div class="chart-box">
           <div class="chart-heading">Overcharge by Vendor</div>
-          <div class="chart-sub-lbl">Red = price · Blue = GST · Amber = phantom · sorted by total</div>
+          <div class="chart-sub-lbl">Price overcharge per vendor · top 3 in amber · sorted descending</div>
           <canvas id="vc"></canvas>
         </div>
         <div class="chart-box">
@@ -736,26 +736,27 @@ async function init(){
     `<div class="run-row"><span class="run-name">${vN[v]||v}</span><span class="run-amt">${inr(d.combined)}</span></div>`
   ).join('');
 
-  // ── VENDOR CHART (stacked) ──
+  // ── VENDOR CHART — price only, sorted desc, top 3 amber ──
   new Chart(document.getElementById('vc'),{
     type:'bar',
     data:{
-      labels:vSorted.map(([v])=>vN[v]||v),
-      datasets:[
-        {label:'Price OC',  data:vSorted.map(([,v])=>Math.round(v.oc||0)),    backgroundColor:'rgba(192,57,43,.85)', borderColor:'#C0392B',borderWidth:1,stack:'s'},
-        {label:'GST Infl.', data:vSorted.map(([,v])=>Math.round(v.gst||0)),   backgroundColor:'rgba(26,86,176,.75)', borderColor:'#1A56B0',borderWidth:1,stack:'s'},
-        {label:'Phantom',   data:vSorted.map(([,v])=>Math.round(v.phantom||0)),backgroundColor:'rgba(183,96,10,.65)',borderColor:'#B7600A',borderWidth:1,stack:'s'}
-      ]
+      labels:vSortedPriceOnly.map(([v])=>vN[v]||v),
+      datasets:[{
+        data:vSortedPriceOnly.map(([,v])=>Math.round(v.oc||0)),
+        backgroundColor:vSortedPriceOnly.map((_,i)=>i<3?'rgba(183,96,10,.9)':'rgba(160,155,148,.35)'),
+        borderColor:vSortedPriceOnly.map((_,i)=>i<3?'#B7600A':'rgba(160,155,148,.5)'),
+        borderWidth:1,borderRadius:3
+      }]
     },
     options:{
       responsive:true,
       plugins:{
-        legend:{display:true,position:'top',labels:{font:{family:'JetBrains Mono',size:9},color:'#888',boxWidth:10,padding:12}},
-        tooltip:{callbacks:{label:c=>`${c.dataset.label}: ₹${c.parsed.y.toLocaleString('en-IN')}`}}
+        legend:{display:false},
+        tooltip:{callbacks:{label:c=>`Price OC: ₹${c.parsed.y.toLocaleString('en-IN')}`}}
       },
       scales:{
-        x:{stacked:true,ticks:{color:'#888',font:{size:9,family:'JetBrains Mono'}},grid:{color:'rgba(0,0,0,.04)'}},
-        y:{stacked:true,ticks:{color:'#888',font:{family:'JetBrains Mono',size:9},callback:v=>'₹'+(v/100000).toFixed(0)+'L'},grid:{color:'rgba(0,0,0,.04)'}}
+        x:{ticks:{color:'#888',font:{size:9,family:'JetBrains Mono'}},grid:{display:false}},
+        y:{ticks:{color:'#888',font:{family:'JetBrains Mono',size:9},callback:v=>'₹'+(v/100000).toFixed(1)+'L'},grid:{color:'rgba(0,0,0,.04)'}}
       }
     }
   });
@@ -978,7 +979,7 @@ function renderDisc(){
 
   document.getElementById('disc-body').innerHTML=discFiltered.slice((discPage-1)*PP,discPage*PP).map(d=>{
     const badge=d.type==='both'?`<span class="pill p-a">Both</span>`:d.type==='price'?`<span class="pill p-r">Price</span>`:`<span class="pill p-b">GST</span>`;
-    const gstLbl=d.gst_wrong?`<span style="color:var(--blue);font-family:var(--mono);font-size:10px">${d.billed_gst}%→${d.correct_gst}%</span>`:`<span style="color:var(--dim)">✓</span>`;
+    const gstLbl=d.gst_wrong?`<span style="color:var(--blue);font-family:var(--mono);font-size:10px">${d.billed_gst}%→${d.correct_gst}%</span>`:`<span style="color:var(--green)">✓</span>`;
     const oc=d.overcharge>0?`<span style="color:var(--red);font-family:var(--mono);font-weight:600">+${inr(d.overcharge)}</span>`:d.overcharge<0?`<span style="color:var(--blue);font-family:var(--mono)">${inr(d.overcharge)}</span>`:`<span style="color:var(--dim)">—</span>`;
     const gstExtra=(d.gst_extra||0)>0?`<span style="color:var(--blue);font-family:var(--mono);font-weight:600">+${inr(d.gst_extra)}</span>`:`<span style="color:var(--dim)">—</span>`;
     return `<tr>
