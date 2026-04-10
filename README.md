@@ -1,28 +1,34 @@
-cat > README.md << 'EOF'
-# Mosaic Wellness — Invoice Audit Intelligence
+# 🧾 Invoice Audit Intelligence Tool
 
-A browser-based invoice audit system built for the Mosaic Fellowship Finance challenge.
+An AI-assisted invoice auditing system built to detect billing anomalies across vendor invoices — surfacing overcharges, GST inflation, and phantom billing at scale.
 
-## What it does
-Cross-references 21,800 line items across 5,200 invoices against the contracted rate card for all 15 vendors. Runs three audit engines client-side:
-- **Price overcharge** — billed amount vs qty × contracted rate
-- **GST inflation** — billed GST% vs contracted GST% (self-discovered finding)
-- **Phantom billing** — items with no rate card entry
+## 🔍 What It Does
 
-## Key findings
-- ₹2,17,82,440 total recoverable
-- ₹30,87,637 price overcharges · 719 line items
-- ₹1,86,94,802 GST inflation · 471 lines · all 4 marketing vendors applied 28% vs contracted 18%
-- ₹9,88,341 phantom billing · 389 items
-- 15/15 vendors flagged
+Audited **~21,800 invoice line items** across FY2025 for a D2C wellness company, identifying **₹2.17 crore in recoverable overcharges** across 15 vendors.
 
-## Live demo
-https://mosaic-invoice-audit-invoice-audit.vercel.app/
+**Anomaly types detected:**
+- GST rate inflation (vendor-applied rates exceeding contracted rates)
+- Unit price overcharges vs. agreed PO rates
+- Phantom billing (line items billed with no corresponding delivery)
+- Duplicate invoice detection
 
-## How to run
-Open `artifacts/invoice-audit/index.html` in any browser — fetches live from the Mosaic API.
-EOF
+## 🛠️ Tech Stack
 
-git add README.md
-git commit -m "Add README with findings and demo link"
-git push
+- **Frontend:** Vanilla HTML, CSS, JavaScript
+- **Visualization:** Chart.js
+- **Deployment:** Vercel
+
+## 🚀 Live Demo
+
+[mosaic-invoice-audit-invoice-audit.vercel.app](https://mosaic-invoice-audit-invoice-audit.vercel.app)
+
+## 💡 Why I Built This
+
+Most finance teams manually reconcile invoices in Excel — slow, error-prone, and unscalable. This tool turns a 2-week audit process into a real-time dashboard, giving ops and finance teams instant visibility into vendor billing patterns.
+
+## 📸 Features
+
+- Vendor-wise anomaly breakdown
+- Category-level drill-down (GST / price / phantom)
+- Recoverable amount tracker
+- Exportable audit summary
